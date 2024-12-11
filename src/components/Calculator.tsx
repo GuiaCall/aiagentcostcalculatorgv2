@@ -30,6 +30,25 @@ export function Calculator() {
 
   const [totalCost, setTotalCost] = useState<number | null>(null);
 
+  const handleTechnologyToggle = (techId: string) => {
+    setTechnologies(
+      technologies.map((tech) =>
+        tech.id === techId ? { ...tech, isSelected: !tech.isSelected } : tech
+      )
+    );
+  };
+
+  const handleCostUpdate = (techId: string, newCost: string) => {
+    const costValue = parseFloat(newCost);
+    if (!isNaN(costValue) && costValue >= 0) {
+      setTechnologies(
+        technologies.map((tech) =>
+          tech.id === techId ? { ...tech, costPerMinute: costValue } : tech
+        )
+      );
+    }
+  };
+
   const calculateCost = () => {
     const selectedTechs = technologies.filter((tech) => tech.isSelected);
     if (selectedTechs.length === 0) {
@@ -45,14 +64,6 @@ export function Calculator() {
     const totalBaseCost = baseCost * totalMinutes;
     const finalCost = totalBaseCost * (1 + margin / 100);
     setTotalCost(finalCost);
-  };
-
-  const handleTechnologyToggle = (techId: string) => {
-    setTechnologies(
-      technologies.map((tech) =>
-        tech.id === techId ? { ...tech, isSelected: !tech.isSelected } : tech
-      )
-    );
   };
 
   const exportPDF = () => {
@@ -135,16 +146,29 @@ export function Calculator() {
           </div>
 
           <div className="space-y-2">
-            <Label>Select Technologies</Label>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <Label>Select Technologies and Set Costs</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {technologies.map((tech) => (
-                <div key={tech.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={tech.id}
-                    checked={tech.isSelected}
-                    onCheckedChange={() => handleTechnologyToggle(tech.id)}
-                  />
-                  <Label htmlFor={tech.id}>{tech.name}</Label>
+                <div key={tech.id} className="flex items-center space-x-4 p-3 border rounded-lg">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id={tech.id}
+                      checked={tech.isSelected}
+                      onCheckedChange={() => handleTechnologyToggle(tech.id)}
+                    />
+                    <Label htmlFor={tech.id}>{tech.name}</Label>
+                  </div>
+                  <div className="flex-1">
+                    <Input
+                      type="number"
+                      value={tech.costPerMinute}
+                      onChange={(e) => handleCostUpdate(tech.id, e.target.value)}
+                      step="0.01"
+                      min="0"
+                      placeholder="Cost per minute"
+                      className="w-full"
+                    />
+                  </div>
                 </div>
               ))}
             </div>
