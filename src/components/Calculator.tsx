@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
 import { Calculator as CalculatorIcon, Download } from "lucide-react";
+import jsPDF from "jspdf";
 
 interface Technology {
   id: string;
@@ -55,11 +56,40 @@ export function Calculator() {
   };
 
   const exportPDF = () => {
-    toast({
-      title: "Export Started",
-      description: "Your PDF is being generated...",
+    if (!totalCost) return;
+
+    const doc = new jsPDF();
+    const selectedTechs = technologies.filter((tech) => tech.isSelected);
+    
+    // Add title
+    doc.setFontSize(20);
+    doc.text("AI Voice Agent Cost Calculation", 20, 20);
+    
+    // Add calculation details
+    doc.setFontSize(12);
+    doc.text("Selected Technologies:", 20, 40);
+    selectedTechs.forEach((tech, index) => {
+      doc.text(`- ${tech.name}: $${tech.costPerMinute}/minute`, 25, 50 + (index * 10));
     });
-    // PDF export logic would go here
+    
+    // Add parameters
+    doc.text(`Call Duration: ${callDuration} minutes`, 20, 90);
+    doc.text(`Total Minutes: ${totalMinutes}`, 20, 100);
+    doc.text(`Margin: ${margin}%`, 20, 110);
+    
+    // Add results
+    doc.text("Results:", 20, 130);
+    doc.text(`Base cost per minute: $${(totalCost / totalMinutes / (1 + margin / 100)).toFixed(4)}`, 25, 140);
+    doc.text(`Cost per minute with margin: $${(totalCost / totalMinutes).toFixed(4)}`, 25, 150);
+    doc.text(`Total Cost: $${totalCost.toFixed(2)}`, 25, 160);
+    
+    // Save the PDF
+    doc.save("voice-agent-cost-calculation.pdf");
+    
+    toast({
+      title: "PDF Generated",
+      description: "Your calculation report has been downloaded",
+    });
   };
 
   return (
