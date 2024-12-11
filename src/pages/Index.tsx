@@ -1,4 +1,5 @@
 import { Calculator } from "@/components/Calculator";
+import { FormulaExplanation } from "@/components/FormulaExplanation";
 
 const Index = () => {
   return (
@@ -13,6 +14,7 @@ const Index = () => {
           </p>
         </div>
         <Calculator />
+        <FormulaExplanation />
       </div>
     </div>
   );
