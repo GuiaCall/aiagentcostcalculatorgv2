@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,6 +28,7 @@ const initialTechnologies = [
   { id: "synthflow", name: "Synthflow", isSelected: true, costPerMinute: 0.002 },
   { id: "calcom", name: "Cal.com", isSelected: true, costPerMinute: 0.003 },
   { id: "twilio", name: "Twilio", isSelected: true, costPerMinute: 0.004 },
+  { id: "vapi", name: "Vapi", isSelected: true, costPerMinute: 0.005 },
 ];
 
 export function Calculator() {
@@ -106,6 +107,19 @@ export function Calculator() {
     const element = document.getElementById('invoice-preview');
     if (!element) return;
 
+    const canvas = await html2canvas(element, {
+      scale: 2, // Increase quality
+      useCORS: true,
+      logging: true,
+      width: element.scrollWidth,
+      height: element.scrollHeight
+    });
+
+    const imgWidth = 210; // A4 width in mm
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    
+    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
+    
     const invoiceNumber = `INV-${format(new Date(), 'yyyyMMdd')}-${invoices.length + 1}`;
     
     const newInvoice: InvoiceHistory = {
@@ -118,13 +132,27 @@ export function Calculator() {
       taxRate,
       margin
     };
-    setInvoices([...invoices, newInvoice]);
 
-    const canvas = await html2canvas(element);
-    const imgData = canvas.toDataURL('image/png');
-    pdf.addImage(imgData, 'PNG', 10, 10, 190, 277);
+    const updatedInvoices = [...invoices, newInvoice];
+    setInvoices(updatedInvoices);
+    localStorage.setItem('invoiceHistory', JSON.stringify(updatedInvoices));
+
     pdf.save(`invoice-${invoiceNumber}.pdf`);
   };
+
+  // Load invoice history from localStorage on component mount
+  useEffect(() => {
+    const savedInvoices = localStorage.getItem('invoiceHistory');
+    if (savedInvoices) {
+      const parsedInvoices = JSON.parse(savedInvoices);
+      // Convert date strings back to Date objects
+      const processedInvoices = parsedInvoices.map((inv: any) => ({
+        ...inv,
+        date: new Date(inv.date)
+      }));
+      setInvoices(processedInvoices);
+    }
+  }, []);
 
   const handleEdit = (invoice: InvoiceHistory) => {
     setAgencyInfo(invoice.agencyInfo);
@@ -151,6 +179,11 @@ export function Calculator() {
     setShowPreview(true);
   };
 
+  const handleTechnologyVisibility = (techId: string, isVisible: boolean) => {
+    // This function will be used to show/hide calculator components based on technology selection
+    console.log(`Technology ${techId} visibility changed to ${isVisible}`);
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto p-6 space-y-8 animate-fadeIn">
       <AgencyClientInfo
@@ -167,52 +200,35 @@ export function Calculator() {
           <TechnologyParameters
             technologies={technologies}
             onTechnologyChange={setTechnologies}
+            onVisibilityChange={handleTechnologyVisibility}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="margin">Margin (%)</Label>
-              <Input
-                id="margin"
-                type="number"
-                value={margin}
-                onChange={(e) => setMargin(Number(e.target.value))}
-                min="0"
-                max="100"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="tax">Tax Rate (%)</Label>
-              <Input
-                id="tax"
-                type="number"
-                value={taxRate}
-                onChange={(e) => setTaxRate(Number(e.target.value))}
-                min="0"
-                max="100"
-              />
-            </div>
-          </div>
+          {technologies.find(t => t.id === 'make')?.isSelected && (
+            <MakeCalculator 
+              totalMinutes={totalMinutes}
+              averageCallDuration={callDuration}
+              onPlanSelect={setSelectedMakePlan}
+            />
+          )}
 
-          <MakeCalculator 
-            totalMinutes={totalMinutes}
-            averageCallDuration={callDuration}
-            onPlanSelect={setSelectedMakePlan}
-          />
+          {technologies.find(t => t.id === 'synthflow')?.isSelected && (
+            <SynthflowCalculator 
+              totalMinutes={totalMinutes}
+              onPlanSelect={setSelectedSynthflowPlan}
+            />
+          )}
 
-          <SynthflowCalculator 
-            totalMinutes={totalMinutes}
-            onPlanSelect={setSelectedSynthflowPlan}
-          />
+          {technologies.find(t => t.id === 'calcom')?.isSelected && (
+            <CalcomCalculator 
+              onPlanSelect={setSelectedCalcomPlan}
+            />
+          )}
 
-          <CalcomCalculator 
-            onPlanSelect={setSelectedCalcomPlan}
-          />
-
-          <TwilioCalculator 
-            onRateSelect={setSelectedTwilioRate}
-          />
+          {technologies.find(t => t.id === 'twilio')?.isSelected && (
+            <TwilioCalculator 
+              onRateSelect={setSelectedTwilioRate}
+            />
+          )}
 
           <div className="flex justify-end space-x-4">
             <Button onClick={calculateCost} className="bg-primary">
