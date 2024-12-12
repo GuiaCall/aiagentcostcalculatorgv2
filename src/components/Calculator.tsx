@@ -1,7 +1,4 @@
 import { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Calculator as CalculatorIcon, Download, Eye } from "lucide-react";
@@ -14,6 +11,8 @@ import { ColorPicker } from "./ColorPicker";
 import { InvoicePreview } from "./InvoicePreview";
 import { TechnologyParameters } from "./TechnologyParameters";
 import { InvoiceHistoryList } from "./InvoiceHistory";
+import { TechnologyCosts } from "./TechnologyCosts";
+import { CalculatorSettings } from "./CalculatorSettings";
 import { MakePlan } from "@/types/make";
 import { SynthflowPlan } from "@/types/synthflow";
 import { CalcomPlan } from "@/types/calcom";
@@ -39,7 +38,6 @@ export function Calculator() {
   const [taxRate, setTaxRate] = useState<number>(20);
   const [themeColor, setThemeColor] = useState<string>("#2563eb");
   const [showPreview, setShowPreview] = useState<boolean>(false);
-  const [calcomUsers, setCalcomUsers] = useState<number>(1);
   const [technologies, setTechnologies] = useState(initialTechnologies);
   const [invoices, setInvoices] = useState<InvoiceHistory[]>([]);
   
@@ -70,6 +68,23 @@ export function Calculator() {
   const [editingId, setEditingId] = useState<string | undefined>();
   const [recalculatedId, setRecalculatedId] = useState<string | undefined>();
 
+  const handleSettingChange = (setting: string, value: number) => {
+    switch (setting) {
+      case 'callDuration':
+        setCallDuration(value);
+        break;
+      case 'totalMinutes':
+        setTotalMinutes(value);
+        break;
+      case 'margin':
+        setMargin(value);
+        break;
+      case 'taxRate':
+        setTaxRate(value);
+        break;
+    }
+  };
+
   const calculateCost = () => {
     const selectedTechs = technologies.filter((tech) => tech.isSelected);
     if (selectedTechs.length === 0) {
@@ -85,12 +100,7 @@ export function Calculator() {
     const totalBaseCost = baseCost * totalMinutes;
     
     const makePlanCostPerMonth = selectedMakePlan ? selectedMakePlan.monthlyPrice : 0;
-    
-    const calcomCostPerMonth = selectedCalcomPlan 
-      ? selectedCalcomPlan.basePrice + (selectedCalcomPlan.allowsTeam ? (calcomUsers - 1) * selectedCalcomPlan.pricePerUser : 0)
-      : 0;
-    
-    const finalCost = (totalBaseCost + makePlanCostPerMonth + calcomCostPerMonth) * (1 + margin / 100);
+    const finalCost = (totalBaseCost + makePlanCostPerMonth) * (1 + margin / 100);
     
     setTotalCost(finalCost);
   };
@@ -206,78 +216,92 @@ export function Calculator() {
         onClientInfoChange={setClientInfo}
       />
 
-      <Card className="p-6 space-y-6">
-        <h2 className="text-2xl font-heading font-bold text-gray-900">Cost Calculator</h2>
-        
-        <div className="space-y-4">
-          <TechnologyParameters
-            technologies={technologies}
-            onTechnologyChange={setTechnologies}
-            onVisibilityChange={() => {}}
-          />
+      <CalculatorSettings
+        callDuration={callDuration}
+        totalMinutes={totalMinutes}
+        margin={margin}
+        taxRate={taxRate}
+        onSettingChange={handleSettingChange}
+      />
 
-          {technologies.find(t => t.id === 'make')?.isSelected && (
-            <MakeCalculator 
-              totalMinutes={totalMinutes}
-              averageCallDuration={callDuration}
-              onPlanSelect={setSelectedMakePlan}
-            />
-          )}
+      <TechnologyParameters
+        technologies={technologies}
+        onTechnologyChange={setTechnologies}
+        onVisibilityChange={() => {}}
+      />
 
-          {technologies.find(t => t.id === 'synthflow')?.isSelected && (
-            <SynthflowCalculator 
-              totalMinutes={totalMinutes}
-              onPlanSelect={setSelectedSynthflowPlan}
-            />
-          )}
+      <TechnologyCosts
+        technologies={technologies}
+        onTechnologyChange={setTechnologies}
+      />
 
-          {technologies.find(t => t.id === 'calcom')?.isSelected && (
-            <CalcomCalculator 
-              onPlanSelect={setSelectedCalcomPlan}
-            />
-          )}
+      {technologies.find(t => t.id === 'make')?.isSelected && (
+        <MakeCalculator 
+          totalMinutes={totalMinutes}
+          averageCallDuration={callDuration}
+          onPlanSelect={setSelectedMakePlan}
+          onCostPerMinuteChange={(cost) => {
+            setTechnologies(techs => 
+              techs.map(tech => 
+                tech.id === 'make' ? { ...tech, costPerMinute: cost } : tech
+              )
+            );
+          }}
+        />
+      )}
 
-          {technologies.find(t => t.id === 'twilio')?.isSelected && (
-            <TwilioCalculator 
-              onRateSelect={setSelectedTwilioRate}
-            />
-          )}
+      {technologies.find(t => t.id === 'synthflow')?.isSelected && (
+        <SynthflowCalculator 
+          totalMinutes={totalMinutes}
+          onPlanSelect={setSelectedSynthflowPlan}
+        />
+      )}
 
-          <div className="flex justify-end space-x-4">
-            <Button onClick={calculateCost} className="bg-primary">
-              <CalculatorIcon className="mr-2 h-4 w-4" />
-              Calculate
+      {technologies.find(t => t.id === 'calcom')?.isSelected && (
+        <CalcomCalculator 
+          onPlanSelect={setSelectedCalcomPlan}
+        />
+      )}
+
+      {technologies.find(t => t.id === 'twilio')?.isSelected && (
+        <TwilioCalculator 
+          onRateSelect={setSelectedTwilioRate}
+        />
+      )}
+
+      <div className="flex justify-end space-x-4">
+        <Button onClick={calculateCost} className="bg-primary">
+          <CalculatorIcon className="mr-2 h-4 w-4" />
+          Calculate
+        </Button>
+        {totalCost && (
+          <>
+            <Button onClick={() => setShowPreview(true)} variant="outline">
+              <Eye className="mr-2 h-4 w-4" />
+              Preview
             </Button>
-            {totalCost && (
-              <>
-                <Button onClick={() => setShowPreview(true)} variant="outline">
-                  <Eye className="mr-2 h-4 w-4" />
-                  Preview
-                </Button>
-                <Button onClick={() => exportPDF()} variant="outline">
-                  <Download className="mr-2 h-4 w-4" />
-                  Export PDF
-                </Button>
-              </>
-            )}
-          </div>
+            <Button onClick={() => exportPDF()} variant="outline">
+              <Download className="mr-2 h-4 w-4" />
+              Export PDF
+            </Button>
+          </>
+        )}
+      </div>
 
-          {showPreview && totalCost && (
-            <div id="invoice-preview">
-              <InvoicePreview
-                agencyInfo={agencyInfo}
-                clientInfo={clientInfo}
-                totalMinutes={totalMinutes}
-                totalCost={totalCost}
-                taxRate={taxRate}
-                themeColor={themeColor}
-                onColorChange={setThemeColor}
-                showColorPicker={true}
-              />
-            </div>
-          )}
+      {showPreview && totalCost && (
+        <div id="invoice-preview">
+          <InvoicePreview
+            agencyInfo={agencyInfo}
+            clientInfo={clientInfo}
+            totalMinutes={totalMinutes}
+            totalCost={totalCost}
+            taxRate={taxRate}
+            themeColor={themeColor}
+            onColorChange={setThemeColor}
+            showColorPicker={true}
+          />
         </div>
-      </Card>
+      )}
 
       <InvoiceHistoryList
         invoices={invoices}
