@@ -85,10 +85,14 @@ export function SynthflowCalculator({
             <p className="text-sm text-gray-600">
               Based on your estimated usage of {totalMinutes} minutes per month
             </p>
-            <p className="text-sm text-gray-600 mt-1">
-              Price: ${billingType === 'monthly' ? recommendedPlan.monthlyPrice : recommendedPlan.yearlyPrice}/month
-              {billingType === 'yearly' ? ' billed yearly' : ''}
-            </p>
+            <div className="text-sm text-gray-600 mt-1">
+              <p>Monthly Price: ${billingType === 'monthly' ? recommendedPlan.monthlyPrice : recommendedPlan.yearlyPrice}/month</p>
+              {billingType === 'yearly' && (
+                <p className="font-medium text-primary">
+                  Total Yearly Cost: ${(recommendedPlan.yearlyPrice * 12).toFixed(2)}/year
+                </p>
+              )}
+            </div>
           </div>
         )}
       </div>
