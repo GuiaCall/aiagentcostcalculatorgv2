@@ -8,9 +8,11 @@ import { useToast } from "@/components/ui/use-toast";
 import { Calculator as CalculatorIcon, Download } from "lucide-react";
 import { MakeCalculator } from "./MakeCalculator";
 import { MakePlan } from "@/types/make";
-import jsPDF from "jspdf";
 import { SynthflowCalculator } from "./SynthflowCalculator";
 import { SynthflowPlan } from "@/types/synthflow";
+import { CalcomCalculator } from "./CalcomCalculator";
+import { CalcomPlan } from "@/types/calcom";
+import jsPDF from "jspdf";
 
 interface Technology {
   id: string;
@@ -25,6 +27,11 @@ export function Calculator() {
   const [totalMinutes, setTotalMinutes] = useState<number>(1000);
   const [margin, setMargin] = useState<number>(20);
   const [selectedMakePlan, setSelectedMakePlan] = useState<MakePlan | null>(null);
+  const [selectedSynthflowPlan, setSelectedSynthflowPlan] = useState<SynthflowPlan | null>(null);
+  const [synthflowBillingType, setSynthflowBillingType] = useState<'monthly' | 'yearly'>('monthly');
+  const [selectedCalcomPlan, setSelectedCalcomPlan] = useState<CalcomPlan | null>(null);
+  const [calcomUsers, setCalcomUsers] = useState<number>(1);
+  
   const [technologies, setTechnologies] = useState<Technology[]>([
     { id: "vapi", name: "Vapi", isSelected: false, costPerMinute: 0.05 },
     { id: "synthflow", name: "Synthflow", isSelected: false, costPerMinute: 0.03 },
@@ -34,8 +41,6 @@ export function Calculator() {
   ]);
 
   const [totalCost, setTotalCost] = useState<number | null>(null);
-  const [selectedSynthflowPlan, setSelectedSynthflowPlan] = useState<SynthflowPlan | null>(null);
-  const [synthflowBillingType, setSynthflowBillingType] = useState<'monthly' | 'yearly'>('monthly');
 
   const handleTechnologyToggle = (techId: string) => {
     setTechnologies(
@@ -72,7 +77,13 @@ export function Calculator() {
     
     // Add Make.com plan cost if selected
     const makePlanCostPerMonth = selectedMakePlan ? selectedMakePlan.monthlyPrice : 0;
-    const finalCost = (totalBaseCost + makePlanCostPerMonth) * (1 + margin / 100);
+    
+    // Add Cal.com plan cost if selected
+    const calcomCostPerMonth = selectedCalcomPlan 
+      ? selectedCalcomPlan.basePrice + (selectedCalcomPlan.allowsTeam ? (calcomUsers - 1) * selectedCalcomPlan.pricePerUser : 0)
+      : 0;
+    
+    const finalCost = (totalBaseCost + makePlanCostPerMonth + calcomCostPerMonth) * (1 + margin / 100);
     
     setTotalCost(finalCost);
   };
@@ -97,6 +108,19 @@ export function Calculator() {
           ? { ...tech, isSelected: true, costPerMinute: billingType === 'monthly' 
               ? plan.monthlyPrice / plan.minutesPerMonth 
               : plan.yearlyPrice * 12 / (plan.minutesPerMonth * 12) }
+          : tech
+      )
+    );
+  };
+
+  const handleCalcomPlanSelect = (plan: CalcomPlan, users: number) => {
+    setSelectedCalcomPlan(plan);
+    setCalcomUsers(users);
+    const monthlyPrice = plan.basePrice + (plan.allowsTeam ? (users - 1) * plan.pricePerUser : 0);
+    setTechnologies(prev => 
+      prev.map(tech => 
+        tech.id === "calcom" 
+          ? { ...tech, isSelected: true, costPerMinute: monthlyPrice / totalMinutes }
           : tech
       )
     );
@@ -180,6 +204,10 @@ export function Calculator() {
             onPlanSelect={handleSynthflowPlanSelect}
           />
 
+          <CalcomCalculator 
+            onPlanSelect={handleCalcomPlanSelect}
+          />
+
           <div className="space-y-2">
             <Label htmlFor="margin">Margin (%)</Label>
             <Input
@@ -249,6 +277,11 @@ export function Calculator() {
                 {selectedSynthflowPlan && (
                   <p className="text-gray-700">
                     Synthflow Plan: {selectedSynthflowPlan.name} (${synthflowBillingType === 'monthly' ? selectedSynthflowPlan.monthlyPrice : selectedSynthflowPlan.yearlyPrice}/month)
+                  </p>
+                )}
+                {selectedCalcomPlan && (
+                  <p className="text-gray-700">
+                    Cal.com Plan: {selectedCalcomPlan.name} ({calcomUsers} users) - ${selectedCalcomPlan.basePrice + (selectedCalcomPlan.allowsTeam ? (calcomUsers - 1) * selectedCalcomPlan.pricePerUser : 0)}/month
                   </p>
                 )}
                 <p className="text-gray-700">

@@ -65,6 +65,22 @@ export function FormulaExplanation() {
           </p>
         </div>
 
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800">Cal.com Plan Cost Calculation</h3>
+          <p className="text-gray-600">
+            Base Cost = Selected Plan Base Price
+          </p>
+          <p className="text-gray-600">
+            Team Member Cost = (Number of Users - 1) × Price Per Additional User
+          </p>
+          <p className="text-gray-600">
+            Total Monthly Cost = Base Cost + Team Member Cost
+          </p>
+          <p className="text-sm text-gray-500 mt-1">
+            For Team and Organization plans, additional team members are charged at $12/month each.
+          </p>
+        </div>
+
         <div className="mt-4 p-4 bg-gray-50 rounded-lg">
           <h3 className="text-lg font-semibold text-gray-800 mb-2">Default Technology Costs</h3>
           <p className="text-sm text-gray-500 mb-2">These are suggested default values. You can customize the costs in the calculator above.</p>
