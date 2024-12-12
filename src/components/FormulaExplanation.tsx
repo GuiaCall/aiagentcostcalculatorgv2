@@ -49,6 +49,22 @@ export function FormulaExplanation() {
           </p>
         </div>
 
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800">Synthflow Plan Cost Calculation</h3>
+          <p className="text-gray-600">
+            Monthly Cost = Selected Plan Monthly Price
+          </p>
+          <p className="text-gray-600">
+            Yearly Total Cost = Selected Plan Yearly Price × 12
+          </p>
+          <p className="text-gray-600">
+            Cost Per Minute = Plan Cost ÷ Minutes Included in Plan
+          </p>
+          <p className="text-sm text-gray-500 mt-1">
+            The cost per minute is automatically adjusted based on your selected plan and billing cycle.
+          </p>
+        </div>
+
         <div className="mt-4 p-4 bg-gray-50 rounded-lg">
           <h3 className="text-lg font-semibold text-gray-800 mb-2">Default Technology Costs</h3>
           <p className="text-sm text-gray-500 mb-2">These are suggested default values. You can customize the costs in the calculator above.</p>
