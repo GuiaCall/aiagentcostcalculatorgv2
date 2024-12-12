@@ -19,12 +19,6 @@ export function CalcomCalculator({ onPlanSelect }: CalcomCalculatorProps) {
   const [monthlyTotal, setMonthlyTotal] = useState<number>(0);
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (selectedPlan) {
-      onPlanSelect(selectedPlan, numberOfUsers);
-    }
-  }, [selectedPlan, numberOfUsers, onPlanSelect]);
-
   const computeMonthlyCost = () => {
     if (!selectedPlan) {
       toast({
@@ -41,10 +35,25 @@ export function CalcomCalculator({ onPlanSelect }: CalcomCalculatorProps) {
     
     setMonthlyTotal(total);
     
+    // Update the parent component with new values
+    onPlanSelect(selectedPlan, numberOfUsers);
+    
     toast({
       title: "Monthly Cost Calculated",
       description: `Base Price: $${basePrice}\nTeam Members Cost: $${additionalUsersCost}\nTotal: $${total}`,
     });
+  };
+
+  const handlePlanChange = (planName: string) => {
+    const plan = CALCOM_PLANS.find(p => p.name === planName);
+    if (plan) {
+      setSelectedPlan(plan);
+      if (!plan.allowsTeam) {
+        setNumberOfUsers(1);
+      }
+      // Reset monthly total when plan changes
+      setMonthlyTotal(0);
+    }
   };
 
   return (
@@ -57,15 +66,7 @@ export function CalcomCalculator({ onPlanSelect }: CalcomCalculatorProps) {
       </div>
 
       <RadioGroup
-        onValueChange={(value) => {
-          const plan = CALCOM_PLANS.find(p => p.name === value);
-          if (plan) {
-            setSelectedPlan(plan);
-            if (!plan.allowsTeam) {
-              setNumberOfUsers(1);
-            }
-          }
-        }}
+        onValueChange={handlePlanChange}
       >
         {CALCOM_PLANS.map((plan) => (
           <div key={plan.name} className="flex items-center space-x-2">
@@ -85,7 +86,11 @@ export function CalcomCalculator({ onPlanSelect }: CalcomCalculatorProps) {
             type="number"
             min="1"
             value={numberOfUsers}
-            onChange={(e) => setNumberOfUsers(Math.max(1, parseInt(e.target.value) || 1))}
+            onChange={(e) => {
+              const value = Math.max(1, parseInt(e.target.value) || 1);
+              setNumberOfUsers(value);
+              setMonthlyTotal(0); // Reset monthly total when number of users changes
+            }}
           />
           <p className="text-sm text-muted-foreground">
             Additional team members cost ${selectedPlan.pricePerUser}/month each
@@ -93,16 +98,14 @@ export function CalcomCalculator({ onPlanSelect }: CalcomCalculatorProps) {
         </div>
       )}
 
-      <div className="flex justify-between items-center pt-4">
-        <Button 
-          onClick={computeMonthlyCost}
-          className="w-full"
-          variant="outline"
-        >
-          <Calculator className="mr-2 h-4 w-4" />
-          Compute Monthly Cost
-        </Button>
-      </div>
+      <Button 
+        onClick={computeMonthlyCost}
+        className="w-full"
+        variant="outline"
+      >
+        <Calculator className="mr-2 h-4 w-4" />
+        Compute Monthly Cost
+      </Button>
 
       {monthlyTotal > 0 && (
         <div className="mt-4 p-4 bg-primary/10 rounded-lg">
