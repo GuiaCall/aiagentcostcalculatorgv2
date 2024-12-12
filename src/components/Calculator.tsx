@@ -55,10 +55,14 @@ export function Calculator() {
 
   const handleTwilioRateSelect = (selection: TwilioSelection | null) => {
     if (selection) {
+      const voiceCost = selection.inboundVoicePrice;
+      const smsCost = selection.inboundSmsPrice || 0;
+      const totalCostPerMinute = voiceCost + smsCost;
+      
       setTechnologies(prev => 
         prev.map(tech => 
           tech.id === "twilio" 
-            ? { ...tech, isSelected: true, costPerMinute: selection.inboundVoicePrice }
+            ? { ...tech, isSelected: true, costPerMinute: totalCostPerMinute }
             : tech
         )
       );
@@ -289,24 +293,18 @@ export function Calculator() {
                 <p className="text-gray-700">
                   Base cost per minute: ${(totalCost / totalMinutes / (1 + margin / 100)).toFixed(4)}
                 </p>
-                {selectedMakePlan && (
-                  <p className="text-gray-700">
-                    Make.com Plan: {selectedMakePlan.name} (${selectedMakePlan.monthlyPrice}/month)
-                  </p>
+                {selectedTwilioRate && (
+                  <div className="text-gray-700">
+                    <p>Twilio Costs:</p>
+                    <ul className="list-disc pl-5">
+                      <p>Voice: ${selectedTwilioRate.inboundVoicePrice.toFixed(4)}/minute</p>
+                      {selectedTwilioRate.inboundSmsPrice && (
+                        <p>SMS: ${selectedTwilioRate.inboundSmsPrice.toFixed(4)}/message</p>
+                      )}
+                      <p>Monthly Phone Number: ${selectedTwilioRate.phoneNumberPrice.toFixed(2)}</p>
+                    </ul>
+                  </div>
                 )}
-                {selectedSynthflowPlan && (
-                  <p className="text-gray-700">
-                    Synthflow Plan: {selectedSynthflowPlan.name} (${synthflowBillingType === 'monthly' ? selectedSynthflowPlan.monthlyPrice : selectedSynthflowPlan.yearlyPrice}/month)
-                  </p>
-                )}
-                {selectedCalcomPlan && (
-                  <p className="text-gray-700">
-                    Cal.com Plan: {selectedCalcomPlan.name} ({calcomUsers} users) - ${selectedCalcomPlan.basePrice + (selectedCalcomPlan.allowsTeam ? (calcomUsers - 1) * selectedCalcomPlan.pricePerUser : 0)}/month
-                  </p>
-                )}
-                <p className="text-gray-700">
-                  Cost per minute with margin: ${(totalCost / totalMinutes).toFixed(4)}
-                </p>
                 <p className="text-xl font-bold text-primary">
                   Total Cost: ${totalCost.toFixed(2)}
                 </p>

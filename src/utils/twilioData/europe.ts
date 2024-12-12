@@ -7,7 +7,8 @@ export const europeanRates: TwilioRate[] = [
     type: "Local",
     phoneNumberPrice: 1.15,
     inboundVoicePrice: 0.01,
-    inboundTrunkingPrice: 0.006
+    inboundTrunkingPrice: 0.006,
+    inboundSmsPrice: 0.0075
   },
   {
     country: "Germany",

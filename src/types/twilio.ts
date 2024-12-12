@@ -18,4 +18,5 @@ export interface TwilioSelection {
   type: string;
   phoneNumberPrice: number;
   inboundVoicePrice: number;
+  inboundSmsPrice?: number;
 }

@@ -13,6 +13,9 @@ export function TwilioRateDisplay({ selection }: TwilioRateDisplayProps) {
       <ul className="list-disc pl-5">
         <li>Phone Number Cost: ${selection.phoneNumberPrice.toFixed(2)}/month</li>
         <li>Inbound Voice: ${selection.inboundVoicePrice.toFixed(4)}/minute</li>
+        {selection.inboundSmsPrice && (
+          <li>Inbound SMS: ${selection.inboundSmsPrice.toFixed(4)}/message</li>
+        )}
       </ul>
     </div>
   );
