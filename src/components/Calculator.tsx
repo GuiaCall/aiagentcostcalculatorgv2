@@ -58,7 +58,7 @@ export function Calculator() {
       setTechnologies(prev => 
         prev.map(tech => 
           tech.id === "twilio" 
-            ? { ...tech, isSelected: true, costPerMinute: selection.price }
+            ? { ...tech, isSelected: true, costPerMinute: selection.inboundVoicePrice }
             : tech
         )
       );

@@ -27,6 +27,77 @@ export const europeRates: TwilioRate[] = [
     outboundVoicePrice: 0.023,
     smsPrice: 0.089,
     phoneNumberPrice: 1.00
+  },
+  {
+    country: "Austria",
+    countryCode: "AT",
+    type: "Local",
+    inboundVoicePrice: 0.0085,
+    outboundVoicePrice: 0.023,
+    smsPrice: 0.089,
+    phoneNumberPrice: 1.00
+  },
+  {
+    country: "Belgium",
+    countryCode: "BE",
+    type: "Local",
+    inboundVoicePrice: 0.0085,
+    outboundVoicePrice: 0.023,
+    smsPrice: 0.089,
+    phoneNumberPrice: 1.00
+  },
+  {
+    country: "Netherlands",
+    countryCode: "NL",
+    type: "Local",
+    inboundVoicePrice: 0.0085,
+    outboundVoicePrice: 0.023,
+    smsPrice: 0.089,
+    phoneNumberPrice: 1.00
+  },
+  {
+    country: "Sweden",
+    countryCode: "SE",
+    type: "Local",
+    inboundVoicePrice: 0.0085,
+    outboundVoicePrice: 0.023,
+    smsPrice: 0.089,
+    phoneNumberPrice: 1.00
+  },
+  {
+    country: "Norway",
+    countryCode: "NO",
+    type: "Local",
+    inboundVoicePrice: 0.0085,
+    outboundVoicePrice: 0.023,
+    smsPrice: 0.089,
+    phoneNumberPrice: 1.00
+  },
+  {
+    country: "Denmark",
+    countryCode: "DK",
+    type: "Local",
+    inboundVoicePrice: 0.0085,
+    outboundVoicePrice: 0.023,
+    smsPrice: 0.089,
+    phoneNumberPrice: 1.00
+  },
+  {
+    country: "Finland",
+    countryCode: "FI",
+    type: "Local",
+    inboundVoicePrice: 0.0085,
+    outboundVoicePrice: 0.023,
+    smsPrice: 0.089,
+    phoneNumberPrice: 1.00
+  },
+  {
+    country: "Ireland",
+    countryCode: "IE",
+    type: "Local",
+    inboundVoicePrice: 0.0085,
+    outboundVoicePrice: 0.023,
+    smsPrice: 0.089,
+    phoneNumberPrice: 1.00
   }
-  // ... Add other European countries with their respective rates
 ];

@@ -28,4 +28,3 @@ export const northAmericaRates: TwilioRate[] = [
     smsPrice: 0.0079,
     phoneNumberPrice: 1.00
   }
-];
