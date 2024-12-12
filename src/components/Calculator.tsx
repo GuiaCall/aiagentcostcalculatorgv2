@@ -101,16 +101,19 @@ export function Calculator() {
     );
   };
 
-  const handleTwilioRateSelect = (selection: TwilioSelection) => {
+  const handleTwilioRateSelect = (selection: TwilioSelection | null) => {
     setSelectedTwilioRate(selection);
-    // Calculate Twilio cost per minute (inbound voice + SMS) and update technology parameters
-    const costPerMinute = Math.ceil((selection.inboundVoicePrice + (selection.inboundSmsPrice || 0)) * 1000) / 1000;
     
-    setTechnologies(techs => 
-      techs.map(tech => 
-        tech.id === 'twilio' ? { ...tech, costPerMinute } : tech
-      )
-    );
+    // Only update technology parameters if we have a valid selection
+    if (selection) {
+      const costPerMinute = Math.ceil((selection.inboundVoicePrice + (selection.inboundSmsPrice || 0)) * 1000) / 1000;
+      
+      setTechnologies(techs => 
+        techs.map(tech => 
+          tech.id === 'twilio' ? { ...tech, costPerMinute } : tech
+        )
+      );
+    }
   };
 
   const calculateCost = () => {

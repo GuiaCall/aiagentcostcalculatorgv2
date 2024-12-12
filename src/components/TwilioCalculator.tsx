@@ -24,8 +24,9 @@ export function TwilioCalculator({ onRateSelect }: TwilioCalculatorProps) {
       setAvailableTypes(types);
       setSelectedType("");
       setCurrentSelection(null);
+      onRateSelect(null); // Reset selection when country changes
     }
-  }, [selectedCountry]);
+  }, [selectedCountry, onRateSelect]);
 
   useEffect(() => {
     if (selectedCountry && selectedType) {
@@ -40,6 +41,9 @@ export function TwilioCalculator({ onRateSelect }: TwilioCalculatorProps) {
         };
         setCurrentSelection(selection);
         onRateSelect(selection);
+      } else {
+        setCurrentSelection(null);
+        onRateSelect(null);
       }
     } else {
       setCurrentSelection(null);
