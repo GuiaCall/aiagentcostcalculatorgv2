@@ -11,7 +11,6 @@ import { ColorPicker } from "./ColorPicker";
 import { InvoicePreview } from "./InvoicePreview";
 import { TechnologyParameters } from "./TechnologyParameters";
 import { InvoiceHistoryList } from "./InvoiceHistory";
-import { TechnologyCosts } from "./TechnologyCosts";
 import { CalculatorSettings } from "./CalculatorSettings";
 import { MakePlan } from "@/types/make";
 import { SynthflowPlan } from "@/types/synthflow";
@@ -228,11 +227,6 @@ export function Calculator() {
         technologies={technologies}
         onTechnologyChange={setTechnologies}
         onVisibilityChange={() => {}}
-      />
-
-      <TechnologyCosts
-        technologies={technologies}
-        onTechnologyChange={setTechnologies}
       />
 
       {technologies.find(t => t.id === 'make')?.isSelected && (
