@@ -1,17 +1,14 @@
-import { Card } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AgencyInfo, ClientInfo } from "@/types/invoice";
-import { format } from "date-fns";
-import { ColorPicker } from "./ColorPicker";
 
 interface InvoicePreviewProps {
   agencyInfo: AgencyInfo;
   clientInfo: ClientInfo;
   totalMinutes: number;
-  totalCost: number;
+  totalCost: number | null;
+  setupCost: number | null;
   taxRate: number;
   themeColor: string;
-  onColorChange?: (color: string) => void;
+  onColorChange: (color: string) => void;
   showColorPicker?: boolean;
 }
 
@@ -20,89 +17,60 @@ export function InvoicePreview({
   clientInfo,
   totalMinutes,
   totalCost,
+  setupCost,
   taxRate,
   themeColor,
   onColorChange,
   showColorPicker = false,
 }: InvoicePreviewProps) {
-  const tax = totalCost * (taxRate / 100);
-  const total = totalCost + tax;
-
   return (
-    <div className="space-y-6">
-      {showColorPicker && onColorChange && (
-        <ColorPicker selectedColor={themeColor} onColorChange={onColorChange} />
-      )}
-      
-      <Card className="p-6 space-y-6 print:shadow-none max-w-[210mm]" style={{ borderColor: themeColor }}>
-        <div className="grid grid-cols-2 gap-6">
-          <div>
-            <h2 className="text-2xl font-bold" style={{ color: themeColor }}>{agencyInfo.name}</h2>
-            <p className="text-sm text-gray-600">{agencyInfo.address}</p>
-            <p className="text-sm text-gray-600">Phone: {agencyInfo.phone}</p>
-            <p className="text-sm text-gray-600">Email: {agencyInfo.email}</p>
-            <p className="text-sm text-gray-600">Website: {agencyInfo.website}</p>
-          </div>
-          <div className="text-right">
-            <h3 className="text-xl font-semibold">{clientInfo.name}</h3>
-            <p className="text-sm text-gray-600">{clientInfo.address}</p>
-            {clientInfo.tvaNumber && (
-              <p className="text-sm text-gray-600">TVA: {clientInfo.tvaNumber}</p>
-            )}
-            <div className="mt-2">
-              <p className="text-sm text-gray-600">Contact Person:</p>
-              <p className="text-sm text-gray-600">{clientInfo.contactPerson.name}</p>
-              <p className="text-sm text-gray-600">{clientInfo.contactPerson.phone}</p>
-            </div>
-          </div>
-        </div>
+    <div className="space-y-6 p-6 bg-white rounded-lg shadow-lg">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Invoice Preview</h2>
+        {showColorPicker && (
+          <input
+            type="color"
+            value={themeColor}
+            onChange={(e) => onColorChange(e.target.value)}
+            className="w-10 h-10 border-0 rounded"
+          />
+        )}
+      </div>
 
-        <div>
-          <h1 className="text-3xl font-bold mb-2" style={{ color: themeColor }}>INVOICE</h1>
-          <p className="text-sm text-gray-600">Date: {format(new Date(), 'dd/MM/yyyy')}</p>
-        </div>
+      <div className="space-y-2">
+        <h3 className="font-semibold">Agency Information</h3>
+        <p>{agencyInfo.name}</p>
+        <p>{agencyInfo.phone}</p>
+        <p>{agencyInfo.address}</p>
+        <p>{agencyInfo.email}</p>
+        <p>{agencyInfo.website}</p>
+      </div>
 
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Description</TableHead>
-              <TableHead className="text-right">Minutes</TableHead>
-              <TableHead className="text-right">Rate</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell>AI Voice Agent Services</TableCell>
-              <TableCell className="text-right">{totalMinutes}</TableCell>
-              <TableCell className="text-right">${(totalCost / totalMinutes).toFixed(4)}/min</TableCell>
-              <TableCell className="text-right">${totalCost.toFixed(2)}</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+      <div className="space-y-2">
+        <h3 className="font-semibold">Client Information</h3>
+        <p>{clientInfo.name}</p>
+        <p>{clientInfo.address}</p>
+        <p>TVA Number: {clientInfo.tvaNumber}</p>
+        <p>Contact Person: {clientInfo.contactPerson.name} ({clientInfo.contactPerson.phone})</p>
+      </div>
 
-        <div className="flex justify-end">
-          <div className="w-72 space-y-2">
-            <div className="flex justify-between">
-              <span>Subtotal:</span>
-              <span>${totalCost.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Tax ({taxRate}%):</span>
-              <span>${tax.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between font-bold text-lg" style={{ color: themeColor }}>
-              <span>Total:</span>
-              <span>${total.toFixed(2)}</span>
-            </div>
-          </div>
+      <div className="space-y-2">
+        <h3 className="font-semibold">Cost Breakdown</h3>
+        <div className="grid grid-cols-2 gap-2">
+          <span>Setup Cost:</span>
+          <span className="text-right">${setupCost?.toFixed(2) || '0.00'}</span>
+          <span>Monthly Service Cost:</span>
+          <span className="text-right">${totalCost?.toFixed(2) || '0.00'}</span>
+          <span>Tax ({taxRate}%):</span>
+          <span className="text-right">
+            ${((totalCost || 0) * (taxRate / 100)).toFixed(2)}
+          </span>
+          <span className="font-semibold">Total:</span>
+          <span className="text-right font-semibold">
+            ${((totalCost || 0) * (1 + taxRate / 100) + (setupCost || 0)).toFixed(2)}
+          </span>
         </div>
-
-        <div className="border-t pt-6 text-sm text-gray-600">
-          <p>Payment Terms: Net 30</p>
-          <p>Please include invoice number with payment</p>
-        </div>
-      </Card>
+      </div>
     </div>
   );
 }

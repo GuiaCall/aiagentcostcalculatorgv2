@@ -20,6 +20,8 @@ import { AgencyInfo, ClientInfo, InvoiceHistory } from "@/types/invoice";
 import jsPDF from "jspdf";
 import { format } from "date-fns";
 import html2canvas from "html2canvas";
+import { calculateMakeOperations, calculateRequiredPlanPrice } from "@/utils/makeCalculations";
+import { calculateCalcomCostPerMinute, calculateTwilioCostPerMinute, calculateSetupCost, calculateTotalCostPerMinute } from "@/utils/costCalculations";
 
 const initialTechnologies = [
   { id: "make", name: "Make.com", isSelected: true, costPerMinute: 0.001 },
@@ -64,6 +66,7 @@ export function Calculator() {
   const [selectedTwilioRate, setSelectedTwilioRate] = useState<TwilioSelection | null>(null);
   
   const [totalCost, setTotalCost] = useState<number | null>(null);
+  const [setupCost, setSetupCost] = useState<number | null>(null);
   const [editingId, setEditingId] = useState<string | undefined>();
   const [recalculatedId, setRecalculatedId] = useState<string | undefined>();
 
@@ -95,13 +98,57 @@ export function Calculator() {
       return;
     }
 
-    const baseCost = selectedTechs.reduce((acc, tech) => acc + tech.costPerMinute, 0);
-    const totalBaseCost = baseCost * totalMinutes;
-    
-    const makePlanCostPerMonth = selectedMakePlan ? selectedMakePlan.monthlyPrice : 0;
-    const finalCost = (totalBaseCost + makePlanCostPerMonth) * (1 + margin / 100);
+    // Update technology costs
+    const updatedTechnologies = technologies.map(tech => {
+      switch (tech.id) {
+        case 'make':
+          if (selectedMakePlan) {
+            const { costPerMinute } = calculateRequiredPlanPrice(
+              selectedMakePlan.operationsPerMonth,
+              'monthly',
+              totalMinutes
+            );
+            return { ...tech, costPerMinute };
+          }
+          break;
+        case 'calcom':
+          if (selectedCalcomPlan) {
+            const costPerMinute = calculateCalcomCostPerMinute(
+              selectedCalcomPlan,
+              numberOfUsers || 1,
+              totalMinutes
+            );
+            return { ...tech, costPerMinute };
+          }
+          break;
+        case 'twilio':
+          if (selectedTwilioRate) {
+            const costPerMinute = calculateTwilioCostPerMinute(selectedTwilioRate);
+            return { ...tech, costPerMinute };
+          }
+          break;
+      }
+      return tech;
+    });
+
+    setTechnologies(updatedTechnologies);
+
+    // Calculate setup cost
+    const setupCost = calculateSetupCost(
+      selectedMakePlan?.monthlyPrice || 0,
+      selectedSynthflowPlan?.monthlyPrice || 0,
+      selectedCalcomPlan ? (selectedCalcomPlan.basePrice + (selectedCalcomPlan.allowsTeam ? (numberOfUsers - 1) * selectedCalcomPlan.pricePerUser : 0)) : 0,
+      selectedTwilioRate?.phoneNumberPrice || 0
+    );
+
+    // Calculate total cost per minute with margin
+    const finalCostPerMinute = calculateTotalCostPerMinute(updatedTechnologies, margin);
+    const finalCost = finalCostPerMinute * totalMinutes;
     
     setTotalCost(finalCost);
+    
+    // Store setup cost in state for display
+    setSetupCost(setupCost);
   };
 
   const exportPDF = async (invoice?: InvoiceHistory) => {
@@ -289,6 +336,7 @@ export function Calculator() {
             clientInfo={clientInfo}
             totalMinutes={totalMinutes}
             totalCost={totalCost}
+            setupCost={setupCost}
             taxRate={taxRate}
             themeColor={themeColor}
             onColorChange={setThemeColor}
