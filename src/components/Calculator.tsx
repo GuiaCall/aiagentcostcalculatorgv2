@@ -9,6 +9,8 @@ import { Calculator as CalculatorIcon, Download } from "lucide-react";
 import { MakeCalculator } from "./MakeCalculator";
 import { MakePlan } from "@/types/make";
 import jsPDF from "jspdf";
+import { SynthflowCalculator } from "./SynthflowCalculator";
+import { SynthflowPlan } from "@/types/synthflow";
 
 interface Technology {
   id: string;
@@ -32,6 +34,8 @@ export function Calculator() {
   ]);
 
   const [totalCost, setTotalCost] = useState<number | null>(null);
+  const [selectedSynthflowPlan, setSelectedSynthflowPlan] = useState<SynthflowPlan | null>(null);
+  const [synthflowBillingType, setSynthflowBillingType] = useState<'monthly' | 'yearly'>('monthly');
 
   const handleTechnologyToggle = (techId: string) => {
     setTechnologies(
@@ -79,6 +83,20 @@ export function Calculator() {
       prev.map(tech => 
         tech.id === "makecom" 
           ? { ...tech, isSelected: true, costPerMinute: plan.monthlyPrice / totalMinutes }
+          : tech
+      )
+    );
+  };
+
+  const handleSynthflowPlanSelect = (plan: SynthflowPlan, billingType: 'monthly' | 'yearly') => {
+    setSelectedSynthflowPlan(plan);
+    setSynthflowBillingType(billingType);
+    setTechnologies(prev => 
+      prev.map(tech => 
+        tech.id === "synthflow" 
+          ? { ...tech, isSelected: true, costPerMinute: billingType === 'monthly' 
+              ? plan.monthlyPrice / plan.minutesPerMonth 
+              : plan.yearlyPrice * 12 / (plan.minutesPerMonth * 12) }
           : tech
       )
     );
@@ -157,6 +175,11 @@ export function Calculator() {
             onPlanSelect={handleMakePlanSelect}
           />
 
+          <SynthflowCalculator 
+            totalMinutes={totalMinutes}
+            onPlanSelect={handleSynthflowPlanSelect}
+          />
+
           <div className="space-y-2">
             <Label htmlFor="margin">Margin (%)</Label>
             <Input
@@ -221,6 +244,11 @@ export function Calculator() {
                 {selectedMakePlan && (
                   <p className="text-gray-700">
                     Make.com Plan: {selectedMakePlan.name} (${selectedMakePlan.monthlyPrice}/month)
+                  </p>
+                )}
+                {selectedSynthflowPlan && (
+                  <p className="text-gray-700">
+                    Synthflow Plan: {selectedSynthflowPlan.name} (${synthflowBillingType === 'monthly' ? selectedSynthflowPlan.monthlyPrice : selectedSynthflowPlan.yearlyPrice}/month)
                   </p>
                 )}
                 <p className="text-gray-700">
