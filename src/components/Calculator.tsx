@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
 import { Calculator as CalculatorIcon, Download } from "lucide-react";
+import { MakeCalculator } from "./MakeCalculator";
+import { MakePlan } from "@/types/make";
 import jsPDF from "jspdf";
 
 interface Technology {
@@ -20,6 +22,7 @@ export function Calculator() {
   const [callDuration, setCallDuration] = useState<number>(5);
   const [totalMinutes, setTotalMinutes] = useState<number>(1000);
   const [margin, setMargin] = useState<number>(20);
+  const [selectedMakePlan, setSelectedMakePlan] = useState<MakePlan | null>(null);
   const [technologies, setTechnologies] = useState<Technology[]>([
     { id: "vapi", name: "Vapi", isSelected: false, costPerMinute: 0.05 },
     { id: "synthflow", name: "Synthflow", isSelected: false, costPerMinute: 0.03 },
@@ -62,8 +65,23 @@ export function Calculator() {
 
     const baseCost = selectedTechs.reduce((acc, tech) => acc + tech.costPerMinute, 0);
     const totalBaseCost = baseCost * totalMinutes;
-    const finalCost = totalBaseCost * (1 + margin / 100);
+    
+    // Add Make.com plan cost if selected
+    const makePlanCostPerMonth = selectedMakePlan ? selectedMakePlan.monthlyPrice : 0;
+    const finalCost = (totalBaseCost + makePlanCostPerMonth) * (1 + margin / 100);
+    
     setTotalCost(finalCost);
+  };
+
+  const handleMakePlanSelect = (plan: MakePlan) => {
+    setSelectedMakePlan(plan);
+    setTechnologies(prev => 
+      prev.map(tech => 
+        tech.id === "makecom" 
+          ? { ...tech, isSelected: true, costPerMinute: plan.monthlyPrice / totalMinutes }
+          : tech
+      )
+    );
   };
 
   const exportPDF = () => {
@@ -133,6 +151,12 @@ export function Calculator() {
             </div>
           </div>
 
+          <MakeCalculator 
+            totalMinutes={totalMinutes}
+            averageCallDuration={callDuration}
+            onPlanSelect={handleMakePlanSelect}
+          />
+
           <div className="space-y-2">
             <Label htmlFor="margin">Margin (%)</Label>
             <Input
@@ -173,37 +197,42 @@ export function Calculator() {
               ))}
             </div>
           </div>
-        </div>
 
-        <div className="flex justify-end space-x-4">
-          <Button onClick={calculateCost} className="bg-primary">
-            <CalculatorIcon className="mr-2 h-4 w-4" />
-            Calculate
-          </Button>
-          {totalCost && (
-            <Button onClick={exportPDF} variant="outline">
-              <Download className="mr-2 h-4 w-4" />
-              Export PDF
+          <div className="flex justify-end space-x-4">
+            <Button onClick={calculateCost} className="bg-primary">
+              <CalculatorIcon className="mr-2 h-4 w-4" />
+              Calculate
             </Button>
+            {totalCost && (
+              <Button onClick={exportPDF} variant="outline">
+                <Download className="mr-2 h-4 w-4" />
+                Export PDF
+              </Button>
+            )}
+          </div>
+
+          {totalCost && (
+            <div className="mt-6 p-4 bg-secondary rounded-lg animate-fadeIn">
+              <h3 className="text-xl font-heading font-semibold mb-2">Results</h3>
+              <div className="space-y-2">
+                <p className="text-gray-700">
+                  Base cost per minute: ${(totalCost / totalMinutes / (1 + margin / 100)).toFixed(4)}
+                </p>
+                {selectedMakePlan && (
+                  <p className="text-gray-700">
+                    Make.com Plan: {selectedMakePlan.name} (${selectedMakePlan.monthlyPrice}/month)
+                  </p>
+                )}
+                <p className="text-gray-700">
+                  Cost per minute with margin: ${(totalCost / totalMinutes).toFixed(4)}
+                </p>
+                <p className="text-xl font-bold text-primary">
+                  Total Cost: ${totalCost.toFixed(2)}
+                </p>
+              </div>
+            </div>
           )}
         </div>
-
-        {totalCost && (
-          <div className="mt-6 p-4 bg-secondary rounded-lg animate-fadeIn">
-            <h3 className="text-xl font-heading font-semibold mb-2">Results</h3>
-            <div className="space-y-2">
-              <p className="text-gray-700">
-                Base cost per minute: ${(totalCost / totalMinutes / (1 + margin / 100)).toFixed(4)}
-              </p>
-              <p className="text-gray-700">
-                Cost per minute with margin: ${(totalCost / totalMinutes).toFixed(4)}
-              </p>
-              <p className="text-xl font-bold text-primary">
-                Total Cost: ${totalCost.toFixed(2)}
-              </p>
-            </div>
-          </div>
-        )}
       </Card>
     </div>
   );
