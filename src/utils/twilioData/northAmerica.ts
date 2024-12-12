@@ -36,5 +36,23 @@ export const northAmericanRates: TwilioRate[] = [
     inboundVoicePrice: 0.022,
     inboundTrunkingPrice: 0.013,
     inboundSmsPrice: 0.0079
+  },
+  {
+    country: "Puerto Rico",
+    countryCode: "PR",
+    type: "Local",
+    phoneNumberPrice: 3.25,
+    inboundVoicePrice: 0.01,
+    inboundTrunkingPrice: 0.006,
+    inboundSmsPrice: 0.0075
+  },
+  {
+    country: "Virgin Islands, U.S.",
+    countryCode: "VI",
+    type: "Local",
+    phoneNumberPrice: 1.15,
+    inboundVoicePrice: 0.0085,
+    inboundTrunkingPrice: 0.0034,
+    inboundSmsPrice: 0.0079
   }
 ];

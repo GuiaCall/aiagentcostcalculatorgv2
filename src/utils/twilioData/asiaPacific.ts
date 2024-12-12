@@ -10,6 +10,15 @@ export const asiaPacificRates: TwilioRate[] = [
     inboundTrunkingPrice: 0.006
   },
   {
+    country: "Australia",
+    countryCode: "AU",
+    type: "Mobile",
+    phoneNumberPrice: 6.5,
+    inboundVoicePrice: 0.01,
+    inboundTrunkingPrice: 0.006,
+    inboundSmsPrice: 0.0075
+  },
+  {
     country: "Japan",
     countryCode: "JP",
     type: "National",
@@ -32,5 +41,14 @@ export const asiaPacificRates: TwilioRate[] = [
     phoneNumberPrice: 6,
     inboundVoicePrice: 0.01,
     inboundTrunkingPrice: 0.006
+  },
+  {
+    country: "Hong Kong",
+    countryCode: "HK",
+    type: "Mobile",
+    phoneNumberPrice: 15,
+    inboundVoicePrice: 0.01,
+    inboundTrunkingPrice: 0.006,
+    inboundSmsPrice: 0.04
   }
 ];

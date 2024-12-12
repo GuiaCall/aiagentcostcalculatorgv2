@@ -35,7 +35,8 @@ export function TwilioCalculator({ onRateSelect }: TwilioCalculatorProps) {
           country: selectedCountry,
           type: selectedType,
           phoneNumberPrice: rate.phoneNumberPrice,
-          inboundVoicePrice: rate.inboundVoicePrice
+          inboundVoicePrice: rate.inboundVoicePrice,
+          inboundSmsPrice: rate.inboundSmsPrice
         };
         setCurrentSelection(selection);
         onRateSelect(selection);
