@@ -23,9 +23,9 @@ export const northAmericaRates: TwilioRate[] = [
     country: "Canada",
     countryCode: "CA",
     type: "Local",
-    inboundVoicePrice: 0.0085,
-    outboundVoicePrice: 0.013,
-    smsPrice: 0.0079,
-    phoneNumberPrice: 1.00
+    inboundVoicePrice: 0.0090,
+    outboundVoicePrice: 0.015,
+    smsPrice: 0.0082,
+    phoneNumberPrice: 1.20
   }
 ];
