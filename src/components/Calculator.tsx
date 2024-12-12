@@ -9,23 +9,21 @@ import { MakeCalculator } from "./MakeCalculator";
 import { SynthflowCalculator } from "./SynthflowCalculator";
 import { CalcomCalculator } from "./CalcomCalculator";
 import { TwilioCalculator } from "./TwilioCalculator";
-import { AgencyClientInfo, AgencyInfo, ClientInfo } from "./AgencyClientInfo";
+import { AgencyClientInfo, AgencyInfo } from "./AgencyClientInfo";
 import { ColorPicker } from "./ColorPicker";
 import { InvoicePreview } from "./InvoicePreview";
+import { TechnologyParameters } from "./TechnologyParameters";
+import { InvoiceHistoryList } from "./InvoiceHistory";
 import { MakePlan } from "@/types/make";
 import { SynthflowPlan } from "@/types/synthflow";
 import { CalcomPlan } from "@/types/calcom";
 import { TwilioSelection } from "@/types/twilio";
+import { ClientInfo, InvoiceHistory } from "@/types/invoice";
 import jsPDF from "jspdf";
+import { format } from "date-fns";
+import html2canvas from "html2canvas";
 
-interface Technology {
-  id: string;
-  name: string;
-  isSelected: boolean;
-  costPerMinute: number;
-}
-
-const technologies: Technology[] = [
+const initialTechnologies = [
   { id: "make", name: "Make.com", isSelected: true, costPerMinute: 0.001 },
   { id: "synthflow", name: "Synthflow", isSelected: true, costPerMinute: 0.002 },
   { id: "calcom", name: "Cal.com", isSelected: true, costPerMinute: 0.003 },
@@ -41,6 +39,8 @@ export function Calculator() {
   const [themeColor, setThemeColor] = useState<string>("#2563eb");
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [calcomUsers, setCalcomUsers] = useState<number>(1);
+  const [technologies, setTechnologies] = useState(initialTechnologies);
+  const [invoices, setInvoices] = useState<InvoiceHistory[]>([]);
   
   const [agencyInfo, setAgencyInfo] = useState<AgencyInfo>({
     name: "",
@@ -54,6 +54,7 @@ export function Calculator() {
     name: "",
     address: "",
     tvaNumber: "",
+    contactPerson: { name: "", phone: "" },
   });
 
   const [selectedMakePlan, setSelectedMakePlan] = useState<MakePlan | null>(null);
@@ -62,23 +63,6 @@ export function Calculator() {
   const [selectedTwilioRate, setSelectedTwilioRate] = useState<TwilioSelection | null>(null);
   
   const [totalCost, setTotalCost] = useState<number | null>(null);
-
-  const handleMakePlanSelect = (plan: MakePlan) => {
-    setSelectedMakePlan(plan);
-  };
-
-  const handleSynthflowPlanSelect = (plan: SynthflowPlan, billingType: 'monthly' | 'yearly') => {
-    setSelectedSynthflowPlan(plan);
-  };
-
-  const handleCalcomPlanSelect = (plan: CalcomPlan, users: number) => {
-    setSelectedCalcomPlan(plan);
-    setCalcomUsers(users);
-  };
-
-  const handleTwilioRateSelect = (selection: TwilioSelection | null) => {
-    setSelectedTwilioRate(selection);
-  };
 
   const calculateCost = () => {
     const selectedTechs = technologies.filter((tech) => tech.isSelected);
@@ -105,7 +89,7 @@ export function Calculator() {
     setTotalCost(finalCost);
   };
 
-  const exportPDF = () => {
+  const exportPDF = async () => {
     if (!totalCost) {
       toast({
         title: "Error",
@@ -116,9 +100,40 @@ export function Calculator() {
     }
 
     const pdf = new jsPDF();
-    // Add content to PDF
-    pdf.text("Invoice", 20, 20);
-    pdf.save("invoice.pdf");
+    const element = document.getElementById('invoice-preview');
+    if (!element) return;
+
+    const invoiceNumber = `INV-${format(new Date(), 'yyyyMMdd')}-${invoices.length + 1}`;
+    
+    const newInvoice: InvoiceHistory = {
+      id: crypto.randomUUID(),
+      invoiceNumber,
+      date: new Date(),
+      clientInfo,
+      agencyInfo,
+      totalAmount: totalCost,
+      taxRate,
+      margin
+    };
+    setInvoices([...invoices, newInvoice]);
+
+    const canvas = await html2canvas(element);
+    const imgData = canvas.toDataURL('image/png');
+    pdf.addImage(imgData, 'PNG', 10, 10, 190, 277);
+    pdf.save(`invoice-${invoiceNumber}.pdf`);
+  };
+
+  const handleEdit = (invoice: InvoiceHistory) => {
+    setAgencyInfo(invoice.agencyInfo);
+    setClientInfo(invoice.clientInfo);
+    setTaxRate(invoice.taxRate);
+    setMargin(invoice.margin);
+    setTotalCost(invoice.totalAmount);
+    setShowPreview(true);
+  };
+
+  const handleDelete = (id: string) => {
+    setInvoices(invoices.filter(inv => inv.id !== id));
   };
 
   const handlePreview = () => {
@@ -146,26 +161,33 @@ export function Calculator() {
         <h2 className="text-2xl font-heading font-bold text-gray-900">Cost Calculator</h2>
         
         <div className="space-y-4">
+          <TechnologyParameters
+            technologies={technologies}
+            onTechnologyChange={setTechnologies}
+          />
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="duration">Average Call Duration (minutes)</Label>
+              <Label htmlFor="margin">Margin (%)</Label>
               <Input
-                id="duration"
+                id="margin"
                 type="number"
-                value={callDuration}
-                onChange={(e) => setCallDuration(Number(e.target.value))}
-                min="1"
+                value={margin}
+                onChange={(e) => setMargin(Number(e.target.value))}
+                min="0"
+                max="100"
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="total">Total Minutes</Label>
+              <Label htmlFor="tax">Tax Rate (%)</Label>
               <Input
-                id="total"
+                id="tax"
                 type="number"
-                value={totalMinutes}
-                onChange={(e) => setTotalMinutes(Number(e.target.value))}
-                min="1"
+                value={taxRate}
+                onChange={(e) => setTaxRate(Number(e.target.value))}
+                min="0"
+                max="100"
               />
             </div>
           </div>
@@ -173,37 +195,20 @@ export function Calculator() {
           <MakeCalculator 
             totalMinutes={totalMinutes}
             averageCallDuration={callDuration}
-            onPlanSelect={handleMakePlanSelect}
+            onPlanSelect={setSelectedMakePlan}
           />
 
           <SynthflowCalculator 
             totalMinutes={totalMinutes}
-            onPlanSelect={handleSynthflowPlanSelect}
+            onPlanSelect={setSelectedSynthflowPlan}
           />
 
           <CalcomCalculator 
-            onPlanSelect={handleCalcomPlanSelect}
+            onPlanSelect={setSelectedCalcomPlan}
           />
 
           <TwilioCalculator 
-            onRateSelect={handleTwilioRateSelect}
-          />
-
-          <div className="space-y-2">
-            <Label htmlFor="tax">Tax Rate (%)</Label>
-            <Input
-              id="tax"
-              type="number"
-              value={taxRate}
-              onChange={(e) => setTaxRate(Number(e.target.value))}
-              min="0"
-              max="100"
-            />
-          </div>
-
-          <ColorPicker
-            selectedColor={themeColor}
-            onColorChange={setThemeColor}
+            onRateSelect={setSelectedTwilioRate}
           />
 
           <div className="flex justify-end space-x-4">
@@ -226,17 +231,26 @@ export function Calculator() {
           </div>
 
           {showPreview && totalCost && (
-            <InvoicePreview
-              agencyInfo={agencyInfo}
-              clientInfo={clientInfo}
-              totalMinutes={totalMinutes}
-              totalCost={totalCost}
-              taxRate={taxRate}
-              themeColor={themeColor}
-            />
+            <div id="invoice-preview">
+              <InvoicePreview
+                agencyInfo={agencyInfo}
+                clientInfo={clientInfo}
+                totalMinutes={totalMinutes}
+                totalCost={totalCost}
+                taxRate={taxRate}
+                themeColor={themeColor}
+              />
+            </div>
           )}
         </div>
       </Card>
+
+      <InvoiceHistoryList
+        invoices={invoices}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onPrint={exportPDF}
+      />
     </div>
   );
 }
