@@ -1,26 +1,13 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
+import { AgencyInfo, ClientInfo } from "@/types/invoice";
 
 interface AgencyClientInfoProps {
   onAgencyInfoChange: (info: AgencyInfo) => void;
   onClientInfoChange: (info: ClientInfo) => void;
   agencyInfo: AgencyInfo;
   clientInfo: ClientInfo;
-}
-
-export interface AgencyInfo {
-  name: string;
-  phone: string;
-  address: string;
-  email: string;
-  website: string;
-}
-
-export interface ClientInfo {
-  name: string;
-  address: string;
-  tvaNumber: string;
 }
 
 export function AgencyClientInfo({
@@ -111,6 +98,30 @@ export function AgencyClientInfo({
               value={clientInfo.tvaNumber}
               onChange={(e) => onClientInfoChange({ ...clientInfo, tvaNumber: e.target.value })}
               placeholder="TVA Number"
+            />
+          </div>
+          <div>
+            <Label htmlFor="contactPersonName">Contact Person Name</Label>
+            <Input
+              id="contactPersonName"
+              value={clientInfo.contactPerson.name}
+              onChange={(e) => onClientInfoChange({
+                ...clientInfo,
+                contactPerson: { ...clientInfo.contactPerson, name: e.target.value }
+              })}
+              placeholder="Contact Person Name"
+            />
+          </div>
+          <div>
+            <Label htmlFor="contactPersonPhone">Contact Person Phone</Label>
+            <Input
+              id="contactPersonPhone"
+              value={clientInfo.contactPerson.phone}
+              onChange={(e) => onClientInfoChange({
+                ...clientInfo,
+                contactPerson: { ...clientInfo.contactPerson, phone: e.target.value }
+              })}
+              placeholder="Contact Person Phone"
             />
           </div>
         </div>

@@ -54,7 +54,10 @@ export function Calculator() {
     name: "",
     address: "",
     tvaNumber: "",
-    contactPerson: { name: "", phone: "" },
+    contactPerson: {
+      name: "",
+      phone: ""
+    }
   });
 
   const [selectedMakePlan, setSelectedMakePlan] = useState<MakePlan | null>(null);
