@@ -1,17 +1,15 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Calculator as CalculatorIcon, Download, Eye } from "lucide-react";
 import { MakeCalculator } from "./MakeCalculator";
 import { SynthflowCalculator } from "./SynthflowCalculator";
 import { CalcomCalculator } from "./CalcomCalculator";
 import { TwilioCalculator } from "./TwilioCalculator";
-import { AgencyClientInfo } from "./AgencyClientInfo";
-import { ColorPicker } from "./ColorPicker";
-import { InvoicePreview } from "./InvoicePreview";
 import { TechnologyParameters } from "./TechnologyParameters";
 import { InvoiceHistoryList } from "./InvoiceHistory";
 import { CalculatorSettings } from "./CalculatorSettings";
+import { CalculatorHeader } from "./calculator/CalculatorHeader";
+import { CalculatorActions } from "./calculator/CalculatorActions";
+import { CalculatorPreview } from "./calculator/CalculatorPreview";
 import { MakePlan } from "@/types/make";
 import { SynthflowPlan } from "@/types/synthflow";
 import { CalcomPlan } from "@/types/calcom";
@@ -20,8 +18,16 @@ import { AgencyInfo, ClientInfo, InvoiceHistory } from "@/types/invoice";
 import jsPDF from "jspdf";
 import { format } from "date-fns";
 import html2canvas from "html2canvas";
-import { calculateMakeOperations, calculateRequiredPlanPrice } from "@/utils/makeCalculations";
-import { calculateCalcomCostPerMinute, calculateTwilioCostPerMinute, calculateSetupCost, calculateTotalCostPerMinute } from "@/utils/costCalculations";
+import {
+  calculateMakeOperations,
+  calculateRequiredPlanPrice,
+} from "@/utils/makeCalculations";
+import {
+  calculateCalcomCostPerMinute,
+  calculateTwilioCostPerMinute,
+  calculateSetupCost,
+  calculateTotalCostPerMinute,
+} from "@/utils/costCalculations";
 
 const initialTechnologies = [
   { id: "make", name: "Make.com", isSelected: true, costPerMinute: 0.001 },
@@ -92,7 +98,6 @@ export function Calculator() {
     setSelectedCalcomPlan(plan);
     setNumberOfUsers(users);
     
-    // Calculate Cal.com cost per minute including team member costs
     const monthlyTotal = plan.basePrice + (plan.allowsTeam ? (users - 1) * plan.pricePerUser : 0);
     const costPerMinute = totalMinutes > 0 ? Math.ceil((monthlyTotal / totalMinutes) * 1000) / 1000 : 0;
     
@@ -128,7 +133,6 @@ export function Calculator() {
       return;
     }
 
-    // Update technology costs
     const updatedTechnologies = technologies.map(tech => {
       switch (tech.id) {
         case 'make':
@@ -163,7 +167,6 @@ export function Calculator() {
 
     setTechnologies(updatedTechnologies);
 
-    // Calculate setup cost
     const setupCost = calculateSetupCost(
       selectedMakePlan?.monthlyPrice || 0,
       selectedSynthflowPlan?.monthlyPrice || 0,
@@ -171,13 +174,10 @@ export function Calculator() {
       selectedTwilioRate?.phoneNumberPrice || 0
     );
 
-    // Calculate total cost per minute with margin
     const finalCostPerMinute = calculateTotalCostPerMinute(updatedTechnologies, margin);
     const finalCost = finalCostPerMinute * totalMinutes;
     
     setTotalCost(finalCost);
-    
-    // Store setup cost in state for display
     setSetupCost(setupCost);
   };
 
@@ -265,7 +265,6 @@ export function Calculator() {
     });
   };
 
-  // Load invoice history from localStorage on component mount
   useEffect(() => {
     const savedInvoices = localStorage.getItem('invoiceHistory');
     if (savedInvoices) {
@@ -278,18 +277,19 @@ export function Calculator() {
     }
   }, []);
 
-  // Save invoices to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('invoiceHistory', JSON.stringify(invoices));
   }, [invoices]);
 
   return (
     <div className="w-full max-w-4xl mx-auto p-6 space-y-8 animate-fadeIn">
-      <AgencyClientInfo
+      <CalculatorHeader
         agencyInfo={agencyInfo}
         clientInfo={clientInfo}
+        themeColor={themeColor}
         onAgencyInfoChange={setAgencyInfo}
         onClientInfoChange={setClientInfo}
+        onColorChange={setThemeColor}
       />
 
       <CalculatorSettings
@@ -306,79 +306,58 @@ export function Calculator() {
         onVisibilityChange={() => {}}
       />
 
-      {technologies.find(t => t.id === 'make')?.isSelected && (
-        <MakeCalculator 
+      {technologies.find((t) => t.id === "make")?.isSelected && (
+        <MakeCalculator
           totalMinutes={totalMinutes}
           averageCallDuration={callDuration}
           onPlanSelect={setSelectedMakePlan}
           onCostPerMinuteChange={(cost) => {
-            setTechnologies(techs => 
-              techs.map(tech => 
-                tech.id === 'make' ? { ...tech, costPerMinute: cost } : tech
+            setTechnologies((techs) =>
+              techs.map((tech) =>
+                tech.id === "make" ? { ...tech, costPerMinute: cost } : tech
               )
             );
           }}
         />
       )}
 
-      {technologies.find(t => t.id === 'synthflow')?.isSelected && (
-        <SynthflowCalculator 
+      {technologies.find((t) => t.id === "synthflow")?.isSelected && (
+        <SynthflowCalculator
           totalMinutes={totalMinutes}
           onPlanSelect={setSelectedSynthflowPlan}
         />
       )}
 
-      {technologies.find(t => t.id === 'calcom')?.isSelected && (
-        <CalcomCalculator 
-          onPlanSelect={handleCalcomPlanSelect}
-        />
+      {technologies.find((t) => t.id === "calcom")?.isSelected && (
+        <CalcomCalculator onPlanSelect={handleCalcomPlanSelect} />
       )}
 
-      {technologies.find(t => t.id === 'twilio')?.isSelected && (
-        <TwilioCalculator 
-          onRateSelect={handleTwilioRateSelect}
-        />
+      {technologies.find((t) => t.id === "twilio")?.isSelected && (
+        <TwilioCalculator onRateSelect={handleTwilioRateSelect} />
       )}
 
-      <div className="flex justify-end space-x-4">
-        <Button onClick={calculateCost} className="bg-primary">
-          <CalculatorIcon className="mr-2 h-4 w-4" />
-          Calculate
-        </Button>
-        {totalCost && (
-          <>
-            <Button onClick={() => setShowPreview(true)} variant="outline">
-              <Eye className="mr-2 h-4 w-4" />
-              Preview
-            </Button>
-            <Button onClick={() => exportPDF()} variant="outline">
-              <Download className="mr-2 h-4 w-4" />
-              Export PDF
-            </Button>
-          </>
-        )}
-      </div>
+      <CalculatorActions
+        onCalculate={calculateCost}
+        onPreviewToggle={() => setShowPreview(!showPreview)}
+        onExportPDF={() => exportPDF()}
+        totalCost={totalCost}
+      />
 
-      {showPreview && totalCost && (
-        <div id="invoice-preview">
-          <InvoicePreview
-            agencyInfo={agencyInfo}
-            clientInfo={clientInfo}
-            totalMinutes={totalMinutes}
-            totalCost={totalCost}
-            setupCost={setupCost}
-            taxRate={taxRate}
-            themeColor={themeColor}
-            onColorChange={setThemeColor}
-            showColorPicker={true}
-          />
-        </div>
-      )}
+      <CalculatorPreview
+        showPreview={showPreview}
+        agencyInfo={agencyInfo}
+        clientInfo={clientInfo}
+        totalMinutes={totalMinutes}
+        totalCost={totalCost}
+        setupCost={setupCost}
+        taxRate={taxRate}
+        themeColor={themeColor}
+      />
 
       <InvoiceHistoryList
         invoices={invoices}
         onEdit={handleEdit}
-        onDelete={(id) => setInvoices(invoices.filter(inv => inv.id !== id))}
+        onDelete={(id) => setInvoices(invoices.filter((inv) => inv.id !== id))}
         onPrint={exportPDF}
         onSave={handleSave}
         editingId={editingId}
