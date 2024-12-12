@@ -1,10 +1,11 @@
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SYNTHFLOW_PLANS, SYNTHFLOW_PRICING_URL } from "@/constants/synthflowPlans";
 import { ExternalLink } from "lucide-react";
 import { SynthflowPlan } from "@/types/synthflow";
+import { useState } from "react";
 
 export function SynthflowCalculator({
   totalMinutes,
@@ -13,7 +14,9 @@ export function SynthflowCalculator({
   totalMinutes: number;
   onPlanSelect: (plan: SynthflowPlan, billingType: 'monthly' | 'yearly') => void;
 }) {
-  const handlePlanSelect = (planName: string, billingType: 'monthly' | 'yearly') => {
+  const [billingType, setBillingType] = useState<'monthly' | 'yearly'>('monthly');
+
+  const handlePlanSelect = (planName: string) => {
     const selectedPlan = SYNTHFLOW_PLANS.find(plan => plan.name === planName);
     if (selectedPlan) {
       onPlanSelect(selectedPlan, billingType);
@@ -40,28 +43,27 @@ export function SynthflowCalculator({
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label>Monthly Billing</Label>
-          <Select
-            onValueChange={(value) => handlePlanSelect(value, 'monthly')}
-            defaultValue={recommendedPlan?.name}
+          <Label>Billing Type</Label>
+          <RadioGroup
+            defaultValue={billingType}
+            onValueChange={(value: 'monthly' | 'yearly') => setBillingType(value)}
+            className="flex flex-col space-y-2"
           >
-            <SelectTrigger>
-              <SelectValue placeholder="Select plan" />
-            </SelectTrigger>
-            <SelectContent>
-              {SYNTHFLOW_PLANS.map((plan) => (
-                <SelectItem key={plan.name} value={plan.name}>
-                  {plan.name} - {plan.minutesPerMonth} mins/month (${plan.monthlyPrice}/month)
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="monthly" id="monthly" />
+              <Label htmlFor="monthly">Monthly Billing</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="yearly" id="yearly" />
+              <Label htmlFor="yearly">Yearly Billing (Save up to 20%)</Label>
+            </div>
+          </RadioGroup>
         </div>
 
         <div className="space-y-2">
-          <Label>Yearly Billing (Save up to 20%)</Label>
+          <Label>Select Plan</Label>
           <Select
-            onValueChange={(value) => handlePlanSelect(value, 'yearly')}
+            onValueChange={handlePlanSelect}
             defaultValue={recommendedPlan?.name}
           >
             <SelectTrigger>
@@ -70,7 +72,7 @@ export function SynthflowCalculator({
             <SelectContent>
               {SYNTHFLOW_PLANS.map((plan) => (
                 <SelectItem key={plan.name} value={plan.name}>
-                  {plan.name} - {plan.minutesPerMonth} mins/month (${plan.yearlyPrice}/month billed yearly)
+                  {plan.name} - {plan.minutesPerMonth} mins/month (${billingType === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice}/month{billingType === 'yearly' ? ' billed yearly' : ''})
                 </SelectItem>
               ))}
             </SelectContent>
@@ -82,6 +84,10 @@ export function SynthflowCalculator({
             <p className="font-semibold">Recommended Plan: {recommendedPlan.name}</p>
             <p className="text-sm text-gray-600">
               Based on your estimated usage of {totalMinutes} minutes per month
+            </p>
+            <p className="text-sm text-gray-600 mt-1">
+              Price: ${billingType === 'monthly' ? recommendedPlan.monthlyPrice : recommendedPlan.yearlyPrice}/month
+              {billingType === 'yearly' ? ' billed yearly' : ''}
             </p>
           </div>
         )}
