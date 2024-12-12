@@ -33,7 +33,8 @@ export function MakeCalculator({
     
     const { totalPrice, operationsIncluded, costPerMinute } = calculateRequiredPlanPrice(
       totalOperations,
-      selectedPlanType
+      selectedPlanType,
+      totalMinutes
     );
 
     const recommendedPlan: MakePlan = {

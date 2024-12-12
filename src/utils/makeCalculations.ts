@@ -14,6 +14,6 @@ export const calculateRequiredPlanPrice = (totalOperations: number, selectedPlan
   return {
     totalPrice,
     operationsIncluded: baseOperations * requiredPlans,
-    costPerMinute: Math.ceil((totalPrice / totalMinutes) * 1000) / 1000 // Cost per minute based on total minutes
+    costPerMinute: totalMinutes > 0 ? Math.ceil((totalPrice / totalMinutes) * 1000) / 1000 : 0 // Cost per minute based on total minutes
   };
 };

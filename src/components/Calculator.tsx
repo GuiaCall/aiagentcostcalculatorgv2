@@ -41,6 +41,7 @@ export function Calculator() {
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [technologies, setTechnologies] = useState(initialTechnologies);
   const [invoices, setInvoices] = useState<InvoiceHistory[]>([]);
+  const [numberOfUsers, setNumberOfUsers] = useState<number>(1);
   
   const [agencyInfo, setAgencyInfo] = useState<AgencyInfo>({
     name: "",
@@ -115,7 +116,7 @@ export function Calculator() {
           if (selectedCalcomPlan) {
             const costPerMinute = calculateCalcomCostPerMinute(
               selectedCalcomPlan,
-              numberOfUsers || 1,
+              numberOfUsers,
               totalMinutes
             );
             return { ...tech, costPerMinute };
