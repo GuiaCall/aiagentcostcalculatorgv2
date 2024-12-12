@@ -106,7 +106,6 @@ export function Calculator() {
   const handleTwilioRateSelect = (selection: TwilioSelection | null) => {
     setSelectedTwilioRate(selection);
     
-    // Only update technology parameters if we have a valid selection
     if (selection) {
       const costPerMinute = Math.ceil((selection.inboundVoicePrice + (selection.inboundSmsPrice || 0)) * 1000) / 1000;
       

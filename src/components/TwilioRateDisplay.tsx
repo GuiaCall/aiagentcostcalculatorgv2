@@ -7,6 +7,8 @@ interface TwilioRateDisplayProps {
 export function TwilioRateDisplay({ selection }: TwilioRateDisplayProps) {
   if (!selection) return null;
 
+  const totalCostPerMinute = selection.inboundVoicePrice + (selection.inboundSmsPrice || 0);
+
   return (
     <div className="mt-2 space-y-1 text-sm text-gray-600">
       <p>Selected rates for {selection.country} ({selection.type}):</p>
@@ -16,6 +18,7 @@ export function TwilioRateDisplay({ selection }: TwilioRateDisplayProps) {
         {selection.inboundSmsPrice && (
           <li>Inbound SMS: ${selection.inboundSmsPrice.toFixed(4)}/message</li>
         )}
+        <li className="font-semibold">Total Cost per Minute: ${totalCostPerMinute.toFixed(4)}</li>
       </ul>
     </div>
   );

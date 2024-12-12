@@ -24,32 +24,27 @@ export function TwilioCalculator({ onRateSelect }: TwilioCalculatorProps) {
       setAvailableTypes(types);
       setSelectedType("");
       setCurrentSelection(null);
-      onRateSelect(null); // Reset selection when country changes
+      onRateSelect(null);
     }
   }, [selectedCountry, onRateSelect]);
 
-  useEffect(() => {
-    if (selectedCountry && selectedType) {
-      const rate = getRateForCountryAndType(selectedCountry, selectedType);
+  const handleTypeChange = (type: string) => {
+    setSelectedType(type);
+    if (selectedCountry && type) {
+      const rate = getRateForCountryAndType(selectedCountry, type);
       if (rate) {
         const selection = {
           country: selectedCountry,
-          type: selectedType,
+          type: type,
           phoneNumberPrice: rate.phoneNumberPrice,
           inboundVoicePrice: rate.inboundVoicePrice,
           inboundSmsPrice: rate.inboundSmsPrice
         };
         setCurrentSelection(selection);
         onRateSelect(selection);
-      } else {
-        setCurrentSelection(null);
-        onRateSelect(null);
       }
-    } else {
-      setCurrentSelection(null);
-      onRateSelect(null);
     }
-  }, [selectedCountry, selectedType, onRateSelect]);
+  };
 
   return (
     <Card className="p-4 space-y-4">
@@ -76,14 +71,14 @@ export function TwilioCalculator({ onRateSelect }: TwilioCalculatorProps) {
         </div>
 
         <div className="space-y-2">
-          <Label>Number Type</Label>
+          <Label>Service Type</Label>
           <Select
             value={selectedType}
-            onValueChange={setSelectedType}
+            onValueChange={handleTypeChange}
             disabled={!selectedCountry}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select a number type" />
+              <SelectValue placeholder="Select a service type" />
             </SelectTrigger>
             <SelectContent>
               {availableTypes.map(type => (
