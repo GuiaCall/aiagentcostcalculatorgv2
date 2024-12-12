@@ -1,11 +1,12 @@
 import { Calculator } from "@/components/Calculator";
+import { FormulaExplanation } from "@/components/FormulaExplanation";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-12">
-      <div className="container mx-auto px-4">
+      <div className="container">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-heading font-bold text-gray-900 mb-4">
             AI Voice Agent Cost Calculator
           </h1>
           <p className="text-xl text-gray-600">
@@ -13,6 +14,7 @@ const Index = () => {
           </p>
         </div>
         <Calculator />
+        <FormulaExplanation />
       </div>
     </div>
   );
