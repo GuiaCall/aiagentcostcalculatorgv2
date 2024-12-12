@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { AgencyInfo, ClientInfo } from "./AgencyClientInfo";
+import { AgencyInfo, ClientInfo } from "@/types/invoice";
 import { format } from "date-fns";
 
 interface InvoicePreviewProps {
