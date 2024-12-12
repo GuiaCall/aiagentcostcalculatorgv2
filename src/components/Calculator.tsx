@@ -7,10 +7,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
 import { Calculator as CalculatorIcon, Download } from "lucide-react";
 import { MakeCalculator } from "./MakeCalculator";
-import { MakePlan } from "@/types/make";
 import { SynthflowCalculator } from "./SynthflowCalculator";
-import { SynthflowPlan } from "@/types/synthflow";
 import { CalcomCalculator } from "./CalcomCalculator";
+import { TwilioCalculator } from "./TwilioCalculator";
+import { TwilioSelection } from "@/types/twilio";
+import { MakePlan } from "@/types/make";
+import { SynthflowPlan } from "@/types/synthflow";
 import { CalcomPlan } from "@/types/calcom";
 import jsPDF from "jspdf";
 
@@ -31,6 +33,7 @@ export function Calculator() {
   const [synthflowBillingType, setSynthflowBillingType] = useState<'monthly' | 'yearly'>('monthly');
   const [selectedCalcomPlan, setSelectedCalcomPlan] = useState<CalcomPlan | null>(null);
   const [calcomUsers, setCalcomUsers] = useState<number>(1);
+  const [selectedTwilioRate, setSelectedTwilioRate] = useState<TwilioSelection | null>(null);
   
   const [technologies, setTechnologies] = useState<Technology[]>([
     { id: "vapi", name: "Vapi", isSelected: false, costPerMinute: 0.05 },
@@ -48,6 +51,19 @@ export function Calculator() {
         tech.id === techId ? { ...tech, isSelected: !tech.isSelected } : tech
       )
     );
+  };
+
+  const handleTwilioRateSelect = (selection: TwilioSelection | null) => {
+    if (selection) {
+      setTechnologies(prev => 
+        prev.map(tech => 
+          tech.id === "twilio" 
+            ? { ...tech, isSelected: true, costPerMinute: selection.price }
+            : tech
+        )
+      );
+      setSelectedTwilioRate(selection);
+    }
   };
 
   const handleCostUpdate = (techId: string, newCost: string) => {
@@ -206,6 +222,10 @@ export function Calculator() {
 
           <CalcomCalculator 
             onPlanSelect={handleCalcomPlanSelect}
+          />
+
+          <TwilioCalculator 
+            onRateSelect={handleTwilioRateSelect}
           />
 
           <div className="space-y-2">
