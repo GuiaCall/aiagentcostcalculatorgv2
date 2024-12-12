@@ -11,10 +11,11 @@ export const calculateRequiredPlanPrice = (totalOperations: number, selectedPlan
   // Ensure we have at least one plan
   const requiredPlans = Math.max(Math.ceil(totalOperations / baseOperations), 1);
   const basePrice = selectedPlanType === 'monthly' ? 10.59 : 9;
+  const totalPrice = Math.ceil(basePrice * requiredPlans);
   
   return {
-    totalPrice: basePrice * requiredPlans,
+    totalPrice,
     operationsIncluded: baseOperations * requiredPlans,
-    costPerMinute: (basePrice * requiredPlans) / (baseOperations * requiredPlans) // This gives us cost per operation
+    costPerMinute: Math.ceil((basePrice * requiredPlans) / (baseOperations * requiredPlans) * 1000) / 1000 // Round to 3 decimal places
   };
 };
