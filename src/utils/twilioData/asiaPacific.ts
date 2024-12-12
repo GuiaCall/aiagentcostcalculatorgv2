@@ -95,5 +95,95 @@ export const asiaPacificRates: TwilioRate[] = [
     inboundVoicePrice: 0.011,
     inboundTrunkingPrice: 0.0065,
     inboundSmsPrice: 0.0072
+  },
+  {
+    country: "Thailand",
+    countryCode: "TH",
+    type: "Local",
+    phoneNumberPrice: 3.5,
+    inboundVoicePrice: 0.011,
+    inboundTrunkingPrice: 0.006,
+    inboundSmsPrice: 0.008
+  },
+  {
+    country: "Vietnam",
+    countryCode: "VN",
+    type: "Local",
+    phoneNumberPrice: 3.25,
+    inboundVoicePrice: 0.01,
+    inboundTrunkingPrice: 0.006,
+    inboundSmsPrice: 0.0075
+  },
+  {
+    country: "Philippines",
+    countryCode: "PH",
+    type: "Local",
+    phoneNumberPrice: 4.0,
+    inboundVoicePrice: 0.012,
+    inboundTrunkingPrice: 0.007,
+    inboundSmsPrice: 0.0085
+  },
+  {
+    country: "Indonesia",
+    countryCode: "ID",
+    type: "Local",
+    phoneNumberPrice: 3.75,
+    inboundVoicePrice: 0.011,
+    inboundTrunkingPrice: 0.006,
+    inboundSmsPrice: 0.008
+  },
+  {
+    country: "Bangladesh",
+    countryCode: "BD",
+    type: "Local",
+    phoneNumberPrice: 2.75,
+    inboundVoicePrice: 0.01,
+    inboundTrunkingPrice: 0.006,
+    inboundSmsPrice: 0.0075
+  },
+  {
+    country: "Pakistan",
+    countryCode: "PK",
+    type: "Local",
+    phoneNumberPrice: 3.0,
+    inboundVoicePrice: 0.011,
+    inboundTrunkingPrice: 0.006,
+    inboundSmsPrice: 0.008
+  },
+  {
+    country: "Nepal",
+    countryCode: "NP",
+    type: "Local",
+    phoneNumberPrice: 2.5,
+    inboundVoicePrice: 0.01,
+    inboundTrunkingPrice: 0.006,
+    inboundSmsPrice: 0.0075
+  },
+  {
+    country: "Cambodia",
+    countryCode: "KH",
+    type: "Local",
+    phoneNumberPrice: 3.25,
+    inboundVoicePrice: 0.011,
+    inboundTrunkingPrice: 0.006,
+    inboundSmsPrice: 0.008
+  },
+  {
+    country: "Myanmar",
+    countryCode: "MM",
+    type: "Local",
+    phoneNumberPrice: 3.0,
+    inboundVoicePrice: 0.01,
+    inboundTrunkingPrice: 0.006,
+    inboundSmsPrice: 0.0075
+  },
+  {
+    country: "Sri Lanka",
+    countryCode: "LK",
+    type: "Local",
+    phoneNumberPrice: 2.75,
+    inboundVoicePrice: 0.01,
+    inboundTrunkingPrice: 0.006,
+    inboundSmsPrice: 0.0075
   }
 ];

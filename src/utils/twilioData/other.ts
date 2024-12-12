@@ -53,39 +53,96 @@ export const otherRates: TwilioRate[] = [
     inboundTrunkingPrice: 0.007,
     inboundSmsPrice: 0.025
   },
+
+  // Additional African Countries
   {
-    country: "South Africa",
-    countryCode: "ZA",
+    country: "Nigeria",
+    countryCode: "NG",
     type: "Local",
-    phoneNumberPrice: 1.5,
-    inboundVoicePrice: 0.01,
-    inboundTrunkingPrice: 0.006
+    phoneNumberPrice: 3.5,
+    inboundVoicePrice: 0.012,
+    inboundTrunkingPrice: 0.007,
+    inboundSmsPrice: 0.0085
   },
   {
-    country: "South Africa",
-    countryCode: "ZA",
-    type: "Mobile",
-    phoneNumberPrice: 4,
+    country: "Kenya",
+    countryCode: "KE",
+    type: "Local",
+    phoneNumberPrice: 3.0,
+    inboundVoicePrice: 0.011,
+    inboundTrunkingPrice: 0.006,
+    inboundSmsPrice: 0.008
+  },
+  {
+    country: "Ghana",
+    countryCode: "GH",
+    type: "Local",
+    phoneNumberPrice: 2.75,
+    inboundVoicePrice: 0.011,
+    inboundTrunkingPrice: 0.006,
+    inboundSmsPrice: 0.0078
+  },
+  {
+    country: "Egypt",
+    countryCode: "EG",
+    type: "Local",
+    phoneNumberPrice: 4.0,
+    inboundVoicePrice: 0.013,
+    inboundTrunkingPrice: 0.008,
+    inboundSmsPrice: 0.009
+  },
+  {
+    country: "Morocco",
+    countryCode: "MA",
+    type: "Local",
+    phoneNumberPrice: 3.75,
+    inboundVoicePrice: 0.012,
+    inboundTrunkingPrice: 0.007,
+    inboundSmsPrice: 0.0085
+  },
+  {
+    country: "Tanzania",
+    countryCode: "TZ",
+    type: "Local",
+    phoneNumberPrice: 2.5,
     inboundVoicePrice: 0.01,
     inboundTrunkingPrice: 0.006,
     inboundSmsPrice: 0.0075
   },
   {
-    country: "Israel",
-    countryCode: "IL",
+    country: "Uganda",
+    countryCode: "UG",
     type: "Local",
-    phoneNumberPrice: 3.5,
+    phoneNumberPrice: 2.75,
     inboundVoicePrice: 0.011,
-    inboundTrunkingPrice: 0.0065,
-    inboundSmsPrice: 0.0077
+    inboundTrunkingPrice: 0.006,
+    inboundSmsPrice: 0.008
   },
   {
-    country: "United Arab Emirates",
-    countryCode: "AE",
+    country: "Ethiopia",
+    countryCode: "ET",
     type: "Local",
-    phoneNumberPrice: 5,
+    phoneNumberPrice: 3.25,
     inboundVoicePrice: 0.012,
     inboundTrunkingPrice: 0.007,
     inboundSmsPrice: 0.0085
+  },
+  {
+    country: "Côte d'Ivoire",
+    countryCode: "CI",
+    type: "Local",
+    phoneNumberPrice: 3.0,
+    inboundVoicePrice: 0.011,
+    inboundTrunkingPrice: 0.006,
+    inboundSmsPrice: 0.008
+  },
+  {
+    country: "Senegal",
+    countryCode: "SN",
+    type: "Local",
+    phoneNumberPrice: 2.75,
+    inboundVoicePrice: 0.01,
+    inboundTrunkingPrice: 0.006,
+    inboundSmsPrice: 0.0075
   }
 ];
