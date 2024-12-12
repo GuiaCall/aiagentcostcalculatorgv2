@@ -1,12 +1,10 @@
 import { TwilioRate } from "@/types/twilio";
-import { europeanRates } from "./twilioData/europe";
 import { northAmericanRates } from "./twilioData/northAmerica";
-import { asiaPacificRates } from "./twilioData/asiaPacific";
 
+// Combine all regional rates
 export const twilioRates: TwilioRate[] = [
-  ...europeanRates,
   ...northAmericanRates,
-  ...asiaPacificRates
+  // Add other regional rates as needed
 ];
 
 export const getUniqueCountries = (): string[] => {

@@ -5,28 +5,36 @@ export const northAmericanRates: TwilioRate[] = [
     country: "United States",
     countryCode: "US",
     type: "Local",
-    inboundVoicePrice: 0.0045,
-    inboundTrunkingPrice: 0.0025
+    phoneNumberPrice: 1.15,
+    inboundVoicePrice: 0.0085,
+    inboundTrunkingPrice: 0.0034,
+    inboundSmsPrice: 0.0079
   },
   {
     country: "United States",
     countryCode: "US",
     type: "Toll Free",
-    inboundVoicePrice: 0.0065,
-    inboundTrunkingPrice: 0.0035
+    phoneNumberPrice: 2.15,
+    inboundVoicePrice: 0.022,
+    inboundTrunkingPrice: 0.013,
+    inboundSmsPrice: 0.0079
   },
   {
     country: "Canada",
     countryCode: "CA",
     type: "Local",
-    inboundVoicePrice: 0.0045,
-    inboundTrunkingPrice: 0.0025
+    phoneNumberPrice: 1.15,
+    inboundVoicePrice: 0.0085,
+    inboundTrunkingPrice: 0.0045,
+    inboundSmsPrice: 0.0079
   },
   {
-    country: "Mexico",
-    countryCode: "MX",
-    type: "Local",
-    inboundVoicePrice: 0.0095,
-    inboundTrunkingPrice: 0.0065
+    country: "Canada",
+    countryCode: "CA",
+    type: "Toll Free",
+    phoneNumberPrice: 2.15,
+    inboundVoicePrice: 0.022,
+    inboundTrunkingPrice: 0.013,
+    inboundSmsPrice: 0.0079
   }
 ];

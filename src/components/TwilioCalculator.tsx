@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getUniqueCountries, getTypesForCountry, getRateForCountryAndType } from "@/utils/twilioData";
 import { TwilioSelection } from "@/types/twilio";
+import { TwilioRateDisplay } from "./TwilioRateDisplay";
 
 interface TwilioCalculatorProps {
   onRateSelect: (selection: TwilioSelection | null) => void;
@@ -13,6 +14,7 @@ export function TwilioCalculator({ onRateSelect }: TwilioCalculatorProps) {
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [selectedType, setSelectedType] = useState<string>("");
   const [availableTypes, setAvailableTypes] = useState<string[]>([]);
+  const [currentSelection, setCurrentSelection] = useState<TwilioSelection | null>(null);
 
   const countries = getUniqueCountries();
 
@@ -21,6 +23,7 @@ export function TwilioCalculator({ onRateSelect }: TwilioCalculatorProps) {
       const types = getTypesForCountry(selectedCountry);
       setAvailableTypes(types);
       setSelectedType("");
+      setCurrentSelection(null);
     }
   }, [selectedCountry]);
 
@@ -28,13 +31,17 @@ export function TwilioCalculator({ onRateSelect }: TwilioCalculatorProps) {
     if (selectedCountry && selectedType) {
       const rate = getRateForCountryAndType(selectedCountry, selectedType);
       if (rate) {
-        onRateSelect({
+        const selection = {
           country: selectedCountry,
           type: selectedType,
-          price: rate.inboundVoicePrice
-        });
+          phoneNumberPrice: rate.phoneNumberPrice,
+          inboundVoicePrice: rate.inboundVoicePrice
+        };
+        setCurrentSelection(selection);
+        onRateSelect(selection);
       }
     } else {
+      setCurrentSelection(null);
       onRateSelect(null);
     }
   }, [selectedCountry, selectedType, onRateSelect]);
@@ -83,11 +90,7 @@ export function TwilioCalculator({ onRateSelect }: TwilioCalculatorProps) {
           </Select>
         </div>
 
-        {selectedCountry && selectedType && (
-          <div className="text-sm text-gray-600">
-            Selected rate: {getRateForCountryAndType(selectedCountry, selectedType)?.inboundVoicePrice.toFixed(4)} USD/minute
-          </div>
-        )}
+        <TwilioRateDisplay selection={currentSelection} />
       </div>
     </Card>
   );
