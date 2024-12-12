@@ -6,7 +6,8 @@ import { CALCOM_PLANS, CALCOM_PRICING_URL } from "@/constants/calcomPlans";
 import { CalcomPlan } from "@/types/calcom";
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Calculator } from "lucide-react";
+import { useToast } from "./ui/use-toast";
 
 interface CalcomCalculatorProps {
   onPlanSelect: (plan: CalcomPlan, numberOfUsers: number) => void;
@@ -15,12 +16,36 @@ interface CalcomCalculatorProps {
 export function CalcomCalculator({ onPlanSelect }: CalcomCalculatorProps) {
   const [selectedPlan, setSelectedPlan] = useState<CalcomPlan | null>(null);
   const [numberOfUsers, setNumberOfUsers] = useState<number>(1);
+  const [monthlyTotal, setMonthlyTotal] = useState<number>(0);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (selectedPlan) {
       onPlanSelect(selectedPlan, numberOfUsers);
     }
   }, [selectedPlan, numberOfUsers, onPlanSelect]);
+
+  const computeMonthlyCost = () => {
+    if (!selectedPlan) {
+      toast({
+        title: "Error",
+        description: "Please select a plan first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const basePrice = selectedPlan.basePrice;
+    const additionalUsersCost = selectedPlan.allowsTeam ? (numberOfUsers - 1) * selectedPlan.pricePerUser : 0;
+    const total = basePrice + additionalUsersCost;
+    
+    setMonthlyTotal(total);
+    
+    toast({
+      title: "Monthly Cost Calculated",
+      description: `Base Price: $${basePrice}\nTeam Members Cost: $${additionalUsersCost}\nTotal: $${total}`,
+    });
+  };
 
   return (
     <Card className="p-4 space-y-4">
@@ -64,6 +89,25 @@ export function CalcomCalculator({ onPlanSelect }: CalcomCalculatorProps) {
           />
           <p className="text-sm text-muted-foreground">
             Additional team members cost ${selectedPlan.pricePerUser}/month each
+          </p>
+        </div>
+      )}
+
+      <div className="flex justify-between items-center pt-4">
+        <Button 
+          onClick={computeMonthlyCost}
+          className="w-full"
+          variant="outline"
+        >
+          <Calculator className="mr-2 h-4 w-4" />
+          Compute Monthly Cost
+        </Button>
+      </div>
+
+      {monthlyTotal > 0 && (
+        <div className="mt-4 p-4 bg-primary/10 rounded-lg">
+          <p className="text-sm font-medium">
+            Total Monthly Cost: ${monthlyTotal.toFixed(2)}
           </p>
         </div>
       )}

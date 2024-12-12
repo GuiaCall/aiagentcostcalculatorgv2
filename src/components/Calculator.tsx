@@ -88,10 +88,12 @@ export function Calculator() {
     }
   };
 
-  const handleCalcomPlanSelect = (plan: CalcomPlan) => {
+  const handleCalcomPlanSelect = (plan: CalcomPlan, users: number) => {
     setSelectedCalcomPlan(plan);
-    // Calculate Cal.com cost per minute and update technology parameters
-    const monthlyTotal = plan.basePrice + (plan.allowsTeam ? (numberOfUsers - 1) * plan.pricePerUser : 0);
+    setNumberOfUsers(users);
+    
+    // Calculate Cal.com cost per minute including team member costs
+    const monthlyTotal = plan.basePrice + (plan.allowsTeam ? (users - 1) * plan.pricePerUser : 0);
     const costPerMinute = totalMinutes > 0 ? Math.ceil((monthlyTotal / totalMinutes) * 1000) / 1000 : 0;
     
     setTechnologies(techs => 
