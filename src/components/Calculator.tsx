@@ -88,6 +88,31 @@ export function Calculator() {
     }
   };
 
+  const handleCalcomPlanSelect = (plan: CalcomPlan) => {
+    setSelectedCalcomPlan(plan);
+    // Calculate Cal.com cost per minute and update technology parameters
+    const monthlyTotal = plan.basePrice + (plan.allowsTeam ? (numberOfUsers - 1) * plan.pricePerUser : 0);
+    const costPerMinute = totalMinutes > 0 ? Math.ceil((monthlyTotal / totalMinutes) * 1000) / 1000 : 0;
+    
+    setTechnologies(techs => 
+      techs.map(tech => 
+        tech.id === 'calcom' ? { ...tech, costPerMinute } : tech
+      )
+    );
+  };
+
+  const handleTwilioRateSelect = (selection: TwilioSelection) => {
+    setSelectedTwilioRate(selection);
+    // Calculate Twilio cost per minute (inbound voice + SMS) and update technology parameters
+    const costPerMinute = Math.ceil((selection.inboundVoicePrice + (selection.inboundSmsPrice || 0)) * 1000) / 1000;
+    
+    setTechnologies(techs => 
+      techs.map(tech => 
+        tech.id === 'twilio' ? { ...tech, costPerMinute } : tech
+      )
+    );
+  };
+
   const calculateCost = () => {
     const selectedTechs = technologies.filter((tech) => tech.isSelected);
     if (selectedTechs.length === 0) {
@@ -301,13 +326,13 @@ export function Calculator() {
 
       {technologies.find(t => t.id === 'calcom')?.isSelected && (
         <CalcomCalculator 
-          onPlanSelect={setSelectedCalcomPlan}
+          onPlanSelect={handleCalcomPlanSelect}
         />
       )}
 
       {technologies.find(t => t.id === 'twilio')?.isSelected && (
         <TwilioCalculator 
-          onRateSelect={setSelectedTwilioRate}
+          onRateSelect={handleTwilioRateSelect}
         />
       )}
 
