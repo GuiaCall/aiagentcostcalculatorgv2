@@ -3,11 +3,16 @@ export interface TwilioRate {
   countryCode: string;
   type: 'Local' | 'Mobile' | 'Toll Free' | 'National';
   inboundVoicePrice: number;
-  inboundTrunkingPrice: number;
+  outboundVoicePrice: number;
+  smsPrice: number;
+  phoneNumberPrice: number;
 }
 
 export interface TwilioSelection {
   country: string;
   type: string;
-  price: number;
+  inboundVoicePrice: number;
+  outboundVoicePrice: number;
+  smsPrice: number;
+  phoneNumberPrice: number;
 }

@@ -31,7 +31,10 @@ export function TwilioCalculator({ onRateSelect }: TwilioCalculatorProps) {
         onRateSelect({
           country: selectedCountry,
           type: selectedType,
-          price: rate.inboundVoicePrice
+          inboundVoicePrice: rate.inboundVoicePrice,
+          outboundVoicePrice: rate.outboundVoicePrice,
+          smsPrice: rate.smsPrice,
+          phoneNumberPrice: rate.phoneNumberPrice
         });
       }
     } else {
@@ -84,8 +87,11 @@ export function TwilioCalculator({ onRateSelect }: TwilioCalculatorProps) {
         </div>
 
         {selectedCountry && selectedType && (
-          <div className="text-sm text-gray-600">
-            Selected rate: {getRateForCountryAndType(selectedCountry, selectedType)?.inboundVoicePrice.toFixed(4)} USD/minute
+          <div className="space-y-2 text-sm text-gray-600">
+            <p>Phone Number Cost: ${getRateForCountryAndType(selectedCountry, selectedType)?.phoneNumberPrice.toFixed(2)}/month</p>
+            <p>Inbound Voice: ${getRateForCountryAndType(selectedCountry, selectedType)?.inboundVoicePrice.toFixed(4)}/minute</p>
+            <p>Outbound Voice: ${getRateForCountryAndType(selectedCountry, selectedType)?.outboundVoicePrice.toFixed(4)}/minute</p>
+            <p>SMS: ${getRateForCountryAndType(selectedCountry, selectedType)?.smsPrice.toFixed(4)}/message</p>
           </div>
         )}
       </div>
