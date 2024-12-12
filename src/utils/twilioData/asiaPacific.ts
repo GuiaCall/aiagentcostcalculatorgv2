@@ -5,28 +5,32 @@ export const asiaPacificRates: TwilioRate[] = [
     country: "Australia",
     countryCode: "AU",
     type: "Local",
-    inboundVoicePrice: 0.0075,
-    inboundTrunkingPrice: 0.0045
+    phoneNumberPrice: 3,
+    inboundVoicePrice: 0.01,
+    inboundTrunkingPrice: 0.006
   },
   {
     country: "Japan",
     countryCode: "JP",
-    type: "Local",
-    inboundVoicePrice: 0.0085,
-    inboundTrunkingPrice: 0.0055
+    type: "National",
+    phoneNumberPrice: 4.5,
+    inboundVoicePrice: 0.01,
+    inboundTrunkingPrice: 0.006
   },
   {
     country: "Singapore",
     countryCode: "SG",
     type: "Local",
-    inboundVoicePrice: 0.0075,
-    inboundTrunkingPrice: 0.0045
+    phoneNumberPrice: 4,
+    inboundVoicePrice: 0.01,
+    inboundTrunkingPrice: 0.006
   },
   {
     country: "Hong Kong",
     countryCode: "HK",
-    type: "Local",
-    inboundVoicePrice: 0.0085,
-    inboundTrunkingPrice: 0.0055
+    type: "National",
+    phoneNumberPrice: 6,
+    inboundVoicePrice: 0.01,
+    inboundTrunkingPrice: 0.006
   }
 ];
