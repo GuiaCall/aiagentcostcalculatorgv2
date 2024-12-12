@@ -18,6 +18,12 @@ interface TechnologyParametersProps {
   onVisibilityChange: (techId: string, isVisible: boolean) => void;
 }
 
+const PRICING_LINKS = {
+  make: 'https://www.make.com/en/pricing',
+  synthflow: 'https://www.synthflow.com/pricing',
+  vapi: 'https://rb.gy/m1p0f7'
+};
+
 export function TechnologyParameters({ 
   technologies, 
   onTechnologyChange,
@@ -38,17 +44,6 @@ export function TechnologyParameters({
     onTechnologyChange(updatedTechs);
   };
 
-  const getPricingUrl = (techId: string) => {
-    switch (techId) {
-      case 'make':
-        return 'https://www.make.com/en/pricing';
-      case 'synthflow':
-        return 'https://www.synthflow.com/pricing';
-      default:
-        return '';
-    }
-  };
-
   return (
     <Card className="p-6 space-y-4">
       <h3 className="text-lg font-semibold">Technology Parameters</h3>
@@ -66,12 +61,12 @@ export function TechnologyParameters({
                   {tech.name}
                 </Label>
               </div>
-              {(tech.id === 'make' || tech.id === 'synthflow') && (
+              {PRICING_LINKS[tech.id as keyof typeof PRICING_LINKS] && (
                 <Button 
                   variant="outline" 
                   size="sm"
-                  className="animate-pulse hover:animate-none"
-                  onClick={() => window.open(getPricingUrl(tech.id), '_blank')}
+                  className="animate-pulse hover:animate-none bg-primary/10 hover:bg-primary/20 text-primary font-semibold"
+                  onClick={() => window.open(PRICING_LINKS[tech.id as keyof typeof PRICING_LINKS], '_blank')}
                 >
                   View Pricing <ExternalLink className="ml-2 h-4 w-4" />
                 </Button>

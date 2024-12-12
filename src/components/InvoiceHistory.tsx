@@ -10,14 +10,16 @@ import {
 } from "@/components/ui/table";
 import { InvoiceHistory } from "@/types/invoice";
 import { format } from "date-fns";
-import { Edit, Printer, Trash } from "lucide-react";
-import { useToast } from "./ui/use-toast";
+import { Edit, Printer, Save, Trash2, RotateCw } from "lucide-react";
 
 interface InvoiceHistoryListProps {
   invoices: InvoiceHistory[];
   onEdit: (invoice: InvoiceHistory) => void;
   onDelete: (id: string) => void;
   onPrint: (invoice: InvoiceHistory) => void;
+  onSave?: (invoice: InvoiceHistory) => void;
+  editingId?: string;
+  recalculatedId?: string;
 }
 
 export function InvoiceHistoryList({
@@ -25,17 +27,10 @@ export function InvoiceHistoryList({
   onEdit,
   onDelete,
   onPrint,
+  onSave,
+  editingId,
+  recalculatedId,
 }: InvoiceHistoryListProps) {
-  const { toast } = useToast();
-
-  const handleDelete = (id: string) => {
-    onDelete(id);
-    toast({
-      title: "Invoice deleted",
-      description: "The invoice has been successfully deleted.",
-    });
-  };
-
   return (
     <Card className="p-6 space-y-4">
       <h3 className="text-xl font-semibold">Invoice History</h3>
@@ -53,18 +48,28 @@ export function InvoiceHistoryList({
           {invoices.map((invoice) => (
             <TableRow key={invoice.id}>
               <TableCell>{invoice.invoiceNumber}</TableCell>
-              <TableCell>{format(invoice.date, 'dd/MM/yyyy')}</TableCell>
+              <TableCell>{format(new Date(invoice.date), 'dd/MM/yyyy')}</TableCell>
               <TableCell>{invoice.clientInfo.name}</TableCell>
               <TableCell>${invoice.totalAmount.toFixed(2)}</TableCell>
               <TableCell>
                 <div className="flex space-x-2">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => onEdit(invoice)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
+                  {editingId === invoice.id ? (
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => onEdit(invoice)}
+                    >
+                      <RotateCw className="h-4 w-4" />
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => onEdit(invoice)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  )}
                   <Button
                     variant="outline"
                     size="icon"
@@ -72,12 +77,21 @@ export function InvoiceHistoryList({
                   >
                     <Printer className="h-4 w-4" />
                   </Button>
+                  {recalculatedId === invoice.id && onSave && (
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => onSave(invoice)}
+                    >
+                      <Save className="h-4 w-4" />
+                    </Button>
+                  )}
                   <Button
                     variant="outline"
                     size="icon"
-                    onClick={() => handleDelete(invoice.id)}
+                    onClick={() => onDelete(invoice.id)}
                   >
-                    <Trash className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               </TableCell>

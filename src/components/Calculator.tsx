@@ -67,6 +67,8 @@ export function Calculator() {
   const [selectedTwilioRate, setSelectedTwilioRate] = useState<TwilioSelection | null>(null);
   
   const [totalCost, setTotalCost] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | undefined>();
+  const [recalculatedId, setRecalculatedId] = useState<string | undefined>();
 
   const calculateCost = () => {
     const selectedTechs = technologies.filter((tech) => tech.isSelected);
@@ -93,8 +95,8 @@ export function Calculator() {
     setTotalCost(finalCost);
   };
 
-  const exportPDF = async () => {
-    if (!totalCost) {
+  const exportPDF = async (invoice?: InvoiceHistory) => {
+    if (!totalCost && !invoice) {
       toast({
         title: "Error",
         description: "Please calculate the cost first",
@@ -108,36 +110,73 @@ export function Calculator() {
     if (!element) return;
 
     const canvas = await html2canvas(element, {
-      scale: 2, // Increase quality
+      scale: 2,
       useCORS: true,
       logging: true,
-      width: element.scrollWidth,
-      height: element.scrollHeight
     });
 
     const imgWidth = 210; // A4 width in mm
+    const pageHeight = 297; // A4 height in mm
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
     
-    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
-    
-    const invoiceNumber = `INV-${format(new Date(), 'yyyyMMdd')}-${invoices.length + 1}`;
-    
-    const newInvoice: InvoiceHistory = {
-      id: crypto.randomUUID(),
-      invoiceNumber,
-      date: new Date(),
-      clientInfo,
-      agencyInfo,
-      totalAmount: totalCost,
-      taxRate,
-      margin
-    };
+    pdf.addImage(
+      canvas.toDataURL('image/png'),
+      'PNG',
+      0,
+      0,
+      imgWidth,
+      Math.min(imgHeight, pageHeight)
+    );
 
-    const updatedInvoices = [...invoices, newInvoice];
+    if (!invoice) {
+      const invoiceNumber = `INV-${format(new Date(), 'yyyyMMdd')}-${invoices.length + 1}`;
+      const newInvoice: InvoiceHistory = {
+        id: crypto.randomUUID(),
+        invoiceNumber,
+        date: new Date(),
+        clientInfo,
+        agencyInfo,
+        totalAmount: totalCost,
+        taxRate,
+        margin
+      };
+
+      const updatedInvoices = [...invoices, newInvoice];
+      setInvoices(updatedInvoices);
+      pdf.save(`invoice-${invoiceNumber}.pdf`);
+    } else {
+      pdf.save(`invoice-${invoice.invoiceNumber}.pdf`);
+    }
+  };
+
+  const handleEdit = (invoice: InvoiceHistory) => {
+    if (editingId === invoice.id) {
+      calculateCost();
+      setRecalculatedId(invoice.id);
+    } else {
+      setAgencyInfo(invoice.agencyInfo);
+      setClientInfo(invoice.clientInfo);
+      setTaxRate(invoice.taxRate);
+      setMargin(invoice.margin);
+      setTotalCost(invoice.totalAmount);
+      setShowPreview(true);
+      setEditingId(invoice.id);
+    }
+  };
+
+  const handleSave = (invoice: InvoiceHistory) => {
+    const updatedInvoices = invoices.map(inv => 
+      inv.id === invoice.id 
+        ? { ...inv, totalAmount: totalCost, taxRate, margin }
+        : inv
+    );
     setInvoices(updatedInvoices);
-    localStorage.setItem('invoiceHistory', JSON.stringify(updatedInvoices));
-
-    pdf.save(`invoice-${invoiceNumber}.pdf`);
+    setEditingId(undefined);
+    setRecalculatedId(undefined);
+    toast({
+      title: "Success",
+      description: "Invoice updated successfully",
+    });
   };
 
   // Load invoice history from localStorage on component mount
@@ -145,7 +184,6 @@ export function Calculator() {
     const savedInvoices = localStorage.getItem('invoiceHistory');
     if (savedInvoices) {
       const parsedInvoices = JSON.parse(savedInvoices);
-      // Convert date strings back to Date objects
       const processedInvoices = parsedInvoices.map((inv: any) => ({
         ...inv,
         date: new Date(inv.date)
@@ -154,35 +192,10 @@ export function Calculator() {
     }
   }, []);
 
-  const handleEdit = (invoice: InvoiceHistory) => {
-    setAgencyInfo(invoice.agencyInfo);
-    setClientInfo(invoice.clientInfo);
-    setTaxRate(invoice.taxRate);
-    setMargin(invoice.margin);
-    setTotalCost(invoice.totalAmount);
-    setShowPreview(true);
-  };
-
-  const handleDelete = (id: string) => {
-    setInvoices(invoices.filter(inv => inv.id !== id));
-  };
-
-  const handlePreview = () => {
-    if (!totalCost) {
-      toast({
-        title: "Error",
-        description: "Please calculate the cost first",
-        variant: "destructive",
-      });
-      return;
-    }
-    setShowPreview(true);
-  };
-
-  const handleTechnologyVisibility = (techId: string, isVisible: boolean) => {
-    // This function will be used to show/hide calculator components based on technology selection
-    console.log(`Technology ${techId} visibility changed to ${isVisible}`);
-  };
+  // Save invoices to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('invoiceHistory', JSON.stringify(invoices));
+  }, [invoices]);
 
   return (
     <div className="w-full max-w-4xl mx-auto p-6 space-y-8 animate-fadeIn">
@@ -200,7 +213,7 @@ export function Calculator() {
           <TechnologyParameters
             technologies={technologies}
             onTechnologyChange={setTechnologies}
-            onVisibilityChange={handleTechnologyVisibility}
+            onVisibilityChange={() => {}}
           />
 
           {technologies.find(t => t.id === 'make')?.isSelected && (
@@ -237,11 +250,11 @@ export function Calculator() {
             </Button>
             {totalCost && (
               <>
-                <Button onClick={handlePreview} variant="outline">
+                <Button onClick={() => setShowPreview(true)} variant="outline">
                   <Eye className="mr-2 h-4 w-4" />
                   Preview
                 </Button>
-                <Button onClick={exportPDF} variant="outline">
+                <Button onClick={() => exportPDF()} variant="outline">
                   <Download className="mr-2 h-4 w-4" />
                   Export PDF
                 </Button>
@@ -258,6 +271,8 @@ export function Calculator() {
                 totalCost={totalCost}
                 taxRate={taxRate}
                 themeColor={themeColor}
+                onColorChange={setThemeColor}
+                showColorPicker={true}
               />
             </div>
           )}
@@ -267,8 +282,11 @@ export function Calculator() {
       <InvoiceHistoryList
         invoices={invoices}
         onEdit={handleEdit}
-        onDelete={handleDelete}
+        onDelete={(id) => setInvoices(invoices.filter(inv => inv.id !== id))}
         onPrint={exportPDF}
+        onSave={handleSave}
+        editingId={editingId}
+        recalculatedId={recalculatedId}
       />
     </div>
   );
