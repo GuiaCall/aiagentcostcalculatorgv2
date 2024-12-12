@@ -12,6 +12,10 @@ import { TwilioCalculator } from "./TwilioCalculator";
 import { AgencyClientInfo, AgencyInfo, ClientInfo } from "./AgencyClientInfo";
 import { ColorPicker } from "./ColorPicker";
 import { InvoicePreview } from "./InvoicePreview";
+import { MakePlan } from "@/types/make";
+import { SynthflowPlan } from "@/types/synthflow";
+import { CalcomPlan } from "@/types/calcom";
+import { TwilioSelection } from "@/types/twilio";
 import jsPDF from "jspdf";
 
 interface Technology {
@@ -21,6 +25,13 @@ interface Technology {
   costPerMinute: number;
 }
 
+const technologies: Technology[] = [
+  { id: "make", name: "Make.com", isSelected: true, costPerMinute: 0.001 },
+  { id: "synthflow", name: "Synthflow", isSelected: true, costPerMinute: 0.002 },
+  { id: "calcom", name: "Cal.com", isSelected: true, costPerMinute: 0.003 },
+  { id: "twilio", name: "Twilio", isSelected: true, costPerMinute: 0.004 },
+];
+
 export function Calculator() {
   const { toast } = useToast();
   const [callDuration, setCallDuration] = useState<number>(5);
@@ -29,6 +40,7 @@ export function Calculator() {
   const [taxRate, setTaxRate] = useState<number>(20);
   const [themeColor, setThemeColor] = useState<string>("#2563eb");
   const [showPreview, setShowPreview] = useState<boolean>(false);
+  const [calcomUsers, setCalcomUsers] = useState<number>(1);
   
   const [agencyInfo, setAgencyInfo] = useState<AgencyInfo>({
     name: "",
@@ -50,6 +62,23 @@ export function Calculator() {
   const [selectedTwilioRate, setSelectedTwilioRate] = useState<TwilioSelection | null>(null);
   
   const [totalCost, setTotalCost] = useState<number | null>(null);
+
+  const handleMakePlanSelect = (plan: MakePlan) => {
+    setSelectedMakePlan(plan);
+  };
+
+  const handleSynthflowPlanSelect = (plan: SynthflowPlan, billingType: 'monthly' | 'yearly') => {
+    setSelectedSynthflowPlan(plan);
+  };
+
+  const handleCalcomPlanSelect = (plan: CalcomPlan, users: number) => {
+    setSelectedCalcomPlan(plan);
+    setCalcomUsers(users);
+  };
+
+  const handleTwilioRateSelect = (selection: TwilioSelection | null) => {
+    setSelectedTwilioRate(selection);
+  };
 
   const calculateCost = () => {
     const selectedTechs = technologies.filter((tech) => tech.isSelected);
@@ -74,6 +103,22 @@ export function Calculator() {
     const finalCost = (totalBaseCost + makePlanCostPerMonth + calcomCostPerMonth) * (1 + margin / 100);
     
     setTotalCost(finalCost);
+  };
+
+  const exportPDF = () => {
+    if (!totalCost) {
+      toast({
+        title: "Error",
+        description: "Please calculate the cost first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const pdf = new jsPDF();
+    // Add content to PDF
+    pdf.text("Invoice", 20, 20);
+    pdf.save("invoice.pdf");
   };
 
   const handlePreview = () => {
