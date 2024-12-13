@@ -1,31 +1,19 @@
 import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { MakeCalculator } from "./MakeCalculator";
-import { SynthflowCalculator } from "./SynthflowCalculator";
-import { CalcomCalculator } from "./CalcomCalculator";
-import { TwilioCalculator } from "./TwilioCalculator";
 import { TechnologyParameters } from "./TechnologyParameters";
 import { InvoiceHistoryList } from "./InvoiceHistory";
-import { CalculatorSettings } from "./CalculatorSettings";
 import { CalculatorHeader } from "./calculator/CalculatorHeader";
 import { CalculatorActions } from "./calculator/CalculatorActions";
 import { CalculatorPreview } from "./calculator/CalculatorPreview";
-import { useCalculatorState } from "./calculator/CalculatorState";
 import { useCalculatorLogic } from "./calculator/CalculatorLogic";
-import { calculateSetupCost } from "@/utils/setupCostCalculations";
-import { Switch } from "./ui/switch";
-import { Label } from "./ui/label";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
-import { format } from "date-fns";
-import { InvoiceHistory } from "@/types/invoice";
-import { CalcomPlan } from "@/types/calcom";
+import { CalculatorSettings } from "./CalculatorSettings";
+import { CurrencyToggle } from "./calculator/CurrencyToggle";
+import { TechnologyCalculators } from "./calculator/TechnologyCalculators";
+import { CalculatorStateProvider, useCalculatorStateContext } from "./calculator/CalculatorStateContext";
 
-const EXCHANGE_RATE = 0.85;
-
-export function Calculator() {
+function CalculatorContent() {
   const { toast } = useToast();
-  const state = useCalculatorState();
+  const state = useCalculatorStateContext();
   const logic = useCalculatorLogic({ ...state, currency: state.currency });
 
   const handleSettingChange = (setting: string, value: number) => {
@@ -45,21 +33,7 @@ export function Calculator() {
     }
   };
 
-  const calculateTotalSetupCost = () => {
-    const setupCost = calculateSetupCost(
-      state.technologies,
-      state.selectedMakePlan,
-      state.selectedSynthflowPlan,
-      state.selectedCalcomPlan,
-      state.numberOfUsers,
-      state.selectedTwilioRate,
-      state.margin
-    );
-    state.setSetupCost(setupCost);
-    return setupCost;
-  };
-
-  const exportPDF = async (invoice?: InvoiceHistory) => {
+  const exportPDF = async (invoice?: any) => {
     if (!state.totalCost && !invoice) {
       toast({
         title: "Error",
@@ -130,60 +104,12 @@ export function Calculator() {
   }, [state.invoices]);
 
   const convertCurrency = (amount: number) => {
-    return state.currency === 'EUR' ? amount * EXCHANGE_RATE : amount;
-  };
-
-  const handleCalcomPlanSelect = (plan: CalcomPlan, users: number) => {
-    state.setSelectedCalcomPlan(plan);
-    state.setNumberOfUsers(users);
-    if (plan.costPerMinute !== undefined) {
-      state.setTechnologies((techs) =>
-        techs.map((tech) =>
-          tech.id === "calcom" ? { ...tech, costPerMinute: plan.costPerMinute || 0 } : tech
-        )
-      );
-    }
-  };
-
-  useEffect(() => {
-    calculateTotalSetupCost();
-  }, [
-    state.technologies,
-    state.selectedMakePlan,
-    state.selectedSynthflowPlan,
-    state.selectedCalcomPlan,
-    state.numberOfUsers,
-    state.selectedTwilioRate,
-    state.margin
-  ]);
-
-  const handleCalculate = () => {
-    const selectedTechs = state.technologies.filter(tech => tech.isSelected);
-    
-    if (selectedTechs.length === 0) {
-      toast({
-        title: "No Technology Selected",
-        description: "Please select at least one technology to calculate costs",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    logic.calculateCost();
+    return state.currency === 'EUR' ? amount * 0.85 : amount;
   };
 
   return (
     <div className="w-full max-w-4xl mx-auto p-6 space-y-8 animate-fadeIn">
-      <div className="flex items-center space-x-2 mb-4">
-        <Switch
-          checked={state.currency === 'EUR'}
-          onCheckedChange={(checked) => state.setCurrency(checked ? 'EUR' : 'USD')}
-          id="currency-toggle"
-        />
-        <Label htmlFor="currency-toggle">
-          Display in {state.currency === 'USD' ? 'EUR' : 'USD'}
-        </Label>
-      </div>
+      <CurrencyToggle />
 
       <CalculatorHeader
         agencyInfo={state.agencyInfo}
@@ -208,41 +134,10 @@ export function Calculator() {
         onVisibilityChange={() => {}}
       />
 
-      {state.technologies.find((t) => t.id === "make")?.isSelected && (
-        <MakeCalculator
-          totalMinutes={state.totalMinutes}
-          averageCallDuration={state.callDuration}
-          onPlanSelect={state.setSelectedMakePlan}
-          onCostPerMinuteChange={(cost) => {
-            state.setTechnologies((techs) =>
-              techs.map((tech) =>
-                tech.id === "make" ? { ...tech, costPerMinute: cost } : tech
-              )
-            );
-          }}
-        />
-      )}
-
-      {state.technologies.find((t) => t.id === "synthflow")?.isSelected && (
-        <SynthflowCalculator
-          totalMinutes={state.totalMinutes}
-          onPlanSelect={state.setSelectedSynthflowPlan}
-        />
-      )}
-
-      {state.technologies.find((t) => t.id === "calcom")?.isSelected && (
-        <CalcomCalculator 
-          onPlanSelect={handleCalcomPlanSelect}
-          totalMinutes={state.totalMinutes}
-        />
-      )}
-
-      {state.technologies.find((t) => t.id === "twilio")?.isSelected && (
-        <TwilioCalculator onRateSelect={logic.handleTwilioRateSelect} />
-      )}
+      <TechnologyCalculators />
 
       <CalculatorActions
-        onCalculate={handleCalculate}
+        onCalculate={logic.calculateCost}
         onPreviewToggle={() => state.setShowPreview(!state.showPreview)}
         onExportPDF={() => exportPDF()}
         totalCost={convertCurrency(state.totalCost || 0)}
@@ -275,5 +170,13 @@ export function Calculator() {
         currency={state.currency}
       />
     </div>
+  );
+}
+
+export function Calculator() {
+  return (
+    <CalculatorStateProvider>
+      <CalculatorContent />
+    </CalculatorStateProvider>
   );
 }
