@@ -99,16 +99,11 @@ export function TechnologyParameters({
                   step="0.001"
                   min="0"
                   className="w-32"
-                  readOnly={tech.id === 'calcom' || tech.id === 'synthflow'}
+                  readOnly={tech.id === 'calcom'}
                 />
                 {tech.id === 'calcom' && (
                   <p className="text-sm text-muted-foreground mt-1">
                     This value is automatically calculated from Cal.com plan settings
-                  </p>
-                )}
-                {tech.id === 'synthflow' && (
-                  <p className="text-sm text-muted-foreground mt-1">
-                    This value is automatically calculated from Synthflow plan settings
                   </p>
                 )}
               </div>
