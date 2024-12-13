@@ -133,9 +133,12 @@ export function SynthflowCalculator({
             </p>
             <div className="text-sm text-gray-600">
               <p>Monthly Price: ${billingType === 'monthly' ? recommendedPlan.monthlyPrice : recommendedPlan.yearlyPrice}/month</p>
-              <p>
-                Base Cost per Minute: ${baseCostPerMinute.toFixed(4)}/min
-              </p>
+              <div className="flex items-center gap-2">
+                <p>Base Cost per Minute: ${baseCostPerMinute.toFixed(4)}/min</p>
+                <span className="text-xs text-primary">
+                  (Copy and paste this value in the Technology Parameter for calculation)
+                </span>
+              </div>
               {billingType === 'yearly' && (
                 <p className="font-medium text-primary">
                   Total Yearly Cost: ${(recommendedPlan.yearlyPrice * 12).toFixed(2)}/year

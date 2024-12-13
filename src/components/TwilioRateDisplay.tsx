@@ -18,7 +18,12 @@ export function TwilioRateDisplay({ selection }: TwilioRateDisplayProps) {
         {selection.inboundSmsPrice && (
           <li>Inbound SMS: ${selection.inboundSmsPrice.toFixed(4)}/message</li>
         )}
-        <li className="font-semibold">Total Cost per Minute: ${totalCostPerMinute.toFixed(4)}</li>
+        <li className="font-semibold flex items-center gap-2">
+          Total Cost per Minute: ${totalCostPerMinute.toFixed(4)}
+          <span className="text-xs text-primary">
+            (Copy and paste this value in the Technology Parameter for calculation)
+          </span>
+        </li>
       </ul>
     </div>
   );
