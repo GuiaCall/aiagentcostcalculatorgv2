@@ -4,9 +4,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { SYNTHFLOW_PLANS, SYNTHFLOW_PRICING_URL } from "@/constants/synthflowPlans";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, ArrowRight } from "lucide-react";
 import { SynthflowPlan } from "@/types/synthflow";
 import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export function SynthflowCalculator({
   totalMinutes,
@@ -15,8 +16,10 @@ export function SynthflowCalculator({
   totalMinutes: number;
   onPlanSelect: (plan: SynthflowPlan, billingType: 'monthly' | 'yearly') => void;
 }) {
+  const { toast } = useToast();
   const [billingType, setBillingType] = useState<'monthly' | 'yearly'>('monthly');
   const [selectedPlan, setSelectedPlan] = useState<SynthflowPlan | null>(null);
+  const [baseCostPerMinute, setBaseCostPerMinute] = useState<number>(0);
 
   const handlePlanSelect = (planName: string) => {
     const plan = SYNTHFLOW_PLANS.find(p => p.name === planName);
@@ -24,7 +27,8 @@ export function SynthflowCalculator({
       const monthlyPrice = billingType === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice;
       const costPerMinute = plan.minutesPerMonth > 0 ? monthlyPrice / plan.minutesPerMonth : 0;
       
-      // Update the selected plan with the calculated cost per minute
+      setBaseCostPerMinute(costPerMinute);
+      
       const updatedPlan = {
         ...plan,
         monthlyPrice: monthlyPrice,
@@ -33,14 +37,23 @@ export function SynthflowCalculator({
       
       setSelectedPlan(updatedPlan);
       onPlanSelect(updatedPlan, billingType);
-
-      // Update the technology parameters with the new cost per minute
-      const technologies = JSON.parse(localStorage.getItem('technologies') || '[]');
-      const updatedTechnologies = technologies.map((tech: any) =>
-        tech.id === 'synthflow' ? { ...tech, costPerMinute: costPerMinute } : tech
-      );
-      localStorage.setItem('technologies', JSON.stringify(updatedTechnologies));
     }
+  };
+
+  const handleApplyCost = () => {
+    const technologies = JSON.parse(localStorage.getItem('technologies') || '[]');
+    const updatedTechnologies = technologies.map((tech: any) =>
+      tech.id === 'synthflow' ? { ...tech, costPerMinute: baseCostPerMinute } : tech
+    );
+    localStorage.setItem('technologies', JSON.stringify(updatedTechnologies));
+    
+    // Dispatch a storage event to notify other components
+    window.dispatchEvent(new Event('storage'));
+    
+    toast({
+      title: "Success",
+      description: "Synthflow cost per minute has been updated",
+    });
   };
 
   useEffect(() => {
@@ -53,7 +66,6 @@ export function SynthflowCalculator({
     plan => plan.minutesPerMonth >= totalMinutes
   );
 
-  // Update recommended plan when billing type changes or when total minutes change
   useEffect(() => {
     if (recommendedPlan && (!selectedPlan || selectedPlan.name !== recommendedPlan.name)) {
       handlePlanSelect(recommendedPlan.name);
@@ -93,54 +105,63 @@ export function SynthflowCalculator({
           </RadioGroup>
         </div>
 
-        <div className="space-y-2">
-          <Label>Select Plan</Label>
-          <Select
-            onValueChange={handlePlanSelect}
-            defaultValue={recommendedPlan?.name}
-            value={selectedPlan?.name}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select plan" />
-            </SelectTrigger>
-            <SelectContent>
-              {SYNTHFLOW_PLANS.map((plan) => (
-                <SelectItem key={plan.name} value={plan.name}>
-                  {plan.name} - {plan.minutesPerMonth} mins/month (${billingType === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice}/month{billingType === 'yearly' ? ' billed yearly' : ''})
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {recommendedPlan && (
-          <div className="p-4 bg-secondary rounded-lg space-y-3">
-            <p className="font-semibold">Recommended Plan: {recommendedPlan.name}</p>
-            <p className="text-sm text-gray-600">
-              Based on your estimated usage of {totalMinutes} minutes per month
-            </p>
-            <div className="text-sm text-gray-600">
-              <p>Monthly Price: ${billingType === 'monthly' ? recommendedPlan.monthlyPrice : recommendedPlan.yearlyPrice}/month</p>
-              <p>Base Cost per Minute: ${((billingType === 'monthly' ? recommendedPlan.monthlyPrice : recommendedPlan.yearlyPrice) / recommendedPlan.minutesPerMonth).toFixed(4)}/min</p>
-              <p className="font-medium text-primary">
-                Final Cost per Minute (including margin): ${(((billingType === 'monthly' ? recommendedPlan.monthlyPrice : recommendedPlan.yearlyPrice) / recommendedPlan.minutesPerMonth) * 1.2).toFixed(4)}/min
-              </p>
-              {billingType === 'yearly' && (
-                <p className="font-medium text-primary">
-                  Total Yearly Cost: ${(recommendedPlan.yearlyPrice * 12).toFixed(2)}/year
-                </p>
-              )}
-            </div>
-            <Button 
-              variant="outline"
-              className="w-full mt-2"
-              onClick={() => window.open(SYNTHFLOW_PRICING_URL, '_blank')}
-            >
-              Get This Plan <ExternalLink className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        )}
+      <div className="space-y-2">
+        <Label>Select Plan</Label>
+        <Select
+          onValueChange={handlePlanSelect}
+          defaultValue={recommendedPlan?.name}
+          value={selectedPlan?.name}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select plan" />
+          </SelectTrigger>
+          <SelectContent>
+            {SYNTHFLOW_PLANS.map((plan) => (
+              <SelectItem key={plan.name} value={plan.name}>
+                {plan.name} - {plan.minutesPerMonth} mins/month (${billingType === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice}/month{billingType === 'yearly' ? ' billed yearly' : ''})
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
+
+      {recommendedPlan && (
+        <div className="p-4 bg-secondary rounded-lg space-y-3">
+          <p className="font-semibold">Recommended Plan: {recommendedPlan.name}</p>
+          <p className="text-sm text-gray-600">
+            Based on your estimated usage of {totalMinutes} minutes per month
+          </p>
+          <div className="text-sm text-gray-600">
+            <p>Monthly Price: ${billingType === 'monthly' ? recommendedPlan.monthlyPrice : recommendedPlan.yearlyPrice}/month</p>
+            <div className="flex items-center gap-2">
+              <p>Base Cost per Minute: ${baseCostPerMinute.toFixed(4)}/min</p>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleApplyCost}
+                className="ml-2 text-xs"
+              >
+                Apply Cost <ArrowRight className="ml-1 h-3 w-3" />
+              </Button>
+            </div>
+            <p className="font-medium text-primary">
+              Final Cost per Minute (including margin): ${(baseCostPerMinute * 1.2).toFixed(4)}/min
+            </p>
+            {billingType === 'yearly' && (
+              <p className="font-medium text-primary">
+                Total Yearly Cost: ${(recommendedPlan.yearlyPrice * 12).toFixed(2)}/year
+              </p>
+            )}
+          </div>
+          <Button 
+            variant="outline"
+            className="w-full mt-2"
+            onClick={() => window.open(SYNTHFLOW_PRICING_URL, '_blank')}
+          >
+            Get This Plan <ExternalLink className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      )}
     </Card>
   );
 }
