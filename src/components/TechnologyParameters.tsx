@@ -4,8 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
 
 interface Technology {
   id: string;
@@ -26,83 +25,38 @@ const PRICING_LINKS = {
   vapi: 'https://rb.gy/m1p0f7'
 };
 
-const DEFAULT_TECHNOLOGIES = [
-  { id: "make", name: "Make.com", isSelected: true, costPerMinute: 0.001 },
-  { id: "synthflow", name: "Synthflow", isSelected: true, costPerMinute: 0.002 },
-  { id: "calcom", name: "Cal.com", isSelected: true, costPerMinute: 0.003 },
-  { id: "twilio", name: "Twilio", isSelected: true, costPerMinute: 0.004 },
-  { id: "vapi", name: "Vapi", isSelected: true, costPerMinute: 0.005 },
-];
-
 export function TechnologyParameters({ 
-  technologies: propTechnologies, 
+  technologies, 
   onTechnologyChange,
   onVisibilityChange 
 }: TechnologyParametersProps) {
-  const { toast } = useToast();
-  const [technologies, setTechnologies] = useState<Technology[]>(propTechnologies || DEFAULT_TECHNOLOGIES);
-
-  useEffect(() => {
-    // Initialize from localStorage or props
-    const storedTechs = localStorage.getItem('technologies');
-    if (storedTechs) {
-      try {
-        const parsedTechs = JSON.parse(storedTechs);
-        setTechnologies(parsedTechs);
-        onTechnologyChange(parsedTechs);
-      } catch (error) {
-        console.error('Error parsing stored technologies:', error);
-        setTechnologies(DEFAULT_TECHNOLOGIES);
-      }
-    } else if (propTechnologies && propTechnologies.length > 0) {
-      setTechnologies(propTechnologies);
-    } else {
-      setTechnologies(DEFAULT_TECHNOLOGIES);
-    }
-  }, []);
-
   const handleToggle = (id: string) => {
     const updatedTechs = technologies.map(tech =>
       tech.id === id ? { ...tech, isSelected: !tech.isSelected } : tech
     );
-    setTechnologies(updatedTechs);
     onTechnologyChange(updatedTechs);
     onVisibilityChange(id, !technologies.find(t => t.id === id)?.isSelected);
-    localStorage.setItem('technologies', JSON.stringify(updatedTechs));
   };
 
   const handleCostChange = (id: string, cost: number) => {
     const updatedTechs = technologies.map(tech =>
       tech.id === id ? { ...tech, costPerMinute: cost } : tech
     );
-    setTechnologies(updatedTechs);
     onTechnologyChange(updatedTechs);
-    localStorage.setItem('technologies', JSON.stringify(updatedTechs));
   };
 
+  // Listen for changes in localStorage
   useEffect(() => {
-    const handleTechnologiesUpdate = (event: Event) => {
-      if (event instanceof CustomEvent) {
-        const updatedTechs = event.detail;
-        setTechnologies(updatedTechs);
-        onTechnologyChange(updatedTechs);
+    const handleStorageChange = () => {
+      const storedTechs = localStorage.getItem('technologies');
+      if (storedTechs) {
+        onTechnologyChange(JSON.parse(storedTechs));
       }
     };
 
-    window.addEventListener('technologiesUpdated', handleTechnologiesUpdate);
-    return () => {
-      window.removeEventListener('technologiesUpdated', handleTechnologiesUpdate);
-    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, [onTechnologyChange]);
-
-  if (!technologies || technologies.length === 0) {
-    return (
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold">Technology Parameters</h3>
-        <p className="text-muted-foreground mt-2">No technologies available</p>
-      </Card>
-    );
-  }
 
   return (
     <Card className="p-6 space-y-4">
@@ -141,11 +95,11 @@ export function TechnologyParameters({
                   step="0.001"
                   min="0"
                   className="w-32"
-                  readOnly={tech.id === 'calcom' || tech.id === 'synthflow'}
+                  readOnly={tech.id === 'calcom'} // Make Cal.com input readonly
                 />
-                {(tech.id === 'calcom' || tech.id === 'synthflow') && (
+                {tech.id === 'calcom' && (
                   <p className="text-sm text-muted-foreground mt-1">
-                    This value is automatically calculated from {tech.id === 'calcom' ? 'Cal.com' : 'Synthflow'} plan settings
+                    This value is automatically calculated from Cal.com plan settings
                   </p>
                 )}
               </div>
