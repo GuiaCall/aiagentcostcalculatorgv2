@@ -42,24 +42,31 @@ export function SynthflowCalculator({
 
   const handleApplyCost = () => {
     try {
+      // Get current technologies from localStorage
       const storedTechnologies = localStorage.getItem('technologies');
       if (!storedTechnologies) {
-        console.warn('No technologies found in localStorage');
+        toast({
+          title: "Error",
+          description: "No technologies found",
+          variant: "destructive",
+        });
         return;
       }
 
+      // Parse and update technologies
       const technologies = JSON.parse(storedTechnologies);
       const updatedTechnologies = technologies.map((tech: any) =>
         tech.id === 'synthflow' ? { ...tech, costPerMinute: baseCostPerMinute } : tech
       );
       
+      // Save back to localStorage
       localStorage.setItem('technologies', JSON.stringify(updatedTechnologies));
       
-      // Create and dispatch a custom event instead of using storage event
-      const updateEvent = new CustomEvent('technologiesUpdated', {
+      // Create and dispatch custom event
+      const event = new CustomEvent('technologiesUpdated', {
         detail: updatedTechnologies
       });
-      window.dispatchEvent(updateEvent);
+      window.dispatchEvent(event);
       
       toast({
         title: "Success",
