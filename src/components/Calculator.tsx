@@ -157,6 +157,21 @@ export function Calculator() {
     state.margin
   ]);
 
+  const handleCalculate = () => {
+    const selectedTechs = state.technologies.filter(tech => tech.isSelected);
+    
+    if (selectedTechs.length === 0) {
+      toast({
+        title: "No Technology Selected",
+        description: "Please select at least one technology to calculate costs",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    logic.calculateCost();
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto p-6 space-y-8 animate-fadeIn">
       <div className="flex items-center space-x-2 mb-4">
@@ -227,7 +242,7 @@ export function Calculator() {
       )}
 
       <CalculatorActions
-        onCalculate={logic.calculateCost}
+        onCalculate={handleCalculate}
         onPreviewToggle={() => state.setShowPreview(!state.showPreview)}
         onExportPDF={() => exportPDF()}
         totalCost={convertCurrency(state.totalCost || 0)}
