@@ -27,7 +27,7 @@ export function CalculatorHeader({
         onAgencyInfoChange={onAgencyInfoChange}
         onClientInfoChange={onClientInfoChange}
       />
-      <ColorPicker value={themeColor} onChange={onColorChange} />
+      <ColorPicker selectedColor={themeColor} onColorChange={onColorChange} />
     </>
   );
 }

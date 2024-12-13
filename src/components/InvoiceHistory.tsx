@@ -20,6 +20,7 @@ interface InvoiceHistoryListProps {
   onSave?: (invoice: InvoiceHistory) => void;
   editingId?: string;
   recalculatedId?: string;
+  currency: 'USD' | 'EUR';
 }
 
 export function InvoiceHistoryList({
@@ -30,7 +31,10 @@ export function InvoiceHistoryList({
   onSave,
   editingId,
   recalculatedId,
+  currency,
 }: InvoiceHistoryListProps) {
+  const currencySymbol = currency === 'EUR' ? '€' : '$';
+  
   return (
     <Card className="p-6 space-y-4">
       <h3 className="text-xl font-semibold">Invoice History</h3>
@@ -50,7 +54,7 @@ export function InvoiceHistoryList({
               <TableCell>{invoice.invoiceNumber}</TableCell>
               <TableCell>{format(new Date(invoice.date), 'dd/MM/yyyy')}</TableCell>
               <TableCell>{invoice.clientInfo.name}</TableCell>
-              <TableCell>${invoice.totalAmount.toFixed(2)}</TableCell>
+              <TableCell>{currencySymbol}{invoice.totalAmount.toFixed(2)}</TableCell>
               <TableCell>
                 <div className="flex space-x-2">
                   {editingId === invoice.id ? (

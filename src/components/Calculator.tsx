@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { MakeCalculator } from "./MakeCalculator";
 import { SynthflowCalculator } from "./SynthflowCalculator";
 import { CalcomCalculator } from "./CalcomCalculator";
@@ -17,6 +17,7 @@ import { Label } from "./ui/label";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { format } from "date-fns";
+import { InvoiceHistory } from "@/types/invoice";
 
 const EXCHANGE_RATE = 0.85; // 1 USD = 0.85 EUR (example rate)
 

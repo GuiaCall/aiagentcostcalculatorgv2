@@ -10,6 +10,7 @@ interface CalculatorPreviewProps {
   setupCost: number | null;
   taxRate: number;
   themeColor: string;
+  currency: 'USD' | 'EUR';
 }
 
 export function CalculatorPreview({
@@ -21,6 +22,7 @@ export function CalculatorPreview({
   setupCost,
   taxRate,
   themeColor,
+  currency,
 }: CalculatorPreviewProps) {
   if (!showPreview || !totalCost) return null;
 
@@ -36,6 +38,7 @@ export function CalculatorPreview({
         themeColor={themeColor}
         showColorPicker={true}
         onColorChange={() => {}}
+        currency={currency}
       />
     </div>
   );

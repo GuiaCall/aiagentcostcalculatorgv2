@@ -10,6 +10,7 @@ interface InvoicePreviewProps {
   themeColor: string;
   onColorChange: (color: string) => void;
   showColorPicker?: boolean;
+  currency: 'USD' | 'EUR';
 }
 
 export function InvoicePreview({
@@ -22,7 +23,10 @@ export function InvoicePreview({
   themeColor,
   onColorChange,
   showColorPicker = false,
+  currency,
 }: InvoicePreviewProps) {
+  const currencySymbol = currency === 'EUR' ? '€' : '$';
+  
   return (
     <div className="space-y-6 p-6 bg-white rounded-lg shadow-lg">
       <div className="flex justify-between items-center">
@@ -58,16 +62,16 @@ export function InvoicePreview({
         <h3 className="font-semibold">Cost Breakdown</h3>
         <div className="grid grid-cols-2 gap-2">
           <span>Setup Cost:</span>
-          <span className="text-right">${setupCost?.toFixed(2) || '0.00'}</span>
+          <span className="text-right">{currencySymbol}{setupCost?.toFixed(2) || '0.00'}</span>
           <span>Monthly Service Cost:</span>
-          <span className="text-right">${totalCost?.toFixed(2) || '0.00'}</span>
+          <span className="text-right">{currencySymbol}{totalCost?.toFixed(2) || '0.00'}</span>
           <span>Tax ({taxRate}%):</span>
           <span className="text-right">
-            ${((totalCost || 0) * (taxRate / 100)).toFixed(2)}
+            {currencySymbol}{((totalCost || 0) * (taxRate / 100)).toFixed(2)}
           </span>
           <span className="font-semibold">Total:</span>
           <span className="text-right font-semibold">
-            ${((totalCost || 0) * (1 + taxRate / 100) + (setupCost || 0)).toFixed(2)}
+            {currencySymbol}{((totalCost || 0) * (1 + taxRate / 100) + (setupCost || 0)).toFixed(2)}
           </span>
         </div>
       </div>

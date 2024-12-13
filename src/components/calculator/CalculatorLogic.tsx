@@ -1,4 +1,4 @@
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { CalcomPlan } from "@/types/calcom";
 import { TwilioSelection } from "@/types/twilio";
 import { InvoiceHistory } from "@/types/invoice";
@@ -114,9 +114,30 @@ export function useCalculatorLogic({
     }
   };
 
+  const handleEdit = (invoice: InvoiceHistory, setEditingId: (id: string) => void, setRecalculatedId: (id: string) => void) => {
+    setEditingId(invoice.id);
+    calculateCost();
+    setRecalculatedId(invoice.id);
+  };
+
+  const handleSave = (invoice: InvoiceHistory, setEditingId: (id: string) => void, setRecalculatedId: (id: string) => void) => {
+    const updatedInvoices = invoices.map((inv: InvoiceHistory) =>
+      inv.id === invoice.id ? { ...inv, totalAmount: invoice.totalAmount } : inv
+    );
+    setInvoices(updatedInvoices);
+    setEditingId('');
+    setRecalculatedId('');
+    toast({
+      title: "Success",
+      description: "Invoice updated successfully",
+    });
+  };
+
   return {
     handleCalcomPlanSelect,
     handleTwilioRateSelect,
     calculateCost,
+    handleEdit,
+    handleSave,
   };
 }
