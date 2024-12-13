@@ -37,8 +37,11 @@ export function MakeCalculator({
       totalMinutes
     );
 
+    const plansNeeded = Math.ceil(totalOperations / 10000);
+    const planName = plansNeeded === 1 ? "Core" : `${plansNeeded}x Core`;
+
     const recommendedPlan: MakePlan = {
-      name: `Custom Plan (${operationsIncluded} ops)`,
+      name: planName,
       operationsPerMonth: operationsIncluded,
       monthlyPrice: totalPrice,
       yearlyPrice: totalPrice * 0.85 // 15% discount for yearly
@@ -120,6 +123,9 @@ export function MakeCalculator({
             {calculation.recommendedPlan && (
               <div className="space-y-2">
                 <p className="font-semibold">Recommended Plan: {calculation.recommendedPlan.name}</p>
+                <p className="text-sm text-gray-600">
+                  Operations Included: {calculation.recommendedPlan.operationsPerMonth}
+                </p>
                 <p className="text-sm text-gray-600">
                   Price: ${selectedPlanType === "monthly" 
                     ? calculation.recommendedPlan.monthlyPrice 
