@@ -4,7 +4,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { SYNTHFLOW_PLANS, SYNTHFLOW_PRICING_URL } from "@/constants/synthflowPlans";
-import { ExternalLink, ArrowRight, Copy } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { SynthflowPlan } from "@/types/synthflow";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -133,18 +133,13 @@ export function SynthflowCalculator({
             </p>
             <div className="text-sm text-gray-600">
               <p>Monthly Price: ${billingType === 'monthly' ? recommendedPlan.monthlyPrice : recommendedPlan.yearlyPrice}/month</p>
-              <div className="flex items-center gap-2">
-                <p>Base Cost per Minute: ${baseCostPerMinute.toFixed(4)}/min</p>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={handleCopyBaseCost}
-                  className="ml-2 text-xs"
-                >
-                  <Copy className="h-3 w-3 mr-1" />
-                  Copy Cost
-                </Button>
-              </div>
+              <p 
+                onClick={handleCopyBaseCost}
+                className="cursor-pointer hover:text-primary transition-colors"
+                title="Click to copy"
+              >
+                Base Cost per Minute: ${baseCostPerMinute.toFixed(4)}/min
+              </p>
               <p className="font-medium text-primary">
                 Final Cost per Minute (including margin): ${(baseCostPerMinute * 1.2).toFixed(4)}/min
               </p>
