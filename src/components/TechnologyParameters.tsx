@@ -59,12 +59,16 @@ export function TechnologyParameters({
     return () => window.removeEventListener('storage', handleStorageChange);
   }, [onTechnologyChange]);
 
+  if (!technologies || technologies.length === 0) {
+    return null;
+  }
+
   return (
     <Card className="p-6 space-y-4">
-      <h3 className="text-lg font-semibold">Technology Parameters</h3>
-      <div className="space-y-4">
+      <h3 className="text-lg font-semibold mb-4">Technology Parameters</h3>
+      <div className="space-y-6">
         {technologies.map((tech) => (
-          <div key={tech.id} className="space-y-2">
+          <div key={tech.id} className="space-y-3 border-b pb-4 last:border-b-0">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <Switch
@@ -72,7 +76,7 @@ export function TechnologyParameters({
                   onCheckedChange={() => handleToggle(tech.id)}
                   id={`toggle-${tech.id}`}
                 />
-                <Label htmlFor={`toggle-${tech.id}`} className="flex-1">
+                <Label htmlFor={`toggle-${tech.id}`} className="text-base font-medium">
                   {tech.name}
                 </Label>
               </div>
@@ -80,7 +84,7 @@ export function TechnologyParameters({
                 <Button 
                   variant="outline" 
                   size="sm"
-                  className="animate-pulse hover:animate-none bg-primary/10 hover:bg-primary/20 text-primary font-semibold"
+                  className="bg-primary/10 hover:bg-primary/20 text-primary font-semibold"
                   onClick={() => window.open(PRICING_LINKS[tech.id as keyof typeof PRICING_LINKS], '_blank')}
                 >
                   View Pricing <ExternalLink className="ml-2 h-4 w-4" />
@@ -89,7 +93,11 @@ export function TechnologyParameters({
             </div>
             {tech.isSelected && (
               <div className="ml-14">
+                <Label htmlFor={`cost-${tech.id}`} className="block text-sm text-muted-foreground mb-2">
+                  Cost per minute ($)
+                </Label>
                 <Input
+                  id={`cost-${tech.id}`}
                   type="number"
                   value={tech.costPerMinute}
                   onChange={(e) => handleCostChange(tech.id, Number(e.target.value))}
