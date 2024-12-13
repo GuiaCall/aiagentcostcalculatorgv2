@@ -22,11 +22,15 @@ export function TwilioCalculator({ onRateSelect }: TwilioCalculatorProps) {
     if (selectedCountry) {
       const types = getTypesForCountry(selectedCountry);
       setAvailableTypes(types);
-      setSelectedType("");
-      setCurrentSelection(null);
-      onRateSelect(null);
     }
-  }, [selectedCountry, onRateSelect]);
+  }, [selectedCountry]);
+
+  const handleCountryChange = (country: string) => {
+    setSelectedCountry(country);
+    setSelectedType("");
+    setCurrentSelection(null);
+    onRateSelect(null);
+  };
 
   const handleTypeChange = (type: string) => {
     setSelectedType(type);
@@ -55,9 +59,9 @@ export function TwilioCalculator({ onRateSelect }: TwilioCalculatorProps) {
           <Label>Country</Label>
           <Select
             value={selectedCountry}
-            onValueChange={setSelectedCountry}
+            onValueChange={handleCountryChange}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a country" />
             </SelectTrigger>
             <SelectContent>
@@ -70,25 +74,26 @@ export function TwilioCalculator({ onRateSelect }: TwilioCalculatorProps) {
           </Select>
         </div>
 
-        <div className="space-y-2">
-          <Label>Service Type</Label>
-          <Select
-            value={selectedType}
-            onValueChange={handleTypeChange}
-            disabled={!selectedCountry}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select a service type" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableTypes.map(type => (
-                <SelectItem key={type} value={type}>
-                  {type}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {selectedCountry && (
+          <div className="space-y-2">
+            <Label>Service Type</Label>
+            <Select
+              value={selectedType}
+              onValueChange={handleTypeChange}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a service type" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableTypes.map(type => (
+                  <SelectItem key={type} value={type}>
+                    {type}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
 
         <TwilioRateDisplay selection={currentSelection} />
       </div>

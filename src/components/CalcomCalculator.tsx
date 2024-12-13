@@ -35,15 +35,19 @@ export function CalcomCalculator({ onPlanSelect }: CalcomCalculatorProps) {
       return;
     }
 
-    const basePrice = selectedPlan.basePrice;
-    const additionalUsersCost = selectedPlan.allowsTeam ? (numberOfUsers - 1) * selectedPlan.pricePerUser : 0;
-    const total = basePrice + additionalUsersCost;
+    // Calculate team member cost
+    const teamMemberCost = selectedPlan.allowsTeam 
+      ? (numberOfUsers - 1) * selectedPlan.pricePerUser 
+      : 0;
+    
+    // Calculate total monthly cost
+    const total = selectedPlan.basePrice + teamMemberCost;
     
     setMonthlyTotal(total);
     
     toast({
       title: "Monthly Cost Calculated",
-      description: `Base Price: $${basePrice}\nTeam Members Cost: $${additionalUsersCost}\nTotal: $${total}`,
+      description: `Base Cost: $${selectedPlan.basePrice}\nTeam Members Cost: $${teamMemberCost}\nTotal: $${total}`,
     });
   };
 
