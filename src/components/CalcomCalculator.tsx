@@ -35,19 +35,19 @@ export function CalcomCalculator({ onPlanSelect }: CalcomCalculatorProps) {
       return;
     }
 
-    // Calculate team member cost using the new formula: (Number of Users - 1) × 12USD
-    const teamMemberCost = selectedPlan.allowsTeam 
-      ? (numberOfUsers - 1) * 12 // Fixed $12 per additional user
+    // Only calculate team member cost for Team and Organization plans
+    const teamMemberCost = (selectedPlan.name === "Team" || selectedPlan.name === "Organization") && numberOfUsers > 0
+      ? numberOfUsers * 12 // $12 per team member
       : 0;
     
-    // Calculate total monthly cost
+    // Calculate total monthly cost (plan base price + team member cost)
     const total = selectedPlan.basePrice + teamMemberCost;
     
     setMonthlyTotal(total);
     
     toast({
       title: "Monthly Cost Calculated",
-      description: `Base Cost: $${selectedPlan.basePrice}\nTeam Members Cost: $${teamMemberCost}\nTotal: $${total}`,
+      description: `Base Plan Cost: $${selectedPlan.basePrice}\nTeam Members Cost: $${teamMemberCost}\nTotal: $${total}`,
     });
   };
 
@@ -81,21 +81,21 @@ export function CalcomCalculator({ onPlanSelect }: CalcomCalculatorProps) {
         ))}
       </RadioGroup>
 
-      {selectedPlan?.allowsTeam && (
+      {selectedPlan?.name === "Team" || selectedPlan?.name === "Organization" ? (
         <div className="space-y-2">
           <Label htmlFor="numberOfUsers">Number of Team Members</Label>
           <Input
             id="numberOfUsers"
             type="number"
-            min="1"
+            min="0"
             value={numberOfUsers}
-            onChange={(e) => setNumberOfUsers(Math.max(1, parseInt(e.target.value) || 1))}
+            onChange={(e) => setNumberOfUsers(Math.max(0, parseInt(e.target.value) || 0))}
           />
           <p className="text-sm text-muted-foreground">
-            Additional team members cost $12/month each
+            Team members cost $12/month each
           </p>
         </div>
-      )}
+      ) : null}
 
       <div className="flex justify-between items-center pt-4">
         <Button 
