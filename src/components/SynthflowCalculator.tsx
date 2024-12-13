@@ -23,24 +23,27 @@ export function SynthflowCalculator({
     if (plan) {
       const monthlyPrice = billingType === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice;
       const baseCostPerMinute = plan.minutesPerMonth > 0 ? monthlyPrice / plan.minutesPerMonth : 0;
+      const finalCostPerMinute = baseCostPerMinute * 1.2; // Adding 20% margin
       
+      // Update the selected plan with both base and final cost per minute
       const updatedPlan = {
         ...plan,
         monthlyPrice: monthlyPrice,
-        costPerMinute: baseCostPerMinute
+        costPerMinute: finalCostPerMinute,
+        baseCostPerMinute: baseCostPerMinute
       };
       
       setSelectedPlan(updatedPlan);
       onPlanSelect(updatedPlan, billingType);
 
-      // Update technologies in localStorage with base cost
+      // Update the technology parameters with the new cost per minute
       const technologies = JSON.parse(localStorage.getItem('technologies') || '[]');
       const updatedTechnologies = technologies.map((tech: any) =>
-        tech.id === 'synthflow' ? { ...tech, costPerMinute: baseCostPerMinute } : tech
+        tech.id === 'synthflow' ? { ...tech, costPerMinute: finalCostPerMinute } : tech
       );
       localStorage.setItem('technologies', JSON.stringify(updatedTechnologies));
       
-      // Dispatch storage event to notify other components
+      // Dispatch a storage event to notify other components
       window.dispatchEvent(new Event('storage'));
     }
   };
@@ -55,6 +58,7 @@ export function SynthflowCalculator({
     plan => plan.minutesPerMonth >= totalMinutes
   );
 
+  // Update recommended plan when billing type changes or when total minutes change
   useEffect(() => {
     if (recommendedPlan && (!selectedPlan || selectedPlan.name !== recommendedPlan.name)) {
       handlePlanSelect(recommendedPlan.name);
