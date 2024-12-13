@@ -96,7 +96,7 @@ export function TechnologyParameters({
                   step="0.001"
                   min="0"
                   className="w-32"
-                  readOnly={tech.id === 'calcom' || tech.id === 'synthflow'} // Make Cal.com and Synthflow inputs readonly
+                  readOnly={tech.id === 'calcom' || tech.id === 'synthflow'}
                 />
                 {tech.id === 'calcom' && (
                   <p className="text-sm text-muted-foreground mt-1">
