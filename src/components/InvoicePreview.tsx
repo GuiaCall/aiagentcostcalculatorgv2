@@ -26,6 +26,7 @@ export function InvoicePreview({
   currency,
 }: InvoicePreviewProps) {
   const currencySymbol = currency === 'EUR' ? '€' : '$';
+  const costPerMinute = totalCost && totalMinutes ? totalCost / totalMinutes : 0;
   
   return (
     <div className="space-y-6 p-6 bg-white rounded-lg shadow-lg">
@@ -65,6 +66,8 @@ export function InvoicePreview({
           <span className="text-right">{currencySymbol}{setupCost?.toFixed(2) || '0.00'}</span>
           <span>Monthly Service Cost:</span>
           <span className="text-right">{currencySymbol}{totalCost?.toFixed(2) || '0.00'}</span>
+          <span>Cost per Minute:</span>
+          <span className="text-right">{currencySymbol}{costPerMinute.toFixed(4)}</span>
           <span>Tax ({taxRate}%):</span>
           <span className="text-right">
             {currencySymbol}{((totalCost || 0) * (taxRate / 100)).toFixed(2)}

@@ -9,6 +9,7 @@ interface CalculatorActionsProps {
   setupCost: number | null;
   currency: 'USD' | 'EUR';
   totalMinutes: number;
+  isEditing?: boolean;
 }
 
 export function CalculatorActions({
@@ -19,25 +20,38 @@ export function CalculatorActions({
   setupCost,
   currency,
   totalMinutes,
+  isEditing = false,
 }: CalculatorActionsProps) {
+  const currencySymbol = currency === 'EUR' ? '€' : '$';
+  
   return (
     <div className="space-y-4">
       <Button onClick={onCalculate} className="w-full bg-primary">
         <CalculatorIcon className="mr-2 h-4 w-4" />
-        Calculate
+        {isEditing ? 'Recalculate' : 'Calculate'}
       </Button>
       
       {totalCost !== null && setupCost !== null && (
         <div className="space-y-4">
           <div className="p-4 bg-secondary rounded-lg space-y-2">
             <p className="text-sm font-medium">
-              Monthly Cost: {currency} {totalCost.toFixed(2)}
+              Monthly Cost: {currencySymbol} {totalCost.toFixed(2)}
+              {totalCost > 0 && (
+                <span className="text-xs text-primary ml-2">
+                  (Copy and paste this value in the Technology Parameter for calculation)
+                </span>
+              )}
             </p>
             <p className="text-sm font-medium">
-              Setup Cost: {currency} {setupCost.toFixed(2)}
+              Setup Cost: {currencySymbol} {setupCost.toFixed(2)}
             </p>
             <p className="text-sm font-medium text-primary">
-              Cost per Minute: {currency} {(totalCost / (totalMinutes || 1)).toFixed(4)}
+              Cost per Minute: {currencySymbol} {(totalCost / (totalMinutes || 1)).toFixed(4)}
+              {totalCost > 0 && (
+                <span className="text-xs text-primary ml-2">
+                  (Copy and paste this value in the Technology Parameter for calculation)
+                </span>
+              )}
             </p>
           </div>
           

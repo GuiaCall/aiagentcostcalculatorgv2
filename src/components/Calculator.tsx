@@ -7,9 +7,11 @@ import { CalculatorActions } from "./calculator/CalculatorActions";
 import { CalculatorPreview } from "./calculator/CalculatorPreview";
 import { useCalculatorLogic } from "./calculator/CalculatorLogic";
 import { CalculatorSettings } from "./CalculatorSettings";
-import { CurrencyToggle } from "./calculator/CurrencyToggle";
 import { TechnologyCalculators } from "./calculator/TechnologyCalculators";
 import { CalculatorStateProvider, useCalculatorStateContext } from "./calculator/CalculatorStateContext";
+import { Navbar } from "./layout/Navbar";
+import { Footer } from "./layout/Footer";
+import { Disclaimer } from "./Disclaimer";
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { format } from 'date-fns';
@@ -111,15 +113,17 @@ function CalculatorContent() {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-6 space-y-8 animate-fadeIn">
-      <CurrencyToggle />
-
-      <CalculatorHeader
-        agencyInfo={state.agencyInfo}
-        clientInfo={state.clientInfo}
-        onAgencyInfoChange={state.setAgencyInfo}
-        onClientInfoChange={state.setClientInfo}
-      />
+    <>
+      <Navbar />
+      <div className="w-full max-w-4xl mx-auto p-6 space-y-8 animate-fadeIn mt-20 mb-20">
+        <Disclaimer />
+        
+        <CalculatorHeader
+          agencyInfo={state.agencyInfo}
+          clientInfo={state.clientInfo}
+          onAgencyInfoChange={state.setAgencyInfo}
+          onClientInfoChange={state.setClientInfo}
+        />
 
       <CalculatorSettings
         callDuration={state.callDuration}
@@ -147,31 +151,33 @@ function CalculatorContent() {
         totalMinutes={state.totalMinutes}
       />
 
-      {state.showPreview && (
-        <CalculatorPreview
-          showPreview={state.showPreview}
-          agencyInfo={state.agencyInfo}
-          clientInfo={state.clientInfo}
-          totalMinutes={state.totalMinutes}
-          totalCost={convertCurrency(state.totalCost || 0)}
-          setupCost={convertCurrency(state.setupCost || 0)}
-          taxRate={state.taxRate}
-          themeColor={state.themeColor}
+        {state.showPreview && (
+          <CalculatorPreview
+            showPreview={state.showPreview}
+            agencyInfo={state.agencyInfo}
+            clientInfo={state.clientInfo}
+            totalMinutes={state.totalMinutes}
+            totalCost={convertCurrency(state.totalCost || 0)}
+            setupCost={convertCurrency(state.setupCost || 0)}
+            taxRate={state.taxRate}
+            themeColor={state.themeColor}
+            currency={state.currency}
+          />
+        )}
+
+        <InvoiceHistoryList
+          invoices={state.invoices}
+          onEdit={(invoice) => logic.handleEdit(invoice, state.setEditingId, state.setRecalculatedId)}
+          onDelete={(id) => state.setInvoices(state.invoices.filter((inv) => inv.id !== id))}
+          onPrint={exportPDF}
+          onSave={(invoice) => logic.handleSave(invoice, state.setEditingId, state.setRecalculatedId)}
+          editingId={state.editingId}
+          recalculatedId={state.recalculatedId}
           currency={state.currency}
         />
-      )}
-
-      <InvoiceHistoryList
-        invoices={state.invoices}
-        onEdit={(invoice) => logic.handleEdit(invoice, state.setEditingId, state.setRecalculatedId)}
-        onDelete={(id) => state.setInvoices(state.invoices.filter((inv) => inv.id !== id))}
-        onPrint={exportPDF}
-        onSave={(invoice) => logic.handleSave(invoice, state.setEditingId, state.setRecalculatedId)}
-        editingId={state.editingId}
-        recalculatedId={state.recalculatedId}
-        currency={state.currency}
-      />
-    </div>
+      </div>
+      <Footer />
+    </>
   );
 }
 
