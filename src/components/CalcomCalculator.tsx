@@ -24,7 +24,7 @@ export function CalcomCalculator({ onPlanSelect, totalMinutes, margin = 20 }: Ca
   useEffect(() => {
     if (selectedPlan && totalMinutes > 0) {
       const teamMemberCost = (selectedPlan.name === "Team" || selectedPlan.name === "Organization") && numberOfUsers > 0
-        ? numberOfUsers * 12
+        ? numberOfUsers * selectedPlan.pricePerUser
         : 0;
       
       const totalCost = selectedPlan.basePrice + teamMemberCost;
@@ -45,7 +45,7 @@ export function CalcomCalculator({ onPlanSelect, totalMinutes, margin = 20 }: Ca
     }
 
     const teamMemberCost = (selectedPlan.name === "Team" || selectedPlan.name === "Organization") && numberOfUsers > 0
-      ? numberOfUsers * 12
+      ? numberOfUsers * selectedPlan.pricePerUser
       : 0;
     
     const totalCost = selectedPlan.basePrice + teamMemberCost;
@@ -54,7 +54,6 @@ export function CalcomCalculator({ onPlanSelect, totalMinutes, margin = 20 }: Ca
     const costPerMinute = totalMinutes > 0 ? Number((totalCost / totalMinutes).toFixed(3)) : 0;
     const costPerMinuteWithMargin = costPerMinute * (1 + margin / 100);
 
-    // Update the technologies array with the new cost per minute
     const updatedPlan = {
       ...selectedPlan,
       costPerMinute: costPerMinuteWithMargin
@@ -130,7 +129,7 @@ Cost Per Minute: $${costPerMinuteWithMargin.toFixed(3)}`,
       {monthlyTotal > 0 && (
         <div className="mt-4 p-4 bg-primary/10 rounded-lg space-y-2">
           <p className="text-sm font-medium">
-            Setup Cost: ${selectedPlan?.basePrice.toFixed(2)}
+            Setup Cost: ${(selectedPlan?.basePrice + (selectedPlan?.allowsTeam ? numberOfUsers * selectedPlan.pricePerUser : 0)).toFixed(2)}
           </p>
           <p className="text-sm font-medium">
             Monthly Cost: ${monthlyTotal.toFixed(2)}
