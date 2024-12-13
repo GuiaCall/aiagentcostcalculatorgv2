@@ -38,9 +38,12 @@ export function TechnologyParameters({
     onVisibilityChange(id, !technologies.find(t => t.id === id)?.isSelected);
   };
 
-  const handleCostChange = (id: string, cost: number) => {
+  const handleCostChange = (id: string, value: string) => {
+    // Allow empty string for complete deletion
+    const cost = value === '' ? 0 : parseFloat(value);
     const margin = 0.2; // 20% margin
-    const finalCost = cost * (1 + margin);
+    const finalCost = isNaN(cost) ? 0 : cost * (1 + margin);
+    
     const updatedTechs = technologies.map(tech =>
       tech.id === id ? { ...tech, costPerMinute: finalCost } : tech
     );
@@ -91,12 +94,12 @@ export function TechnologyParameters({
               <div className="ml-14">
                 <Input
                   type="number"
-                  value={tech.costPerMinute}
-                  onChange={(e) => handleCostChange(tech.id, Number(e.target.value))}
+                  value={tech.costPerMinute || ''}
+                  onChange={(e) => handleCostChange(tech.id, e.target.value)}
                   step="0.001"
                   min="0"
                   className="w-32"
-                  readOnly={tech.id === 'calcom' || tech.id === 'synthflow'} // Make Cal.com and Synthflow inputs readonly
+                  readOnly={tech.id === 'calcom' || tech.id === 'synthflow'}
                 />
                 {tech.id === 'calcom' && (
                   <p className="text-sm text-muted-foreground mt-1">
