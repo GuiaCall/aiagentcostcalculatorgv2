@@ -8,6 +8,8 @@ import {
   calculateSetupCost,
   calculateTotalCostPerMinute,
 } from "@/utils/costCalculations";
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 export function useCalculatorLogic({
   technologies,
@@ -133,11 +135,46 @@ export function useCalculatorLogic({
     });
   };
 
+  const exportPDF = async () => {
+    const element = document.querySelector('.invoice-preview');
+    if (!element) {
+      toast({
+        title: "Error",
+        description: "Could not find invoice preview",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const canvas = await html2canvas(element);
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF();
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save('invoice.pdf');
+
+      toast({
+        title: "Success",
+        description: "PDF exported successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to export PDF",
+        variant: "destructive",
+      });
+    }
+  };
+
   return {
     handleCalcomPlanSelect,
     handleTwilioRateSelect,
     calculateCost,
     handleEdit,
     handleSave,
+    exportPDF,
   };
 }
