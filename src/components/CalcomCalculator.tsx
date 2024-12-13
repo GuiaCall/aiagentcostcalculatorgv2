@@ -26,7 +26,7 @@ export function CalcomCalculator({ onPlanSelect }: CalcomCalculatorProps) {
         ? numberOfUsers * 12 // $12 per team member
         : 0;
       
-      // Update the total cost and notify parent component
+      // Calculate total monthly cost: plan base price + team member cost
       const totalCost = selectedPlan.basePrice + teamMemberCost;
       setMonthlyTotal(totalCost);
       onPlanSelect(selectedPlan, numberOfUsers);
@@ -43,19 +43,19 @@ export function CalcomCalculator({ onPlanSelect }: CalcomCalculatorProps) {
       return;
     }
 
-    // Only calculate team member cost for Team and Organization plans
+    // Calculate team member cost only for Team and Organization plans
     const teamMemberCost = (selectedPlan.name === "Team" || selectedPlan.name === "Organization") && numberOfUsers > 0
       ? numberOfUsers * 12 // $12 per team member
       : 0;
     
-    // Calculate total monthly cost (plan base price + team member cost)
-    const total = selectedPlan.basePrice + teamMemberCost;
+    // Calculate total monthly cost: plan base price + team member cost
+    const totalCost = selectedPlan.basePrice + teamMemberCost;
     
-    setMonthlyTotal(total);
+    setMonthlyTotal(totalCost);
     
     toast({
       title: "Monthly Cost Calculated",
-      description: `Base Plan Cost: $${selectedPlan.basePrice}\nTeam Members Cost: $${teamMemberCost}\nTotal: $${total}`,
+      description: `Base Plan Cost: $${selectedPlan.basePrice}\nTeam Members Cost: $${teamMemberCost}\nTotal: $${totalCost}`,
     });
   };
 
