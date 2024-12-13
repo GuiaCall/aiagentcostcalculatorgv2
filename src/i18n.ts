@@ -9,7 +9,6 @@ i18n
     resources: {
       en: {
         translation: {
-          // Add all your English translations here
           "title": "AI Voice Agent Calculator",
           "technologyParameters": "Technology Parameters",
           "pleaseAddValue": "Please add a value",
@@ -39,6 +38,10 @@ i18n
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false,
+    },
+    detection: {
+      order: ['localStorage', 'navigator'],
+      caches: ['localStorage'],
     },
   });
 

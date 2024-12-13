@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Check, X } from "lucide-react";
 import { useCalculatorStateContext } from "./calculator/CalculatorStateContext";
+import { useTranslation } from "react-i18next";
 
 export interface Technology {
   id: string;
@@ -24,11 +25,12 @@ export function TechnologyParameters({
   onVisibilityChange,
 }: TechnologyParametersProps) {
   const { currency } = useCalculatorStateContext();
+  const { t } = useTranslation();
   const currencySymbol = currency === 'EUR' ? '€' : '$';
 
   const handleToggle = (id: string) => {
     const updatedTechs = technologies.map(tech =>
-      tech.id === id ? { ...tech, isSelected: !tech.isSelected, costPerMinute: !tech.isSelected ? 0 : tech.costPerMinute } : tech
+      tech.id === id ? { ...tech, isSelected: !tech.isSelected } : tech
     );
     onTechnologyChange(updatedTechs);
     onVisibilityChange(id, !technologies.find(t => t.id === id)?.isSelected);
@@ -45,7 +47,7 @@ export function TechnologyParameters({
 
   return (
     <Card className="p-6 space-y-4">
-      <h3 className="text-lg font-semibold">Technology Parameters</h3>
+      <h3 className="text-lg font-semibold">{t('technologyParameters')}</h3>
       <div className="space-y-4">
         {technologies.map((tech) => (
           <div key={tech.id} className="space-y-2">
@@ -85,11 +87,11 @@ export function TechnologyParameters({
                   )}
                 </div>
                 <span className="text-sm text-muted-foreground">
-                  /minute
+                  {t('perMinute')}
                 </span>
                 {tech.isSelected && tech.costPerMinute === 0 && (
                   <span className="absolute left-32 top-full text-xs text-red-500">
-                    Please add a value
+                    {t('pleaseAddValue')}
                   </span>
                 )}
               </div>
