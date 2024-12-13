@@ -27,6 +27,22 @@ export function FormulaExplanation() {
         </div>
 
         <div>
+          <h3 className="text-lg font-semibold text-gray-800">Cal.com Plan Cost Calculation</h3>
+          <p className="text-gray-600">
+            Monthly Cost = Selected Plan Base Price + Team Member Cost
+          </p>
+          <p className="text-gray-600">
+            Team Member Cost = Number of Users × $12
+          </p>
+          <p className="text-gray-600">
+            Cost Per Minute = Monthly Cost ÷ Total Minutes
+          </p>
+          <p className="text-sm text-gray-500 mt-1">
+            For Team and Organization plans, each team member costs $12/month. The total monthly cost is divided by total minutes to get the per-minute rate.
+          </p>
+        </div>
+
+        <div>
           <h3 className="text-lg font-semibold text-gray-800">Twilio Cost Calculation</h3>
           <p className="text-gray-600">
             Base Cost = Selected Rate × Total Minutes
@@ -65,29 +81,10 @@ export function FormulaExplanation() {
             Monthly Cost = Selected Plan Monthly Price
           </p>
           <p className="text-gray-600">
-            Yearly Total Cost = Selected Plan Yearly Price × 12
-          </p>
-          <p className="text-gray-600">
-            Cost Per Minute = Plan Cost ÷ Minutes Included in Plan
+            Cost Per Minute = Monthly Cost ÷ Minutes Included in Plan
           </p>
           <p className="text-sm text-gray-500 mt-1">
-            The cost per minute is automatically adjusted based on your selected plan and billing cycle.
-          </p>
-        </div>
-
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800">Cal.com Plan Cost Calculation</h3>
-          <p className="text-gray-600">
-            Base Cost = Selected Plan Base Price
-          </p>
-          <p className="text-gray-600">
-            Team Member Cost = (Number of Users - 1) × Price Per Additional User
-          </p>
-          <p className="text-gray-600">
-            Total Monthly Cost = Base Cost + Team Member Cost
-          </p>
-          <p className="text-sm text-gray-500 mt-1">
-            For Team and Organization plans, additional team members are charged at $12/month each.
+            The cost per minute is automatically adjusted based on your selected plan.
           </p>
         </div>
 
