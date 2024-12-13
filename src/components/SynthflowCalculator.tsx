@@ -22,13 +22,15 @@ export function SynthflowCalculator({
     const plan = SYNTHFLOW_PLANS.find(p => p.name === planName);
     if (plan) {
       const monthlyPrice = billingType === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice;
-      const costPerMinute = plan.minutesPerMonth > 0 ? monthlyPrice / plan.minutesPerMonth : 0;
+      const baseCostPerMinute = plan.minutesPerMonth > 0 ? monthlyPrice / plan.minutesPerMonth : 0;
+      const finalCostPerMinute = baseCostPerMinute * 1.2; // Adding 20% margin
       
-      // Update the selected plan with the calculated cost per minute
+      // Update the selected plan with both base and final cost per minute
       const updatedPlan = {
         ...plan,
         monthlyPrice: monthlyPrice,
-        costPerMinute: costPerMinute
+        costPerMinute: finalCostPerMinute,
+        baseCostPerMinute: baseCostPerMinute
       };
       
       setSelectedPlan(updatedPlan);
@@ -37,9 +39,12 @@ export function SynthflowCalculator({
       // Update the technology parameters with the new cost per minute
       const technologies = JSON.parse(localStorage.getItem('technologies') || '[]');
       const updatedTechnologies = technologies.map((tech: any) =>
-        tech.id === 'synthflow' ? { ...tech, costPerMinute: costPerMinute } : tech
+        tech.id === 'synthflow' ? { ...tech, costPerMinute: finalCostPerMinute } : tech
       );
       localStorage.setItem('technologies', JSON.stringify(updatedTechnologies));
+      
+      // Dispatch a storage event to notify other components
+      window.dispatchEvent(new Event('storage'));
     }
   };
 
