@@ -8,15 +8,14 @@ export const calculateCalcomCostPerMinute = (
 ): number => {
   if (!plan || totalMinutes <= 0) return 0;
   
-  // Calculate team member cost only for Team and Organization plans
+  // Calculate total monthly cost including team members
   const teamMemberCost = (plan.name === "Team" || plan.name === "Organization") && numberOfUsers > 0
     ? numberOfUsers * 12 // $12 per team member
     : 0;
   
-  // Calculate total monthly cost: plan base price + team member cost
   const monthlyTotal = plan.basePrice + teamMemberCost;
   
-  // Convert to cost per minute
+  // Convert to cost per minute with 3 decimal places
   return Number((monthlyTotal / totalMinutes).toFixed(3));
 };
 

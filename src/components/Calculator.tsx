@@ -176,7 +176,10 @@ export function Calculator() {
       )}
 
       {state.technologies.find((t) => t.id === "calcom")?.isSelected && (
-        <CalcomCalculator onPlanSelect={logic.handleCalcomPlanSelect} />
+        <CalcomCalculator 
+          onPlanSelect={logic.handleCalcomPlanSelect} 
+          totalMinutes={state.totalMinutes} // Pass totalMinutes prop
+        />
       )}
 
       {state.technologies.find((t) => t.id === "twilio")?.isSelected && (

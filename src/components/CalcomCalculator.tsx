@@ -8,12 +8,14 @@ import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { ExternalLink, Calculator } from "lucide-react";
 import { useToast } from "./ui/use-toast";
+import { calculateCalcomCostPerMinute } from "@/utils/costCalculations";
 
 interface CalcomCalculatorProps {
   onPlanSelect: (plan: CalcomPlan, numberOfUsers: number) => void;
+  totalMinutes: number; // Add this prop
 }
 
-export function CalcomCalculator({ onPlanSelect }: CalcomCalculatorProps) {
+export function CalcomCalculator({ onPlanSelect, totalMinutes }: CalcomCalculatorProps) {
   const [selectedPlan, setSelectedPlan] = useState<CalcomPlan | null>(null);
   const [numberOfUsers, setNumberOfUsers] = useState<number>(1);
   const [monthlyTotal, setMonthlyTotal] = useState<number>(0);
@@ -21,17 +23,20 @@ export function CalcomCalculator({ onPlanSelect }: CalcomCalculatorProps) {
 
   useEffect(() => {
     if (selectedPlan) {
-      // Calculate team member cost only for Team and Organization plans
+      // Calculate team member cost
       const teamMemberCost = (selectedPlan.name === "Team" || selectedPlan.name === "Organization") && numberOfUsers > 0
         ? numberOfUsers * 12 // $12 per team member
         : 0;
       
-      // Calculate total monthly cost: plan base price + team member cost
+      // Calculate total monthly cost
       const totalCost = selectedPlan.basePrice + teamMemberCost;
       setMonthlyTotal(totalCost);
+
+      // Calculate cost per minute and update parent
+      const costPerMinute = calculateCalcomCostPerMinute(selectedPlan, numberOfUsers, totalMinutes);
       onPlanSelect(selectedPlan, numberOfUsers);
     }
-  }, [selectedPlan, numberOfUsers, onPlanSelect]);
+  }, [selectedPlan, numberOfUsers, totalMinutes, onPlanSelect]);
 
   const computeMonthlyCost = () => {
     if (!selectedPlan) {
@@ -43,19 +48,18 @@ export function CalcomCalculator({ onPlanSelect }: CalcomCalculatorProps) {
       return;
     }
 
-    // Calculate team member cost only for Team and Organization plans
+    // Calculate team member cost
     const teamMemberCost = (selectedPlan.name === "Team" || selectedPlan.name === "Organization") && numberOfUsers > 0
-      ? numberOfUsers * 12 // $12 per team member
+      ? numberOfUsers * 12
       : 0;
     
-    // Calculate total monthly cost: plan base price + team member cost
+    // Calculate total monthly cost
     const totalCost = selectedPlan.basePrice + teamMemberCost;
-    
     setMonthlyTotal(totalCost);
     
     toast({
       title: "Monthly Cost Calculated",
-      description: `Base Plan Cost: $${selectedPlan.basePrice}\nTeam Members Cost: $${teamMemberCost}\nTotal: $${totalCost}`,
+      description: `Base Plan Cost: $${selectedPlan.basePrice}\nTeam Members Cost: $${teamMemberCost}\nTotal: $${totalCost}\nCost Per Minute: $${calculateCalcomCostPerMinute(selectedPlan, numberOfUsers, totalMinutes)}`,
     });
   };
 
