@@ -16,7 +16,7 @@ export const calculateCalcomCostPerMinute = (
   // Calculate total monthly cost: plan base price + team member cost
   const monthlyTotal = plan.basePrice + teamMemberCost;
   
-  // Convert to cost per minute (rounded to 3 decimal places)
+  // Convert to cost per minute
   return Number((monthlyTotal / totalMinutes).toFixed(3));
 };
 
