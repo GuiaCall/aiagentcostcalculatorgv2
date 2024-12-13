@@ -6,29 +6,11 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import { useEffect } from "react";
 
-interface Technology {
-  id: string;
-  name: string;
-  isSelected: boolean;
-  costPerMinute: number;
-}
-
-interface TechnologyParametersProps {
-  technologies: Technology[];
-  onTechnologyChange: (technologies: Technology[]) => void;
-  onVisibilityChange: (techId: string, isVisible: boolean) => void;
-}
-
-const PRICING_LINKS = {
-  make: 'https://www.make.com/en/pricing',
-  synthflow: 'https://www.synthflow.com/pricing',
-  vapi: 'https://rb.gy/m1p0f7'
-};
-
 export function TechnologyParameters({ 
   technologies, 
   onTechnologyChange,
-  onVisibilityChange 
+  onVisibilityChange,
+  currency = 'USD'
 }: TechnologyParametersProps) {
   const handleToggle = (id: string) => {
     const updatedTechs = technologies.map(tech =>
@@ -76,19 +58,12 @@ export function TechnologyParameters({
                   {tech.name}
                 </Label>
               </div>
-              {PRICING_LINKS[tech.id as keyof typeof PRICING_LINKS] && (
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="animate-pulse hover:animate-none bg-primary/10 hover:bg-primary/20 text-primary font-semibold"
-                  onClick={() => window.open(PRICING_LINKS[tech.id as keyof typeof PRICING_LINKS], '_blank')}
-                >
-                  View Pricing <ExternalLink className="ml-2 h-4 w-4" />
-                </Button>
-              )}
             </div>
             {tech.isSelected && (
-              <div className="ml-14">
+              <div className="ml-14 flex items-center space-x-2">
+                <span className="text-sm text-muted-foreground">
+                  {currency}
+                </span>
                 <Input
                   type="number"
                   value={tech.costPerMinute || ''}
@@ -98,11 +73,9 @@ export function TechnologyParameters({
                   className="w-32"
                   readOnly={tech.id === 'calcom'}
                 />
-                {tech.id === 'calcom' && (
-                  <p className="text-sm text-muted-foreground mt-1">
-                    This value is automatically calculated from Cal.com plan settings
-                  </p>
-                )}
+                <span className="text-sm text-muted-foreground">
+                  /minute
+                </span>
               </div>
             )}
           </div>

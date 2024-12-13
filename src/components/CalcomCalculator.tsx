@@ -6,7 +6,7 @@ import { CALCOM_PLANS, CALCOM_PRICING_URL } from "@/constants/calcomPlans";
 import { CalcomPlan } from "@/types/calcom";
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
-import { ExternalLink, Calculator } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { useToast } from "./ui/use-toast";
 
 interface CalcomCalculatorProps {
@@ -30,7 +30,12 @@ export function CalcomCalculator({ onPlanSelect, totalMinutes, margin = 20 }: Ca
       const totalCost = selectedPlan.basePrice + teamMemberCost;
       setMonthlyTotal(totalCost);
 
-      onPlanSelect(selectedPlan, numberOfUsers);
+      const costPerMinute = totalMinutes > 0 ? Number((totalCost / totalMinutes).toFixed(3)) : 0;
+      const updatedPlan = {
+        ...selectedPlan,
+        costPerMinute
+      };
+      onPlanSelect(updatedPlan, numberOfUsers);
     }
   }, [selectedPlan, numberOfUsers, totalMinutes, onPlanSelect]);
 
@@ -52,11 +57,9 @@ export function CalcomCalculator({ onPlanSelect, totalMinutes, margin = 20 }: Ca
     setMonthlyTotal(totalCost);
     
     const costPerMinute = totalMinutes > 0 ? Number((totalCost / totalMinutes).toFixed(3)) : 0;
-    const costPerMinuteWithMargin = costPerMinute * (1 + margin / 100);
-
     const updatedPlan = {
       ...selectedPlan,
-      costPerMinute: costPerMinuteWithMargin
+      costPerMinute
     };
     onPlanSelect(updatedPlan, numberOfUsers);
     
@@ -65,7 +68,7 @@ export function CalcomCalculator({ onPlanSelect, totalMinutes, margin = 20 }: Ca
       description: `Base Plan Cost: $${selectedPlan.basePrice}
 Team Members Cost: $${teamMemberCost}
 Total Monthly Cost: $${totalCost}
-Cost Per Minute: $${costPerMinuteWithMargin.toFixed(3)}`,
+Cost Per Minute: $${costPerMinute}`,
     });
   };
 
@@ -121,7 +124,6 @@ Cost Per Minute: $${costPerMinuteWithMargin.toFixed(3)}`,
           className="w-full"
           variant="outline"
         >
-          <Calculator className="mr-2 h-4 w-4" />
           Compute Monthly Cost
         </Button>
       </div>

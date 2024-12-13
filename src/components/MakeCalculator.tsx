@@ -132,6 +132,13 @@ export function MakeCalculator({
                     : calculation.recommendedPlan.yearlyPrice
                   }/{selectedPlanType === "monthly" ? "month" : "month (billed yearly)"}
                 </p>
+                <Button 
+                  variant="outline" 
+                  className="w-full mt-4"
+                  onClick={() => window.open('https://rb.gy/8nusbv', '_blank')}
+                >
+                  Get This Plan <ExternalLink className="ml-2 h-4 w-4" />
+                </Button>
               </div>
             )}
           </div>
