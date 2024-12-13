@@ -9,20 +9,28 @@ export const calculateRequiredPlanPrice = (totalOperations: number, selectedPlan
   const baseOperations = 10000;
   const requiredPlans = Math.max(Math.ceil(totalOperations / baseOperations), 1);
   
-  // Use exact pricing from Make.com plans
-  const monthlyBasePrice = 10.59;
-  const yearlyBasePrice = 9.00;
-  
-  // Calculate total price based on the number of required plans
-  const totalPrice = selectedPlanType === 'monthly' 
-    ? monthlyBasePrice * requiredPlans 
-    : yearlyBasePrice * requiredPlans;
+  // Use exact Make.com pricing tiers
+  const monthlyPrices = {
+    1: 10.59,  // 1 plan = 10.59
+    2: 21.18,  // 2 plans = 10.59 * 2
+    3: 31.77,  // 3 plans = 10.59 * 3
+    4: 42.36   // 4 plans = 10.59 * 4
+  };
+
+  const yearlyPrices = {
+    1: 9.00,   // 1 plan = 9.00
+    2: 18.00,  // 2 plans = 9.00 * 2
+    3: 27.00,  // 3 plans = 9.00 * 3
+    4: 36.00   // 4 plans = 9.00 * 4
+  };
+
+  // Get the exact price based on required plans
+  const prices = selectedPlanType === 'monthly' ? monthlyPrices : yearlyPrices;
+  const totalPrice = prices[Math.min(requiredPlans, 4) as keyof typeof prices];
   
   return {
-    totalPrice: Math.round(totalPrice * 100) / 100, // Round to 2 decimal places
+    totalPrice,
     operationsIncluded: baseOperations * requiredPlans,
-    costPerMinute: totalMinutes > 0 
-      ? Math.round((totalPrice / totalMinutes) * 1000) / 1000 
-      : 0
+    costPerMinute: totalMinutes > 0 ? totalPrice / totalMinutes : 0
   };
 };
