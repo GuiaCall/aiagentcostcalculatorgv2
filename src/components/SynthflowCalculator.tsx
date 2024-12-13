@@ -56,7 +56,7 @@ export function SynthflowCalculator({
       // Parse and update technologies
       const technologies = JSON.parse(storedTechnologies);
       const updatedTechnologies = technologies.map((tech: any) =>
-        tech.id === 'synthflow' ? { ...tech, costPerMinute: baseCostPerMinute * 1.2 } : tech
+        tech.id === 'synthflow' ? { ...tech, costPerMinute: baseCostPerMinute } : tech
       );
       
       // Save back to localStorage
