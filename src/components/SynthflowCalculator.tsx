@@ -133,11 +133,7 @@ export function SynthflowCalculator({
             </p>
             <div className="text-sm text-gray-600">
               <p>Monthly Price: ${billingType === 'monthly' ? recommendedPlan.monthlyPrice : recommendedPlan.yearlyPrice}/month</p>
-              <p 
-                onClick={handleCopyBaseCost}
-                className="cursor-pointer hover:text-primary transition-colors"
-                title="Click to copy"
-              >
+              <p>
                 Base Cost per Minute: ${baseCostPerMinute.toFixed(4)}/min
               </p>
               <p className="font-medium text-primary">
