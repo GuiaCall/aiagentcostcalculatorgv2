@@ -42,6 +42,13 @@ export function SynthflowCalculator({
     plan => plan.minutesPerMonth >= totalMinutes
   );
 
+  // Update recommended plan when billing type changes
+  useEffect(() => {
+    if (recommendedPlan && (!selectedPlan || selectedPlan.name !== recommendedPlan.name)) {
+      handlePlanSelect(recommendedPlan.name);
+    }
+  }, [recommendedPlan, billingType]);
+
   return (
     <Card className="p-6 space-y-6">
       <div className="flex justify-between items-center">
@@ -80,6 +87,7 @@ export function SynthflowCalculator({
           <Select
             onValueChange={handlePlanSelect}
             defaultValue={recommendedPlan?.name}
+            value={selectedPlan?.name}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select plan" />
