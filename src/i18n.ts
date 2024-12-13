@@ -13,7 +13,18 @@ i18n
           "technologyParameters": "Technology Parameters",
           "pleaseAddValue": "Please add a value",
           "perMinute": "/minute",
-          // Add more translations as needed
+          "calculatorSettings": "Calculator Settings",
+          "averageCallDuration": "Average Call Duration (minutes)",
+          "totalMinutesPerMonth": "Total Minutes per Month",
+          "margin": "Margin (%)",
+          "taxRate": "Tax Rate (%)",
+          "agencyInformation": "Agency Information",
+          "clientInformation": "Client Information",
+          "calculate": "Calculate",
+          "preview": "Preview",
+          "export": "Export PDF",
+          "totalCost": "Total Cost",
+          "setupCost": "Setup Cost"
         }
       },
       fr: {
@@ -22,7 +33,18 @@ i18n
           "technologyParameters": "Paramètres Technologiques",
           "pleaseAddValue": "Veuillez ajouter une valeur",
           "perMinute": "/minute",
-          // Add more translations as needed
+          "calculatorSettings": "Paramètres du Calculateur",
+          "averageCallDuration": "Durée Moyenne d'Appel (minutes)",
+          "totalMinutesPerMonth": "Minutes Totales par Mois",
+          "margin": "Marge (%)",
+          "taxRate": "Taux de Taxe (%)",
+          "agencyInformation": "Informations de l'Agence",
+          "clientInformation": "Informations du Client",
+          "calculate": "Calculer",
+          "preview": "Aperçu",
+          "export": "Exporter PDF",
+          "totalCost": "Coût Total",
+          "setupCost": "Coût d'Installation"
         }
       },
       de: {
@@ -31,7 +53,18 @@ i18n
           "technologyParameters": "Technologie-Parameter",
           "pleaseAddValue": "Bitte Wert hinzufügen",
           "perMinute": "/minute",
-          // Add more translations as needed
+          "calculatorSettings": "Rechner-Einstellungen",
+          "averageCallDuration": "Durchschnittliche Anrufdauer (Minuten)",
+          "totalMinutesPerMonth": "Gesamtminuten pro Monat",
+          "margin": "Marge (%)",
+          "taxRate": "Steuersatz (%)",
+          "agencyInformation": "Agenturinformationen",
+          "clientInformation": "Kundeninformationen",
+          "calculate": "Berechnen",
+          "preview": "Vorschau",
+          "export": "PDF Exportieren",
+          "totalCost": "Gesamtkosten",
+          "setupCost": "Einrichtungskosten"
         }
       }
     },
@@ -42,7 +75,7 @@ i18n
     detection: {
       order: ['localStorage', 'navigator'],
       caches: ['localStorage'],
-    },
+    }
   });
 
 export default i18n;

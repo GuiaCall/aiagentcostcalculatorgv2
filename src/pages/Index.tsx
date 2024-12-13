@@ -1,5 +1,4 @@
 import { Calculator } from "@/components/Calculator";
-import { FormulaExplanation } from "@/components/FormulaExplanation";
 import { Calculator as CalculatorIcon } from "lucide-react";
 
 const Index = () => {
@@ -16,7 +15,6 @@ const Index = () => {
           </p>
         </div>
         <Calculator />
-        <FormulaExplanation />
       </div>
     </div>
   );
