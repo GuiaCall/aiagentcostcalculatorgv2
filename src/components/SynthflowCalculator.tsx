@@ -4,7 +4,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { SYNTHFLOW_PLANS, SYNTHFLOW_PRICING_URL } from "@/constants/synthflowPlans";
-import { ExternalLink, ArrowRight } from "lucide-react";
+import { ExternalLink, ArrowRight, Copy } from "lucide-react";
 import { SynthflowPlan } from "@/types/synthflow";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -40,43 +40,17 @@ export function SynthflowCalculator({
     }
   };
 
-  const handleApplyCost = () => {
+  const handleCopyBaseCost = async () => {
     try {
-      // Get current technologies from localStorage
-      const storedTechnologies = localStorage.getItem('technologies');
-      if (!storedTechnologies) {
-        toast({
-          title: "Error",
-          description: "No technologies found",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Parse and update technologies
-      const technologies = JSON.parse(storedTechnologies);
-      const updatedTechnologies = technologies.map((tech: any) =>
-        tech.id === 'synthflow' ? { ...tech, costPerMinute: baseCostPerMinute } : tech
-      );
-      
-      // Save back to localStorage
-      localStorage.setItem('technologies', JSON.stringify(updatedTechnologies));
-      
-      // Create and dispatch custom event
-      const event = new CustomEvent('technologiesUpdated', {
-        detail: updatedTechnologies
-      });
-      window.dispatchEvent(event);
-      
+      await navigator.clipboard.writeText(baseCostPerMinute.toFixed(4));
       toast({
-        title: "Success",
-        description: "Synthflow cost per minute has been updated",
+        title: "Copied!",
+        description: "Base cost per minute copied to clipboard",
       });
-    } catch (error) {
-      console.error('Error updating technologies:', error);
+    } catch (err) {
       toast({
         title: "Error",
-        description: "Failed to update Synthflow cost",
+        description: "Failed to copy to clipboard",
         variant: "destructive",
       });
     }
@@ -164,10 +138,11 @@ export function SynthflowCalculator({
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={handleApplyCost}
+                  onClick={handleCopyBaseCost}
                   className="ml-2 text-xs"
                 >
-                  Apply Cost <ArrowRight className="ml-1 h-3 w-3" />
+                  <Copy className="h-3 w-3 mr-1" />
+                  Copy Cost
                 </Button>
               </div>
               <p className="font-medium text-primary">
