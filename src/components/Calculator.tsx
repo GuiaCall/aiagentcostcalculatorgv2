@@ -10,6 +10,9 @@ import { CalculatorSettings } from "./CalculatorSettings";
 import { CurrencyToggle } from "./calculator/CurrencyToggle";
 import { TechnologyCalculators } from "./calculator/TechnologyCalculators";
 import { CalculatorStateProvider, useCalculatorStateContext } from "./calculator/CalculatorStateContext";
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import { format } from 'date-fns';
 
 function CalculatorContent() {
   const { toast } = useToast();
