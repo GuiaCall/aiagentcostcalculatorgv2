@@ -48,15 +48,15 @@ export function TechnologyParameters({
   };
 
   useEffect(() => {
-    const handleStorageChange = () => {
-      const storedTechs = localStorage.getItem('technologies');
-      if (storedTechs) {
-        onTechnologyChange(JSON.parse(storedTechs));
-      }
+    const handleTechnologiesUpdate = (event: CustomEvent<Technology[]>) => {
+      onTechnologyChange(event.detail);
     };
 
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    window.addEventListener('technologiesUpdated', handleTechnologiesUpdate as EventListener);
+    
+    return () => {
+      window.removeEventListener('technologiesUpdated', handleTechnologiesUpdate as EventListener);
+    };
   }, [onTechnologyChange]);
 
   return (

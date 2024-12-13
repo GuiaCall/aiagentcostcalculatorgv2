@@ -41,18 +41,38 @@ export function SynthflowCalculator({
   };
 
   const handleApplyCost = () => {
-    const technologies = JSON.parse(localStorage.getItem('technologies') || '[]');
-    const updatedTechnologies = technologies.map((tech: any) =>
-      tech.id === 'synthflow' ? { ...tech, costPerMinute: baseCostPerMinute } : tech
-    );
-    localStorage.setItem('technologies', JSON.stringify(updatedTechnologies));
-    
-    window.dispatchEvent(new Event('storage'));
-    
-    toast({
-      title: "Success",
-      description: "Synthflow cost per minute has been updated",
-    });
+    try {
+      const storedTechnologies = localStorage.getItem('technologies');
+      if (!storedTechnologies) {
+        console.warn('No technologies found in localStorage');
+        return;
+      }
+
+      const technologies = JSON.parse(storedTechnologies);
+      const updatedTechnologies = technologies.map((tech: any) =>
+        tech.id === 'synthflow' ? { ...tech, costPerMinute: baseCostPerMinute } : tech
+      );
+      
+      localStorage.setItem('technologies', JSON.stringify(updatedTechnologies));
+      
+      // Create and dispatch a custom event instead of using storage event
+      const updateEvent = new CustomEvent('technologiesUpdated', {
+        detail: updatedTechnologies
+      });
+      window.dispatchEvent(updateEvent);
+      
+      toast({
+        title: "Success",
+        description: "Synthflow cost per minute has been updated",
+      });
+    } catch (error) {
+      console.error('Error updating technologies:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update Synthflow cost",
+        variant: "destructive",
+      });
+    }
   };
 
   useEffect(() => {
