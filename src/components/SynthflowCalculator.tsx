@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { SYNTHFLOW_PLANS, SYNTHFLOW_PRICING_URL } from "@/constants/synthflowPlans";
 import { ExternalLink } from "lucide-react";
 import { SynthflowPlan } from "@/types/synthflow";
@@ -103,12 +104,12 @@ export function SynthflowCalculator({
         </div>
 
         {recommendedPlan && (
-          <div className="p-4 bg-secondary rounded-lg">
+          <div className="p-4 bg-secondary rounded-lg space-y-3">
             <p className="font-semibold">Recommended Plan: {recommendedPlan.name}</p>
             <p className="text-sm text-gray-600">
               Based on your estimated usage of {totalMinutes} minutes per month
             </p>
-            <div className="text-sm text-gray-600 mt-1">
+            <div className="text-sm text-gray-600">
               <p>Monthly Price: ${billingType === 'monthly' ? recommendedPlan.monthlyPrice : recommendedPlan.yearlyPrice}/month</p>
               <p>Cost per Minute: ${((billingType === 'monthly' ? recommendedPlan.monthlyPrice : recommendedPlan.yearlyPrice) / recommendedPlan.minutesPerMonth).toFixed(4)}/min</p>
               {billingType === 'yearly' && (
@@ -117,6 +118,13 @@ export function SynthflowCalculator({
                 </p>
               )}
             </div>
+            <Button 
+              variant="outline"
+              className="w-full mt-2"
+              onClick={() => window.open(SYNTHFLOW_PRICING_URL, '_blank')}
+            >
+              Get This Plan <ExternalLink className="ml-2 h-4 w-4" />
+            </Button>
           </div>
         )}
       </div>
