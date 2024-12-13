@@ -19,6 +19,7 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { format } from "date-fns";
 import { InvoiceHistory } from "@/types/invoice";
+import { CalcomPlan } from "@/types/calcom";
 
 const EXCHANGE_RATE = 0.85;
 

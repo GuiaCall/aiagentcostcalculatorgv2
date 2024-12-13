@@ -36,8 +36,11 @@ export const calculateSetupCost = (
           break;
         case 'calcom':
           if (calcomPlan) {
-            const teamMemberCost = calcomPlan.allowsTeam ? (numberOfUsers - 1) * calcomPlan.pricePerUser : 0;
-            totalSetupCost += calcomPlan.basePrice + teamMemberCost;
+            // Include base price and team member costs
+            const basePrice = calcomPlan.basePrice;
+            // Calculate team member costs (all users including the first one)
+            const teamMemberCost = calcomPlan.allowsTeam ? numberOfUsers * calcomPlan.pricePerUser : 0;
+            totalSetupCost += basePrice + teamMemberCost;
           }
           break;
         case 'twilio':
