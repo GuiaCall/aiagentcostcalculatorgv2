@@ -136,9 +136,6 @@ export function SynthflowCalculator({
               <p>
                 Base Cost per Minute: ${baseCostPerMinute.toFixed(4)}/min
               </p>
-              <p className="font-medium text-primary">
-                Final Cost per Minute (including margin): ${(baseCostPerMinute * 1.2).toFixed(4)}/min
-              </p>
               {billingType === 'yearly' && (
                 <p className="font-medium text-primary">
                   Total Yearly Cost: ${(recommendedPlan.yearlyPrice * 12).toFixed(2)}/year

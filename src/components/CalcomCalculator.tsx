@@ -135,9 +135,6 @@ Cost Per Minute: $${costPerMinuteWithMargin.toFixed(3)}`,
             Monthly Cost: ${monthlyTotal.toFixed(2)}
           </p>
           <p className="text-sm font-medium">
-            Cost Per Minute (with {margin}% margin): ${((monthlyTotal / totalMinutes) * (1 + margin / 100)).toFixed(3)}
-          </p>
-          <p className="text-sm font-medium">
             Monthly Cost Per Minute: ${(monthlyTotal / totalMinutes).toFixed(3)}
           </p>
         </div>

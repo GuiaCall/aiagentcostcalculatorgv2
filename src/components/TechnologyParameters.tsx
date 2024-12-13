@@ -39,13 +39,10 @@ export function TechnologyParameters({
   };
 
   const handleCostChange = (id: string, value: string) => {
-    // Allow empty string for complete deletion
-    const cost = value === '' ? 0 : parseFloat(value);
-    const margin = 0.2; // 20% margin
-    const finalCost = isNaN(cost) ? 0 : cost * (1 + margin);
+    const numericValue = value === '' ? '' : parseFloat(value);
     
     const updatedTechs = technologies.map(tech =>
-      tech.id === id ? { ...tech, costPerMinute: finalCost } : tech
+      tech.id === id ? { ...tech, costPerMinute: numericValue === '' ? 0 : numericValue } : tech
     );
     onTechnologyChange(updatedTechs);
   };
