@@ -75,42 +75,43 @@ export function SynthflowCalculator({
           </RadioGroup>
         </div>
 
-      <div className="space-y-2">
-        <Label>Select Plan</Label>
-        <Select
-          onValueChange={handlePlanSelect}
-          defaultValue={recommendedPlan?.name}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select plan" />
-          </SelectTrigger>
-          <SelectContent>
-            {SYNTHFLOW_PLANS.map((plan) => (
-              <SelectItem key={plan.name} value={plan.name}>
-                {plan.name} - {plan.minutesPerMonth} mins/month (${billingType === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice}/month{billingType === 'yearly' ? ' billed yearly' : ''})
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {recommendedPlan && (
-        <div className="p-4 bg-secondary rounded-lg">
-          <p className="font-semibold">Recommended Plan: {recommendedPlan.name}</p>
-          <p className="text-sm text-gray-600">
-            Based on your estimated usage of {totalMinutes} minutes per month
-          </p>
-          <div className="text-sm text-gray-600 mt-1">
-            <p>Monthly Price: ${billingType === 'monthly' ? recommendedPlan.monthlyPrice : recommendedPlan.yearlyPrice}/month</p>
-            <p>Cost per Minute: ${((billingType === 'monthly' ? recommendedPlan.monthlyPrice : recommendedPlan.yearlyPrice) / recommendedPlan.minutesPerMonth).toFixed(4)}/min</p>
-            {billingType === 'yearly' && (
-              <p className="font-medium text-primary">
-                Total Yearly Cost: ${(recommendedPlan.yearlyPrice * 12).toFixed(2)}/year
-              </p>
-            )}
-          </div>
+        <div className="space-y-2">
+          <Label>Select Plan</Label>
+          <Select
+            onValueChange={handlePlanSelect}
+            defaultValue={recommendedPlan?.name}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select plan" />
+            </SelectTrigger>
+            <SelectContent>
+              {SYNTHFLOW_PLANS.map((plan) => (
+                <SelectItem key={plan.name} value={plan.name}>
+                  {plan.name} - {plan.minutesPerMonth} mins/month (${billingType === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice}/month{billingType === 'yearly' ? ' billed yearly' : ''})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
-      )}
+
+        {recommendedPlan && (
+          <div className="p-4 bg-secondary rounded-lg">
+            <p className="font-semibold">Recommended Plan: {recommendedPlan.name}</p>
+            <p className="text-sm text-gray-600">
+              Based on your estimated usage of {totalMinutes} minutes per month
+            </p>
+            <div className="text-sm text-gray-600 mt-1">
+              <p>Monthly Price: ${billingType === 'monthly' ? recommendedPlan.monthlyPrice : recommendedPlan.yearlyPrice}/month</p>
+              <p>Cost per Minute: ${((billingType === 'monthly' ? recommendedPlan.monthlyPrice : recommendedPlan.yearlyPrice) / recommendedPlan.minutesPerMonth).toFixed(4)}/min</p>
+              {billingType === 'yearly' && (
+                <p className="font-medium text-primary">
+                  Total Yearly Cost: ${(recommendedPlan.yearlyPrice * 12).toFixed(2)}/year
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </Card>
   );
 }
