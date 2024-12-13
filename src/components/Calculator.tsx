@@ -117,10 +117,8 @@ function CalculatorContent() {
       <CalculatorHeader
         agencyInfo={state.agencyInfo}
         clientInfo={state.clientInfo}
-        themeColor={state.themeColor}
         onAgencyInfoChange={state.setAgencyInfo}
         onClientInfoChange={state.setClientInfo}
-        onColorChange={state.setThemeColor}
       />
 
       <CalculatorSettings

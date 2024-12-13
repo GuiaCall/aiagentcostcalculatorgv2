@@ -6,6 +6,20 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import { useEffect } from "react";
 
+export interface Technology {
+  id: string;
+  name: string;
+  isSelected: boolean;
+  costPerMinute: number;
+}
+
+export interface TechnologyParametersProps {
+  technologies: Technology[];
+  onTechnologyChange: (technologies: Technology[]) => void;
+  onVisibilityChange: (id: string, isVisible: boolean) => void;
+  currency?: string;
+}
+
 export function TechnologyParameters({ 
   technologies, 
   onTechnologyChange,
