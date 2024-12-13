@@ -21,6 +21,14 @@ export function CalcomCalculator({ onPlanSelect }: CalcomCalculatorProps) {
 
   useEffect(() => {
     if (selectedPlan) {
+      // Calculate team member cost only for Team and Organization plans
+      const teamMemberCost = (selectedPlan.name === "Team" || selectedPlan.name === "Organization") && numberOfUsers > 0
+        ? numberOfUsers * 12 // $12 per team member
+        : 0;
+      
+      // Update the total cost and notify parent component
+      const totalCost = selectedPlan.basePrice + teamMemberCost;
+      setMonthlyTotal(totalCost);
       onPlanSelect(selectedPlan, numberOfUsers);
     }
   }, [selectedPlan, numberOfUsers, onPlanSelect]);
