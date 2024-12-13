@@ -16,8 +16,8 @@ export const calculateCalcomCostPerMinute = (
   // Calculate total monthly cost: plan base price + team member cost
   const monthlyTotal = plan.basePrice + teamMemberCost;
   
-  // Convert to cost per minute
-  return Math.ceil((monthlyTotal / totalMinutes) * 1000) / 1000;
+  // Convert to cost per minute (rounded to 3 decimal places)
+  return Math.round((monthlyTotal / totalMinutes) * 1000) / 1000;
 };
 
 export const calculateTwilioCostPerMinute = (selection: TwilioSelection | null): number => {
