@@ -8,12 +8,21 @@ export const calculateMakeOperations = (totalMinutes: number, averageCallDuratio
 export const calculateRequiredPlanPrice = (totalOperations: number, selectedPlanType: string, totalMinutes: number) => {
   const baseOperations = 10000;
   const requiredPlans = Math.max(Math.ceil(totalOperations / baseOperations), 1);
-  const basePrice = selectedPlanType === 'monthly' ? 10.59 : 9;
-  const totalPrice = Math.ceil(basePrice * requiredPlans);
+  
+  // Use exact pricing from Make.com plans
+  const monthlyBasePrice = 10.59;
+  const yearlyBasePrice = 9.00;
+  
+  // Calculate total price based on the number of required plans
+  const totalPrice = selectedPlanType === 'monthly' 
+    ? monthlyBasePrice * requiredPlans 
+    : yearlyBasePrice * requiredPlans;
   
   return {
-    totalPrice,
+    totalPrice: Math.round(totalPrice * 100) / 100, // Round to 2 decimal places
     operationsIncluded: baseOperations * requiredPlans,
-    costPerMinute: totalMinutes > 0 ? Math.ceil((totalPrice / totalMinutes) * 1000) / 1000 : 0 // Cost per minute based on total minutes
+    costPerMinute: totalMinutes > 0 
+      ? Math.round((totalPrice / totalMinutes) * 1000) / 1000 
+      : 0
   };
 };
