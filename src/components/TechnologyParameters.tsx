@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface Technology {
   id: string;
@@ -30,26 +30,32 @@ export function TechnologyParameters({
   onTechnologyChange,
   onVisibilityChange 
 }: TechnologyParametersProps) {
+  const [localTechnologies, setLocalTechnologies] = useState(technologies);
+
   const handleToggle = (id: string) => {
-    const updatedTechs = technologies.map(tech =>
+    const updatedTechs = localTechnologies.map(tech =>
       tech.id === id ? { ...tech, isSelected: !tech.isSelected } : tech
     );
+    setLocalTechnologies(updatedTechs);
     onTechnologyChange(updatedTechs);
-    onVisibilityChange(id, !technologies.find(t => t.id === id)?.isSelected);
+    onVisibilityChange(id, !localTechnologies.find(t => t.id === id)?.isSelected);
   };
 
   const handleCostChange = (id: string, cost: number) => {
     const margin = 0.2; // 20% margin
     const finalCost = cost * (1 + margin);
-    const updatedTechs = technologies.map(tech =>
+    const updatedTechs = localTechnologies.map(tech =>
       tech.id === id ? { ...tech, costPerMinute: finalCost } : tech
     );
+    setLocalTechnologies(updatedTechs);
     onTechnologyChange(updatedTechs);
   };
 
   useEffect(() => {
     const handleTechnologiesUpdate = (event: CustomEvent<Technology[]>) => {
-      onTechnologyChange(event.detail);
+      const updatedTechs = event.detail;
+      setLocalTechnologies(updatedTechs);
+      onTechnologyChange(updatedTechs);
     };
 
     window.addEventListener('technologiesUpdated', handleTechnologiesUpdate as EventListener);
@@ -59,11 +65,16 @@ export function TechnologyParameters({
     };
   }, [onTechnologyChange]);
 
+  // Update local state when technologies prop changes
+  useEffect(() => {
+    setLocalTechnologies(technologies);
+  }, [technologies]);
+
   return (
     <Card className="p-6 space-y-4">
       <h3 className="text-lg font-semibold">Technology Parameters</h3>
       <div className="space-y-4">
-        {technologies.map((tech) => (
+        {localTechnologies.map((tech) => (
           <div key={tech.id} className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
@@ -96,7 +107,7 @@ export function TechnologyParameters({
                   step="0.001"
                   min="0"
                   className="w-32"
-                  readOnly={tech.id === 'calcom' || tech.id === 'synthflow'} // Make Cal.com and Synthflow inputs readonly
+                  readOnly={tech.id === 'calcom' || tech.id === 'synthflow'}
                 />
                 {tech.id === 'calcom' && (
                   <p className="text-sm text-muted-foreground mt-1">
