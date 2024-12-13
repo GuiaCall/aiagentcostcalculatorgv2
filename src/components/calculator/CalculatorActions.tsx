@@ -8,6 +8,7 @@ interface CalculatorActionsProps {
   totalCost: number | null;
   setupCost: number | null;
   currency: 'USD' | 'EUR';
+  totalMinutes: number;
 }
 
 export function CalculatorActions({
@@ -17,6 +18,7 @@ export function CalculatorActions({
   totalCost,
   setupCost,
   currency,
+  totalMinutes,
 }: CalculatorActionsProps) {
   return (
     <div className="space-y-4">
@@ -33,6 +35,9 @@ export function CalculatorActions({
             </p>
             <p className="text-sm font-medium">
               Setup Cost: {currency} {setupCost.toFixed(2)}
+            </p>
+            <p className="text-sm font-medium text-primary">
+              Cost per Minute: {currency} {(totalCost / (totalMinutes || 1)).toFixed(4)}
             </p>
           </div>
           
