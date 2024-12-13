@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Check } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { useCalculatorStateContext } from "./calculator/CalculatorStateContext";
 
 export interface Technology {
@@ -28,17 +28,17 @@ export function TechnologyParameters({
 
   const handleToggle = (id: string) => {
     const updatedTechs = technologies.map(tech =>
-      tech.id === id ? { ...tech, isSelected: !tech.isSelected } : tech
+      tech.id === id ? { ...tech, isSelected: !tech.isSelected, costPerMinute: !tech.isSelected ? 0 : tech.costPerMinute } : tech
     );
     onTechnologyChange(updatedTechs);
     onVisibilityChange(id, !technologies.find(t => t.id === id)?.isSelected);
   };
 
   const handleCostChange = (id: string, value: string) => {
-    const numericValue = value === '' ? '' : parseFloat(value);
+    const numericValue = value === '' ? 0 : parseFloat(value);
     
     const updatedTechs = technologies.map(tech =>
-      tech.id === id ? { ...tech, costPerMinute: numericValue === '' ? 0 : numericValue } : tech
+      tech.id === id ? { ...tech, costPerMinute: numericValue } : tech
     );
     onTechnologyChange(updatedTechs);
   };
@@ -69,23 +69,25 @@ export function TechnologyParameters({
                 <div className="relative flex-1">
                   <Input
                     type="number"
-                    value={tech.costPerMinute || ''}
+                    value={tech.costPerMinute || '0'}
                     onChange={(e) => handleCostChange(tech.id, e.target.value)}
                     step="0.001"
                     min="0"
                     className={`w-32 pr-8 ${
-                      tech.costPerMinute > 0 ? 'bg-green-50' : ''
+                      tech.costPerMinute > 0 ? 'bg-green-50' : 'bg-red-50'
                     }`}
                     readOnly={tech.id === 'calcom'}
                   />
-                  {tech.costPerMinute > 0 && (
+                  {tech.costPerMinute > 0 ? (
                     <Check className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-green-500" />
+                  ) : (
+                    <X className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-red-500" />
                   )}
                 </div>
                 <span className="text-sm text-muted-foreground">
                   /minute
                 </span>
-                {tech.isSelected && !tech.costPerMinute && (
+                {tech.isSelected && tech.costPerMinute === 0 && (
                   <span className="absolute left-32 top-full text-xs text-red-500">
                     Please add a value
                   </span>
