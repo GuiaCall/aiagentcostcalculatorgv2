@@ -2,9 +2,8 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
-import { ExternalLink } from "lucide-react";
-import { useEffect } from "react";
+import { Check } from "lucide-react";
+import { useCalculatorStateContext } from "./calculator/CalculatorStateContext";
 
 export interface Technology {
   id: string;
@@ -17,15 +16,16 @@ export interface TechnologyParametersProps {
   technologies: Technology[];
   onTechnologyChange: (technologies: Technology[]) => void;
   onVisibilityChange: (id: string, isVisible: boolean) => void;
-  currency?: string;
 }
 
 export function TechnologyParameters({ 
   technologies, 
   onTechnologyChange,
   onVisibilityChange,
-  currency = 'USD'
 }: TechnologyParametersProps) {
+  const { currency } = useCalculatorStateContext();
+  const currencySymbol = currency === 'EUR' ? '€' : '$';
+
   const handleToggle = (id: string) => {
     const updatedTechs = technologies.map(tech =>
       tech.id === id ? { ...tech, isSelected: !tech.isSelected } : tech
@@ -42,18 +42,6 @@ export function TechnologyParameters({
     );
     onTechnologyChange(updatedTechs);
   };
-
-  useEffect(() => {
-    const handleTechnologiesUpdate = (event: CustomEvent<Technology[]>) => {
-      onTechnologyChange(event.detail);
-    };
-
-    window.addEventListener('technologiesUpdated', handleTechnologiesUpdate as EventListener);
-    
-    return () => {
-      window.removeEventListener('technologiesUpdated', handleTechnologiesUpdate as EventListener);
-    };
-  }, [onTechnologyChange]);
 
   return (
     <Card className="p-6 space-y-4">
@@ -74,22 +62,34 @@ export function TechnologyParameters({
               </div>
             </div>
             {tech.isSelected && (
-              <div className="ml-14 flex items-center space-x-2">
+              <div className="ml-14 flex items-center space-x-2 relative">
                 <span className="text-sm text-muted-foreground">
-                  {currency}
+                  {currencySymbol}
                 </span>
-                <Input
-                  type="number"
-                  value={tech.costPerMinute || ''}
-                  onChange={(e) => handleCostChange(tech.id, e.target.value)}
-                  step="0.001"
-                  min="0"
-                  className="w-32"
-                  readOnly={tech.id === 'calcom'}
-                />
+                <div className="relative flex-1">
+                  <Input
+                    type="number"
+                    value={tech.costPerMinute || ''}
+                    onChange={(e) => handleCostChange(tech.id, e.target.value)}
+                    step="0.001"
+                    min="0"
+                    className={`w-32 pr-8 ${
+                      tech.costPerMinute > 0 ? 'bg-green-50' : ''
+                    }`}
+                    readOnly={tech.id === 'calcom'}
+                  />
+                  {tech.costPerMinute > 0 && (
+                    <Check className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-green-500" />
+                  )}
+                </div>
                 <span className="text-sm text-muted-foreground">
                   /minute
                 </span>
+                {tech.isSelected && !tech.costPerMinute && (
+                  <span className="absolute left-32 top-full text-xs text-red-500">
+                    Please add a value
+                  </span>
+                )}
               </div>
             )}
           </div>
