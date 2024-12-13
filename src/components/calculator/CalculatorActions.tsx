@@ -36,22 +36,12 @@ export function CalculatorActions({
           <div className="p-4 bg-secondary rounded-lg space-y-2">
             <p className="text-sm font-medium">
               Monthly Cost: {currencySymbol} {totalCost.toFixed(2)}
-              {totalCost > 0 && (
-                <span className="text-xs text-primary ml-2">
-                  (Copy and paste this value in the Technology Parameter for calculation)
-                </span>
-              )}
             </p>
             <p className="text-sm font-medium">
               Setup Cost: {currencySymbol} {setupCost.toFixed(2)}
             </p>
-            <p className="text-sm font-medium text-primary">
+            <p className="text-sm font-medium">
               Cost per Minute: {currencySymbol} {(totalCost / (totalMinutes || 1)).toFixed(4)}
-              {totalCost > 0 && (
-                <span className="text-xs text-primary ml-2">
-                  (Copy and paste this value in the Technology Parameter for calculation)
-                </span>
-              )}
             </p>
           </div>
           

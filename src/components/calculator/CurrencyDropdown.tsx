@@ -11,7 +11,7 @@ export function CurrencyDropdown() {
   const { currency, setCurrency } = useCalculatorStateContext();
   
   return (
-    <div className="w-[180px]">
+    <div className="w-[180px] pr-6">
       <Select value={currency} onValueChange={(value: 'USD' | 'EUR') => setCurrency(value)}>
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select currency" />

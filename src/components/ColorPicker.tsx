@@ -18,7 +18,7 @@ interface ColorPickerProps {
 export function ColorPicker({ selectedColor, onColorChange }: ColorPickerProps) {
   return (
     <div className="space-y-4">
-      <Label>Select Theme Color</Label>
+      <Label>Choose Color Theme</Label>
       <RadioGroup
         value={selectedColor}
         onValueChange={onColorChange}
@@ -36,7 +36,7 @@ export function ColorPicker({ selectedColor, onColorChange }: ColorPickerProps) 
             />
             <Label
               htmlFor={color.value}
-              className="flex items-center space-x-2 rounded-md border-2 border-muted p-4 hover:border-accent cursor-pointer peer-data-[state=checked]:border-primary"
+              className="flex items-center space-x-2 rounded-full border-2 border-muted p-4 hover:border-accent cursor-pointer peer-data-[state=checked]:border-primary"
             >
               <div
                 className="w-4 h-4 rounded-full"
