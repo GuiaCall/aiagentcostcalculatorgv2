@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 interface Technology {
   id: string;
@@ -30,28 +30,20 @@ export function TechnologyParameters({
   onTechnologyChange,
   onVisibilityChange 
 }: TechnologyParametersProps) {
-  const [localTechnologies, setLocalTechnologies] = useState<Technology[]>(technologies);
-
-  useEffect(() => {
-    setLocalTechnologies(technologies);
-  }, [technologies]);
-
   const handleToggle = (id: string) => {
-    const updatedTechs = localTechnologies.map(tech =>
+    const updatedTechs = technologies.map(tech =>
       tech.id === id ? { ...tech, isSelected: !tech.isSelected } : tech
     );
-    setLocalTechnologies(updatedTechs);
     onTechnologyChange(updatedTechs);
-    onVisibilityChange(id, !localTechnologies.find(t => t.id === id)?.isSelected);
+    onVisibilityChange(id, !technologies.find(t => t.id === id)?.isSelected);
   };
 
   const handleCostChange = (id: string, cost: number) => {
     const margin = 0.2; // 20% margin
     const finalCost = cost * (1 + margin);
-    const updatedTechs = localTechnologies.map(tech =>
+    const updatedTechs = technologies.map(tech =>
       tech.id === id ? { ...tech, costPerMinute: finalCost } : tech
     );
-    setLocalTechnologies(updatedTechs);
     onTechnologyChange(updatedTechs);
   };
 
@@ -59,9 +51,7 @@ export function TechnologyParameters({
     const handleStorageChange = () => {
       const storedTechs = localStorage.getItem('technologies');
       if (storedTechs) {
-        const parsedTechs = JSON.parse(storedTechs);
-        setLocalTechnologies(parsedTechs);
-        onTechnologyChange(parsedTechs);
+        onTechnologyChange(JSON.parse(storedTechs));
       }
     };
 
@@ -69,16 +59,12 @@ export function TechnologyParameters({
     return () => window.removeEventListener('storage', handleStorageChange);
   }, [onTechnologyChange]);
 
-  if (!localTechnologies || localTechnologies.length === 0) {
-    return null;
-  }
-
   return (
     <Card className="p-6 space-y-4">
-      <h3 className="text-lg font-semibold mb-4">Technology Parameters</h3>
-      <div className="space-y-6">
-        {localTechnologies.map((tech) => (
-          <div key={tech.id} className="space-y-3 border-b pb-4 last:border-b-0">
+      <h3 className="text-lg font-semibold">Technology Parameters</h3>
+      <div className="space-y-4">
+        {technologies.map((tech) => (
+          <div key={tech.id} className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <Switch
@@ -86,7 +72,7 @@ export function TechnologyParameters({
                   onCheckedChange={() => handleToggle(tech.id)}
                   id={`toggle-${tech.id}`}
                 />
-                <Label htmlFor={`toggle-${tech.id}`} className="text-base font-medium">
+                <Label htmlFor={`toggle-${tech.id}`} className="flex-1">
                   {tech.name}
                 </Label>
               </div>
@@ -94,7 +80,7 @@ export function TechnologyParameters({
                 <Button 
                   variant="outline" 
                   size="sm"
-                  className="bg-primary/10 hover:bg-primary/20 text-primary font-semibold"
+                  className="animate-pulse hover:animate-none bg-primary/10 hover:bg-primary/20 text-primary font-semibold"
                   onClick={() => window.open(PRICING_LINKS[tech.id as keyof typeof PRICING_LINKS], '_blank')}
                 >
                   View Pricing <ExternalLink className="ml-2 h-4 w-4" />
@@ -103,11 +89,7 @@ export function TechnologyParameters({
             </div>
             {tech.isSelected && (
               <div className="ml-14">
-                <Label htmlFor={`cost-${tech.id}`} className="block text-sm text-muted-foreground mb-2">
-                  Cost per minute ($)
-                </Label>
                 <Input
-                  id={`cost-${tech.id}`}
                   type="number"
                   value={tech.costPerMinute}
                   onChange={(e) => handleCostChange(tech.id, Number(e.target.value))}
