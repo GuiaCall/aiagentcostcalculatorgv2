@@ -8,11 +8,10 @@ import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { ExternalLink, Calculator } from "lucide-react";
 import { useToast } from "./ui/use-toast";
-import { calculateCalcomCostPerMinute } from "@/utils/costCalculations";
 
 interface CalcomCalculatorProps {
   onPlanSelect: (plan: CalcomPlan, numberOfUsers: number) => void;
-  totalMinutes: number; // Add this prop
+  totalMinutes: number;
 }
 
 export function CalcomCalculator({ onPlanSelect, totalMinutes }: CalcomCalculatorProps) {
@@ -22,18 +21,17 @@ export function CalcomCalculator({ onPlanSelect, totalMinutes }: CalcomCalculato
   const { toast } = useToast();
 
   useEffect(() => {
-    if (selectedPlan) {
+    if (selectedPlan && totalMinutes > 0) {
       // Calculate team member cost
       const teamMemberCost = (selectedPlan.name === "Team" || selectedPlan.name === "Organization") && numberOfUsers > 0
         ? numberOfUsers * 12 // $12 per team member
         : 0;
       
-      // Calculate total monthly cost
+      // Calculate total monthly cost including team members
       const totalCost = selectedPlan.basePrice + teamMemberCost;
       setMonthlyTotal(totalCost);
 
-      // Calculate cost per minute and update parent
-      const costPerMinute = calculateCalcomCostPerMinute(selectedPlan, numberOfUsers, totalMinutes);
+      // Pass the selected plan and number of users to parent
       onPlanSelect(selectedPlan, numberOfUsers);
     }
   }, [selectedPlan, numberOfUsers, totalMinutes, onPlanSelect]);
@@ -53,13 +51,18 @@ export function CalcomCalculator({ onPlanSelect, totalMinutes }: CalcomCalculato
       ? numberOfUsers * 12
       : 0;
     
-    // Calculate total monthly cost
+    // Calculate total monthly cost including team members
     const totalCost = selectedPlan.basePrice + teamMemberCost;
     setMonthlyTotal(totalCost);
     
+    const costPerMinute = totalMinutes > 0 ? (totalCost / totalMinutes).toFixed(3) : 0;
+    
     toast({
       title: "Monthly Cost Calculated",
-      description: `Base Plan Cost: $${selectedPlan.basePrice}\nTeam Members Cost: $${teamMemberCost}\nTotal: $${totalCost}\nCost Per Minute: $${calculateCalcomCostPerMinute(selectedPlan, numberOfUsers, totalMinutes)}`,
+      description: `Base Plan Cost: $${selectedPlan.basePrice}
+Team Members Cost: $${teamMemberCost}
+Total Monthly Cost: $${totalCost}
+Cost Per Minute: $${costPerMinute}`,
     });
   };
 
