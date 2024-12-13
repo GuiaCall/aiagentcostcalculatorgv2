@@ -33,6 +33,13 @@ export function SynthflowCalculator({
       
       setSelectedPlan(updatedPlan);
       onPlanSelect(updatedPlan, billingType);
+
+      // Update the technology parameters with the new cost per minute
+      const technologies = JSON.parse(localStorage.getItem('technologies') || '[]');
+      const updatedTechnologies = technologies.map((tech: any) =>
+        tech.id === 'synthflow' ? { ...tech, costPerMinute: costPerMinute } : tech
+      );
+      localStorage.setItem('technologies', JSON.stringify(updatedTechnologies));
     }
   };
 

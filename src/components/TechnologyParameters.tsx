@@ -45,6 +45,19 @@ export function TechnologyParameters({
     onTechnologyChange(updatedTechs);
   };
 
+  // Listen for changes in localStorage
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const storedTechs = localStorage.getItem('technologies');
+      if (storedTechs) {
+        onTechnologyChange(JSON.parse(storedTechs));
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [onTechnologyChange]);
+
   return (
     <Card className="p-6 space-y-4">
       <h3 className="text-lg font-semibold">Technology Parameters</h3>
