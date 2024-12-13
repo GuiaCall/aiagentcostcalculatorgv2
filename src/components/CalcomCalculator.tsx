@@ -12,9 +12,10 @@ import { useToast } from "./ui/use-toast";
 interface CalcomCalculatorProps {
   onPlanSelect: (plan: CalcomPlan, numberOfUsers: number) => void;
   totalMinutes: number;
+  margin?: number;
 }
 
-export function CalcomCalculator({ onPlanSelect, totalMinutes }: CalcomCalculatorProps) {
+export function CalcomCalculator({ onPlanSelect, totalMinutes, margin = 20 }: CalcomCalculatorProps) {
   const [selectedPlan, setSelectedPlan] = useState<CalcomPlan | null>(null);
   const [numberOfUsers, setNumberOfUsers] = useState<number>(1);
   const [monthlyTotal, setMonthlyTotal] = useState<number>(0);
@@ -51,11 +52,12 @@ export function CalcomCalculator({ onPlanSelect, totalMinutes }: CalcomCalculato
     setMonthlyTotal(totalCost);
     
     const costPerMinute = totalMinutes > 0 ? Number((totalCost / totalMinutes).toFixed(3)) : 0;
+    const costPerMinuteWithMargin = costPerMinute * (1 + margin / 100);
 
     // Update the technologies array with the new cost per minute
     const updatedPlan = {
       ...selectedPlan,
-      costPerMinute
+      costPerMinute: costPerMinuteWithMargin
     };
     onPlanSelect(updatedPlan, numberOfUsers);
     
@@ -64,7 +66,7 @@ export function CalcomCalculator({ onPlanSelect, totalMinutes }: CalcomCalculato
       description: `Base Plan Cost: $${selectedPlan.basePrice}
 Team Members Cost: $${teamMemberCost}
 Total Monthly Cost: $${totalCost}
-Cost Per Minute: $${costPerMinute}`,
+Cost Per Minute: $${costPerMinuteWithMargin.toFixed(3)}`,
     });
   };
 
@@ -126,9 +128,18 @@ Cost Per Minute: $${costPerMinute}`,
       </div>
 
       {monthlyTotal > 0 && (
-        <div className="mt-4 p-4 bg-primary/10 rounded-lg">
+        <div className="mt-4 p-4 bg-primary/10 rounded-lg space-y-2">
           <p className="text-sm font-medium">
-            Total Monthly Cost: ${monthlyTotal.toFixed(2)}
+            Setup Cost: ${selectedPlan?.basePrice.toFixed(2)}
+          </p>
+          <p className="text-sm font-medium">
+            Monthly Cost: ${monthlyTotal.toFixed(2)}
+          </p>
+          <p className="text-sm font-medium">
+            Cost Per Minute (with {margin}% margin): ${((monthlyTotal / totalMinutes) * (1 + margin / 100)).toFixed(3)}
+          </p>
+          <p className="text-sm font-medium">
+            Monthly Cost Per Minute: ${(monthlyTotal / totalMinutes).toFixed(3)}
           </p>
         </div>
       )}
