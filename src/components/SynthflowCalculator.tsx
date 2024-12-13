@@ -47,7 +47,6 @@ export function SynthflowCalculator({
     );
     localStorage.setItem('technologies', JSON.stringify(updatedTechnologies));
     
-    // Dispatch a storage event to notify other components
     window.dispatchEvent(new Event('storage'));
     
     toast({
@@ -105,63 +104,64 @@ export function SynthflowCalculator({
           </RadioGroup>
         </div>
 
-      <div className="space-y-2">
-        <Label>Select Plan</Label>
-        <Select
-          onValueChange={handlePlanSelect}
-          defaultValue={recommendedPlan?.name}
-          value={selectedPlan?.name}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select plan" />
-          </SelectTrigger>
-          <SelectContent>
-            {SYNTHFLOW_PLANS.map((plan) => (
-              <SelectItem key={plan.name} value={plan.name}>
-                {plan.name} - {plan.minutesPerMonth} mins/month (${billingType === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice}/month{billingType === 'yearly' ? ' billed yearly' : ''})
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {recommendedPlan && (
-        <div className="p-4 bg-secondary rounded-lg space-y-3">
-          <p className="font-semibold">Recommended Plan: {recommendedPlan.name}</p>
-          <p className="text-sm text-gray-600">
-            Based on your estimated usage of {totalMinutes} minutes per month
-          </p>
-          <div className="text-sm text-gray-600">
-            <p>Monthly Price: ${billingType === 'monthly' ? recommendedPlan.monthlyPrice : recommendedPlan.yearlyPrice}/month</p>
-            <div className="flex items-center gap-2">
-              <p>Base Cost per Minute: ${baseCostPerMinute.toFixed(4)}/min</p>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={handleApplyCost}
-                className="ml-2 text-xs"
-              >
-                Apply Cost <ArrowRight className="ml-1 h-3 w-3" />
-              </Button>
-            </div>
-            <p className="font-medium text-primary">
-              Final Cost per Minute (including margin): ${(baseCostPerMinute * 1.2).toFixed(4)}/min
-            </p>
-            {billingType === 'yearly' && (
-              <p className="font-medium text-primary">
-                Total Yearly Cost: ${(recommendedPlan.yearlyPrice * 12).toFixed(2)}/year
-              </p>
-            )}
-          </div>
-          <Button 
-            variant="outline"
-            className="w-full mt-2"
-            onClick={() => window.open(SYNTHFLOW_PRICING_URL, '_blank')}
+        <div className="space-y-2">
+          <Label>Select Plan</Label>
+          <Select
+            onValueChange={handlePlanSelect}
+            defaultValue={recommendedPlan?.name}
+            value={selectedPlan?.name}
           >
-            Get This Plan <ExternalLink className="ml-2 h-4 w-4" />
-          </Button>
+            <SelectTrigger>
+              <SelectValue placeholder="Select plan" />
+            </SelectTrigger>
+            <SelectContent>
+              {SYNTHFLOW_PLANS.map((plan) => (
+                <SelectItem key={plan.name} value={plan.name}>
+                  {plan.name} - {plan.minutesPerMonth} mins/month (${billingType === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice}/month{billingType === 'yearly' ? ' billed yearly' : ''})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
-      )}
+
+        {recommendedPlan && (
+          <div className="p-4 bg-secondary rounded-lg space-y-3">
+            <p className="font-semibold">Recommended Plan: {recommendedPlan.name}</p>
+            <p className="text-sm text-gray-600">
+              Based on your estimated usage of {totalMinutes} minutes per month
+            </p>
+            <div className="text-sm text-gray-600">
+              <p>Monthly Price: ${billingType === 'monthly' ? recommendedPlan.monthlyPrice : recommendedPlan.yearlyPrice}/month</p>
+              <div className="flex items-center gap-2">
+                <p>Base Cost per Minute: ${baseCostPerMinute.toFixed(4)}/min</p>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleApplyCost}
+                  className="ml-2 text-xs"
+                >
+                  Apply Cost <ArrowRight className="ml-1 h-3 w-3" />
+                </Button>
+              </div>
+              <p className="font-medium text-primary">
+                Final Cost per Minute (including margin): ${(baseCostPerMinute * 1.2).toFixed(4)}/min
+              </p>
+              {billingType === 'yearly' && (
+                <p className="font-medium text-primary">
+                  Total Yearly Cost: ${(recommendedPlan.yearlyPrice * 12).toFixed(2)}/year
+                </p>
+              )}
+            </div>
+            <Button 
+              variant="outline"
+              className="w-full mt-2"
+              onClick={() => window.open(SYNTHFLOW_PRICING_URL, '_blank')}
+            >
+              Get This Plan <ExternalLink className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        )}
+      </div>
     </Card>
   );
 }
