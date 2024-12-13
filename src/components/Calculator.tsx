@@ -22,6 +22,7 @@ import { InvoiceHistory } from "@/types/invoice";
 const EXCHANGE_RATE = 0.85; // 1 USD = 0.85 EUR (example rate)
 
 export function Calculator() {
+  const { toast } = useToast();
   const state = useCalculatorState();
   const logic = useCalculatorLogic({ ...state, currency: state.currency });
 
