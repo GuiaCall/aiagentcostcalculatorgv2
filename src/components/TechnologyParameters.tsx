@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
+import { useEffect } from "react";
 
 interface Technology {
   id: string;
@@ -81,7 +82,13 @@ export function TechnologyParameters({
                   step="0.001"
                   min="0"
                   className="w-32"
+                  readOnly={tech.id === 'calcom'} // Make Cal.com input readonly
                 />
+                {tech.id === 'calcom' && (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    This value is automatically calculated from Cal.com plan settings
+                  </p>
+                )}
               </div>
             )}
           </div>
