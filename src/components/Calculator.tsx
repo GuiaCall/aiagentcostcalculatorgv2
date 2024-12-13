@@ -12,13 +12,17 @@ import { CalculatorActions } from "./calculator/CalculatorActions";
 import { CalculatorPreview } from "./calculator/CalculatorPreview";
 import { useCalculatorState } from "./calculator/CalculatorState";
 import { useCalculatorLogic } from "./calculator/CalculatorLogic";
+import { Switch } from "./ui/switch";
+import { Label } from "./ui/label";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { format } from "date-fns";
 
+const EXCHANGE_RATE = 0.85; // 1 USD = 0.85 EUR (example rate)
+
 export function Calculator() {
   const state = useCalculatorState();
-  const logic = useCalculatorLogic(state);
+  const logic = useCalculatorLogic({ ...state, currency: state.currency });
 
   const handleSettingChange = (setting: string, value: number) => {
     switch (setting) {
@@ -107,8 +111,23 @@ export function Calculator() {
     localStorage.setItem('invoiceHistory', JSON.stringify(state.invoices));
   }, [state.invoices]);
 
+  const convertCurrency = (amount: number) => {
+    return state.currency === 'EUR' ? amount * EXCHANGE_RATE : amount;
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto p-6 space-y-8 animate-fadeIn">
+      <div className="flex items-center space-x-2 mb-4">
+        <Switch
+          checked={state.currency === 'EUR'}
+          onCheckedChange={(checked) => state.setCurrency(checked ? 'EUR' : 'USD')}
+          id="currency-toggle"
+        />
+        <Label htmlFor="currency-toggle">
+          Display in {state.currency === 'USD' ? 'EUR' : 'USD'}
+        </Label>
+      </div>
+
       <CalculatorHeader
         agencyInfo={state.agencyInfo}
         clientInfo={state.clientInfo}
@@ -166,19 +185,24 @@ export function Calculator() {
         onCalculate={logic.calculateCost}
         onPreviewToggle={() => state.setShowPreview(!state.showPreview)}
         onExportPDF={() => exportPDF()}
-        totalCost={state.totalCost}
+        totalCost={convertCurrency(state.totalCost || 0)}
+        setupCost={convertCurrency(state.setupCost || 0)}
+        currency={state.currency}
       />
 
-      <CalculatorPreview
-        showPreview={state.showPreview}
-        agencyInfo={state.agencyInfo}
-        clientInfo={state.clientInfo}
-        totalMinutes={state.totalMinutes}
-        totalCost={state.totalCost}
-        setupCost={state.setupCost}
-        taxRate={state.taxRate}
-        themeColor={state.themeColor}
-      />
+      {state.showPreview && (
+        <CalculatorPreview
+          showPreview={state.showPreview}
+          agencyInfo={state.agencyInfo}
+          clientInfo={state.clientInfo}
+          totalMinutes={state.totalMinutes}
+          totalCost={convertCurrency(state.totalCost || 0)}
+          setupCost={convertCurrency(state.setupCost || 0)}
+          taxRate={state.taxRate}
+          themeColor={state.themeColor}
+          currency={state.currency}
+        />
+      )}
 
       <InvoiceHistoryList
         invoices={state.invoices}
@@ -188,6 +212,7 @@ export function Calculator() {
         onSave={(invoice) => logic.handleSave(invoice, state.setEditingId, state.setRecalculatedId)}
         editingId={state.editingId}
         recalculatedId={state.recalculatedId}
+        currency={state.currency}
       />
     </div>
   );
