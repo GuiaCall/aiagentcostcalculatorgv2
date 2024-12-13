@@ -21,14 +21,17 @@ export function SynthflowCalculator({
   const handlePlanSelect = (planName: string) => {
     const plan = SYNTHFLOW_PLANS.find(p => p.name === planName);
     if (plan) {
-      setSelectedPlan(plan);
       const monthlyPrice = billingType === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice;
       const costPerMinute = plan.minutesPerMonth > 0 ? monthlyPrice / plan.minutesPerMonth : 0;
+      
+      // Update the selected plan with the calculated cost per minute
       const updatedPlan = {
         ...plan,
         monthlyPrice: monthlyPrice,
         costPerMinute: costPerMinute
       };
+      
+      setSelectedPlan(updatedPlan);
       onPlanSelect(updatedPlan, billingType);
     }
   };
@@ -43,12 +46,12 @@ export function SynthflowCalculator({
     plan => plan.minutesPerMonth >= totalMinutes
   );
 
-  // Update recommended plan when billing type changes
+  // Update recommended plan when billing type changes or when total minutes change
   useEffect(() => {
     if (recommendedPlan && (!selectedPlan || selectedPlan.name !== recommendedPlan.name)) {
       handlePlanSelect(recommendedPlan.name);
     }
-  }, [recommendedPlan, billingType]);
+  }, [recommendedPlan, billingType, totalMinutes]);
 
   return (
     <Card className="p-6 space-y-6">
