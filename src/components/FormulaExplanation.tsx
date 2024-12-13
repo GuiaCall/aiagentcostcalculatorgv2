@@ -5,6 +5,7 @@ import { TwilioFormula } from "./formula/TwilioFormula";
 import { MakeFormula } from "./formula/MakeFormula";
 import { SynthflowFormula } from "./formula/SynthflowFormula";
 import { DefaultCosts } from "./formula/DefaultCosts";
+import { TechnologyParametersFormula } from "./formula/TechnologyParameters";
 
 export function FormulaExplanation() {
   return (
@@ -13,6 +14,7 @@ export function FormulaExplanation() {
       
       <div className="space-y-4">
         <BaseFormula />
+        <TechnologyParametersFormula />
         <CalcomFormula />
         <TwilioFormula />
         <MakeFormula />
