@@ -136,7 +136,7 @@ export function useCalculatorLogic({
   };
 
   const exportPDF = async () => {
-    const element = document.querySelector('.invoice-preview');
+    const element = document.querySelector('.invoice-preview') as HTMLElement;
     if (!element) {
       toast({
         title: "Error",
