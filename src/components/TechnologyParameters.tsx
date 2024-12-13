@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface Technology {
   id: string;
@@ -30,20 +30,28 @@ export function TechnologyParameters({
   onTechnologyChange,
   onVisibilityChange 
 }: TechnologyParametersProps) {
+  const [localTechnologies, setLocalTechnologies] = useState<Technology[]>(technologies);
+
+  useEffect(() => {
+    setLocalTechnologies(technologies);
+  }, [technologies]);
+
   const handleToggle = (id: string) => {
-    const updatedTechs = technologies.map(tech =>
+    const updatedTechs = localTechnologies.map(tech =>
       tech.id === id ? { ...tech, isSelected: !tech.isSelected } : tech
     );
+    setLocalTechnologies(updatedTechs);
     onTechnologyChange(updatedTechs);
-    onVisibilityChange(id, !technologies.find(t => t.id === id)?.isSelected);
+    onVisibilityChange(id, !localTechnologies.find(t => t.id === id)?.isSelected);
   };
 
   const handleCostChange = (id: string, cost: number) => {
     const margin = 0.2; // 20% margin
     const finalCost = cost * (1 + margin);
-    const updatedTechs = technologies.map(tech =>
+    const updatedTechs = localTechnologies.map(tech =>
       tech.id === id ? { ...tech, costPerMinute: finalCost } : tech
     );
+    setLocalTechnologies(updatedTechs);
     onTechnologyChange(updatedTechs);
   };
 
@@ -51,7 +59,9 @@ export function TechnologyParameters({
     const handleStorageChange = () => {
       const storedTechs = localStorage.getItem('technologies');
       if (storedTechs) {
-        onTechnologyChange(JSON.parse(storedTechs));
+        const parsedTechs = JSON.parse(storedTechs);
+        setLocalTechnologies(parsedTechs);
+        onTechnologyChange(parsedTechs);
       }
     };
 
@@ -59,7 +69,7 @@ export function TechnologyParameters({
     return () => window.removeEventListener('storage', handleStorageChange);
   }, [onTechnologyChange]);
 
-  if (!technologies || technologies.length === 0) {
+  if (!localTechnologies || localTechnologies.length === 0) {
     return null;
   }
 
@@ -67,7 +77,7 @@ export function TechnologyParameters({
     <Card className="p-6 space-y-4">
       <h3 className="text-lg font-semibold mb-4">Technology Parameters</h3>
       <div className="space-y-6">
-        {technologies.map((tech) => (
+        {localTechnologies.map((tech) => (
           <div key={tech.id} className="space-y-3 border-b pb-4 last:border-b-0">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
