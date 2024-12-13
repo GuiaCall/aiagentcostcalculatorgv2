@@ -22,16 +22,13 @@ export function CalcomCalculator({ onPlanSelect, totalMinutes }: CalcomCalculato
 
   useEffect(() => {
     if (selectedPlan && totalMinutes > 0) {
-      // Calculate team member cost
       const teamMemberCost = (selectedPlan.name === "Team" || selectedPlan.name === "Organization") && numberOfUsers > 0
-        ? numberOfUsers * 12 // $12 per team member
+        ? numberOfUsers * 12
         : 0;
       
-      // Calculate total monthly cost including team members
       const totalCost = selectedPlan.basePrice + teamMemberCost;
       setMonthlyTotal(totalCost);
 
-      // Pass the selected plan and number of users to parent
       onPlanSelect(selectedPlan, numberOfUsers);
     }
   }, [selectedPlan, numberOfUsers, totalMinutes, onPlanSelect]);
@@ -46,16 +43,21 @@ export function CalcomCalculator({ onPlanSelect, totalMinutes }: CalcomCalculato
       return;
     }
 
-    // Calculate team member cost
     const teamMemberCost = (selectedPlan.name === "Team" || selectedPlan.name === "Organization") && numberOfUsers > 0
       ? numberOfUsers * 12
       : 0;
     
-    // Calculate total monthly cost including team members
     const totalCost = selectedPlan.basePrice + teamMemberCost;
     setMonthlyTotal(totalCost);
     
-    const costPerMinute = totalMinutes > 0 ? (totalCost / totalMinutes).toFixed(3) : 0;
+    const costPerMinute = totalMinutes > 0 ? Number((totalCost / totalMinutes).toFixed(3)) : 0;
+
+    // Update the technologies array with the new cost per minute
+    const updatedPlan = {
+      ...selectedPlan,
+      costPerMinute
+    };
+    onPlanSelect(updatedPlan, numberOfUsers);
     
     toast({
       title: "Monthly Cost Calculated",

@@ -117,6 +117,17 @@ export function Calculator() {
     return state.currency === 'EUR' ? amount * EXCHANGE_RATE : amount;
   };
 
+  const handleCalcomPlanSelect = (plan: CalcomPlan, users: number) => {
+    state.setSelectedCalcomPlan(plan);
+    if (plan.costPerMinute !== undefined) {
+      state.setTechnologies((techs) =>
+        techs.map((tech) =>
+          tech.id === "calcom" ? { ...tech, costPerMinute: plan.costPerMinute || 0 } : tech
+        )
+      );
+    }
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto p-6 space-y-8 animate-fadeIn">
       <div className="flex items-center space-x-2 mb-4">
@@ -177,8 +188,8 @@ export function Calculator() {
 
       {state.technologies.find((t) => t.id === "calcom")?.isSelected && (
         <CalcomCalculator 
-          onPlanSelect={logic.handleCalcomPlanSelect} 
-          totalMinutes={state.totalMinutes} // Pass totalMinutes prop
+          onPlanSelect={handleCalcomPlanSelect}
+          totalMinutes={state.totalMinutes}
         />
       )}
 

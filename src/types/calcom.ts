@@ -3,6 +3,7 @@ export interface CalcomPlan {
   basePrice: number;
   allowsTeam: boolean;
   pricePerUser: number;
+  costPerMinute?: number;
 }
 
 export interface CalcomCalculation {
