@@ -39,13 +39,14 @@ export function TechnologyParameters({
   };
 
   const handleCostChange = (id: string, cost: number) => {
+    const margin = 0.2; // 20% margin
+    const finalCost = cost * (1 + margin);
     const updatedTechs = technologies.map(tech =>
-      tech.id === id ? { ...tech, costPerMinute: cost } : tech
+      tech.id === id ? { ...tech, costPerMinute: finalCost } : tech
     );
     onTechnologyChange(updatedTechs);
   };
 
-  // Listen for changes in localStorage
   useEffect(() => {
     const handleStorageChange = () => {
       const storedTechs = localStorage.getItem('technologies');
@@ -95,11 +96,16 @@ export function TechnologyParameters({
                   step="0.001"
                   min="0"
                   className="w-32"
-                  readOnly={tech.id === 'calcom'} // Make Cal.com input readonly
+                  readOnly={tech.id === 'calcom' || tech.id === 'synthflow'} // Make Cal.com and Synthflow inputs readonly
                 />
                 {tech.id === 'calcom' && (
                   <p className="text-sm text-muted-foreground mt-1">
                     This value is automatically calculated from Cal.com plan settings
+                  </p>
+                )}
+                {tech.id === 'synthflow' && (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    This value is automatically calculated from Synthflow plan settings
                   </p>
                 )}
               </div>
