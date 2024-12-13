@@ -35,9 +35,9 @@ export function CalcomCalculator({ onPlanSelect }: CalcomCalculatorProps) {
       return;
     }
 
-    // Calculate team member cost
+    // Calculate team member cost using the new formula: (Number of Users - 1) × 12USD
     const teamMemberCost = selectedPlan.allowsTeam 
-      ? (numberOfUsers - 1) * selectedPlan.pricePerUser 
+      ? (numberOfUsers - 1) * 12 // Fixed $12 per additional user
       : 0;
     
     // Calculate total monthly cost
@@ -92,7 +92,7 @@ export function CalcomCalculator({ onPlanSelect }: CalcomCalculatorProps) {
             onChange={(e) => setNumberOfUsers(Math.max(1, parseInt(e.target.value) || 1))}
           />
           <p className="text-sm text-muted-foreground">
-            Additional team members cost ${selectedPlan.pricePerUser}/month each
+            Additional team members cost $12/month each
           </p>
         </div>
       )}
