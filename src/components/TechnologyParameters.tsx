@@ -45,17 +45,26 @@ export function TechnologyParameters({
     onTechnologyChange(updatedTechs);
   };
 
-  // Listen for changes in localStorage
+  // Listen for both storage and custom events
   useEffect(() => {
-    const handleStorageChange = () => {
-      const storedTechs = localStorage.getItem('technologies');
-      if (storedTechs) {
-        onTechnologyChange(JSON.parse(storedTechs));
+    const handleTechnologiesUpdate = (event: Event) => {
+      if (event instanceof CustomEvent) {
+        onTechnologyChange(event.detail);
+      } else {
+        const storedTechs = localStorage.getItem('technologies');
+        if (storedTechs) {
+          onTechnologyChange(JSON.parse(storedTechs));
+        }
       }
     };
 
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    window.addEventListener('storage', handleTechnologiesUpdate);
+    window.addEventListener('technologiesUpdated', handleTechnologiesUpdate);
+
+    return () => {
+      window.removeEventListener('storage', handleTechnologiesUpdate);
+      window.removeEventListener('technologiesUpdated', handleTechnologiesUpdate);
+    };
   }, [onTechnologyChange]);
 
   return (
@@ -95,11 +104,11 @@ export function TechnologyParameters({
                   step="0.001"
                   min="0"
                   className="w-32"
-                  readOnly={tech.id === 'calcom'} // Make Cal.com input readonly
+                  readOnly={tech.id === 'calcom' || tech.id === 'synthflow'} // Make Synthflow input readonly too
                 />
-                {tech.id === 'calcom' && (
+                {(tech.id === 'calcom' || tech.id === 'synthflow') && (
                   <p className="text-sm text-muted-foreground mt-1">
-                    This value is automatically calculated from Cal.com plan settings
+                    This value is automatically calculated from {tech.id === 'calcom' ? 'Cal.com' : 'Synthflow'} plan settings
                   </p>
                 )}
               </div>
