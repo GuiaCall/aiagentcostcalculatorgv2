@@ -4,7 +4,6 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
-import { useEffect } from "react";
 
 interface Technology {
   id: string;
@@ -75,26 +74,14 @@ export function TechnologyParameters({
             </div>
             {tech.isSelected && (
               <div className="ml-14">
-                {tech.id === 'calcom' ? (
-                  <div className="flex items-center space-x-2">
-                    <Input
-                      type="number"
-                      value={tech.costPerMinute}
-                      readOnly
-                      className="w-32 bg-gray-50"
-                    />
-                    <span className="text-sm text-gray-500">per minute</span>
-                  </div>
-                ) : (
-                  <Input
-                    type="number"
-                    value={tech.costPerMinute}
-                    onChange={(e) => handleCostChange(tech.id, Number(e.target.value))}
-                    step="0.001"
-                    min="0"
-                    className="w-32"
-                  />
-                )}
+                <Input
+                  type="number"
+                  value={tech.costPerMinute}
+                  onChange={(e) => handleCostChange(tech.id, Number(e.target.value))}
+                  step="0.001"
+                  min="0"
+                  className="w-32"
+                />
               </div>
             )}
           </div>
