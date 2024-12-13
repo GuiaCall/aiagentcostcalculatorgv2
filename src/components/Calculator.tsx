@@ -146,6 +146,7 @@ function CalculatorContent() {
         totalCost={convertCurrency(state.totalCost || 0)}
         setupCost={convertCurrency(state.setupCost || 0)}
         currency={state.currency}
+        totalMinutes={state.totalMinutes}
       />
 
       {state.showPreview && (
