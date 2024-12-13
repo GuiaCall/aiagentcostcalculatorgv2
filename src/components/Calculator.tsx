@@ -12,15 +12,15 @@ import { CalculatorActions } from "./calculator/CalculatorActions";
 import { CalculatorPreview } from "./calculator/CalculatorPreview";
 import { useCalculatorState } from "./calculator/CalculatorState";
 import { useCalculatorLogic } from "./calculator/CalculatorLogic";
+import { calculateSetupCost } from "@/utils/setupCostCalculations";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { format } from "date-fns";
 import { InvoiceHistory } from "@/types/invoice";
-import { CalcomPlan } from "@/types/calcom";
 
-const EXCHANGE_RATE = 0.85; // 1 USD = 0.85 EUR (example rate)
+const EXCHANGE_RATE = 0.85;
 
 export function Calculator() {
   const { toast } = useToast();
@@ -42,6 +42,20 @@ export function Calculator() {
         state.setTaxRate(value);
         break;
     }
+  };
+
+  const calculateTotalSetupCost = () => {
+    const setupCost = calculateSetupCost(
+      state.technologies,
+      state.selectedMakePlan,
+      state.selectedSynthflowPlan,
+      state.selectedCalcomPlan,
+      state.numberOfUsers,
+      state.selectedTwilioRate,
+      state.margin
+    );
+    state.setSetupCost(setupCost);
+    return setupCost;
   };
 
   const exportPDF = async (invoice?: InvoiceHistory) => {
@@ -120,6 +134,7 @@ export function Calculator() {
 
   const handleCalcomPlanSelect = (plan: CalcomPlan, users: number) => {
     state.setSelectedCalcomPlan(plan);
+    state.setNumberOfUsers(users);
     if (plan.costPerMinute !== undefined) {
       state.setTechnologies((techs) =>
         techs.map((tech) =>
@@ -128,6 +143,18 @@ export function Calculator() {
       );
     }
   };
+
+  useEffect(() => {
+    calculateTotalSetupCost();
+  }, [
+    state.technologies,
+    state.selectedMakePlan,
+    state.selectedSynthflowPlan,
+    state.selectedCalcomPlan,
+    state.numberOfUsers,
+    state.selectedTwilioRate,
+    state.margin
+  ]);
 
   return (
     <div className="w-full max-w-4xl mx-auto p-6 space-y-8 animate-fadeIn">
