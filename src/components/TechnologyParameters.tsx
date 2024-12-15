@@ -37,11 +37,8 @@ export function TechnologyParameters({
   };
 
   const handleCostChange = (id: string, value: string) => {
-    // Convert empty string to 0, otherwise parse the float value
-    const numericValue = value === '' ? 0 : parseFloat(value);
-    
     const updatedTechs = technologies.map(tech =>
-      tech.id === id ? { ...tech, costPerMinute: numericValue } : tech
+      tech.id === id ? { ...tech, costPerMinute: value === '' ? 0 : parseFloat(value) } : tech
     );
     onTechnologyChange(updatedTechs);
   };
@@ -72,7 +69,7 @@ export function TechnologyParameters({
                 <div className="relative flex-1">
                   <Input
                     type="number"
-                    value={tech.costPerMinute}
+                    value={tech.costPerMinute || ''}
                     onChange={(e) => handleCostChange(tech.id, e.target.value)}
                     step="any"
                     min="0"
