@@ -30,7 +30,7 @@ export function TechnologyParameters({
 
   const handleToggle = (id: string) => {
     const updatedTechs = technologies.map(tech =>
-      tech.id === id ? { ...tech, isSelected: !tech.isSelected, costPerMinute: 0 } : tech
+      tech.id === id ? { ...tech, isSelected: !tech.isSelected } : tech
     );
     onTechnologyChange(updatedTechs);
     onVisibilityChange(id, !technologies.find(t => t.id === id)?.isSelected);
@@ -64,22 +64,18 @@ export function TechnologyParameters({
               </div>
             </div>
             {tech.isSelected && (
-              <div className="ml-14 flex items-center space-x-2 relative">
+              <div className="ml-14 flex items-center space-x-2">
                 <span className="text-sm text-muted-foreground">
                   {currencySymbol}
                 </span>
                 <div className="relative flex-1">
                   <Input
                     type="number"
-                    value={tech.costPerMinute}
+                    value={tech.costPerMinute || ''}
                     onChange={(e) => handleCostChange(tech.id, e.target.value)}
-                    step="0.001"
+                    step="any"
                     min="0"
-                    defaultValue="0"
-                    className={`w-32 pr-8 ${
-                      tech.costPerMinute > 0 ? 'bg-green-50' : 'bg-red-50'
-                    }`}
-                    readOnly={tech.id === 'calcom'}
+                    className="w-32 pr-8"
                   />
                   {tech.costPerMinute > 0 ? (
                     <Check className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-green-500" />
@@ -90,11 +86,6 @@ export function TechnologyParameters({
                 <span className="text-sm text-muted-foreground">
                   {t('perMinute')}
                 </span>
-                {tech.isSelected && tech.costPerMinute === 0 && (
-                  <span className="absolute left-32 top-full text-xs text-red-500">
-                    {t('pleaseAddValue')}
-                  </span>
-                )}
               </div>
             )}
           </div>
