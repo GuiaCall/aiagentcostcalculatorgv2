@@ -37,6 +37,7 @@ export function TechnologyParameters({
   };
 
   const handleCostChange = (id: string, value: string) => {
+    // Convert empty string to 0, otherwise parse the float value
     const numericValue = value === '' ? 0 : parseFloat(value);
     
     const updatedTechs = technologies.map(tech =>
@@ -71,13 +72,13 @@ export function TechnologyParameters({
                 <div className="relative flex-1">
                   <Input
                     type="number"
-                    value={tech.costPerMinute || ''}
+                    value={tech.costPerMinute}
                     onChange={(e) => handleCostChange(tech.id, e.target.value)}
                     step="any"
                     min="0"
                     className="w-32 pr-8"
                   />
-                  {tech.costPerMinute > 0 ? (
+                  {tech.costPerMinute >= 0 ? (
                     <Check className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-green-500" />
                   ) : (
                     <X className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-red-500" />
