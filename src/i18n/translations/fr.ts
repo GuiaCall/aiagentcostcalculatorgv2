@@ -1,15 +1,22 @@
 export const fr = {
   translation: {
+    // General
     "title": "Calculateur d'Agent Vocal IA",
     "subtitle": "Calculez les coûts de votre implémentation d'agent vocal IA",
+    
+    // Technology Parameters
     "technologyParameters": "Paramètres Technologiques",
     "pleaseAddValue": "Veuillez ajouter une valeur",
     "perMinute": "/minute",
+    
+    // Calculator Settings
     "calculatorSettings": "Paramètres du Calculateur",
     "averageCallDuration": "Durée Moyenne d'Appel (minutes)",
     "totalMinutesPerMonth": "Minutes Totales par Mois",
     "margin": "Marge (%)",
-    "taxRate": "Taux de Taxe (%)",
+    "taxRate": "Taux de TVA (%)",
+    
+    // Agency Information
     "agencyInformation": "Informations de l'Agence",
     "agencyName": "Nom de l'Agence",
     "agencyNamePlaceholder": "Nom de Votre Agence",
@@ -21,6 +28,8 @@ export const fr = {
     "emailPlaceholder": "contact@agence.fr",
     "website": "Site Web",
     "websitePlaceholder": "www.agence.fr",
+    
+    // Client Information
     "clientInformation": "Informations du Client",
     "clientName": "Nom du Client/Entreprise",
     "clientNamePlaceholder": "Nom du Client",
@@ -32,20 +41,48 @@ export const fr = {
     "contactPersonNamePlaceholder": "Nom de la Personne à Contacter",
     "contactPersonPhone": "Téléphone du Contact",
     "contactPersonPhonePlaceholder": "Téléphone de la Personne à Contacter",
+    
+    // Actions
     "calculate": "Calculer",
     "preview": "Aperçu",
-    "export": "Exporter PDF",
+    "export": "Exporter en PDF",
+    
+    // Results
     "totalCost": "Coût Total",
     "setupCost": "Coût d'Installation",
     "monthlyCost": "Coût Mensuel",
     "costPerMinute": "Coût par Minute",
+    
+    // Calculator Components
+    "makeCalculator": "Calculateur Make.com",
+    "synthflowCalculator": "Calculateur Synthflow",
+    "calcomCalculator": "Plan Cal.com",
+    "twilioCalculator": "Configuration Twilio",
+    
+    // Technology Names
+    "make.com": "Make.com",
+    "synthflow": "Synthflow",
+    "cal.com": "Cal.com",
+    "twilio": "Twilio",
+    "vapi": "Vapi",
+    
+    // Invoice History
     "invoiceHistory": "Historique des Factures",
     "invoiceNumber": "Numéro de Facture",
     "date": "Date",
     "client": "Client",
     "amount": "Montant",
     "actions": "Actions",
+    
+    // Results
+    "monthlyResults": "Coût Mensuel : ",
+    "setupResults": "Coût d'Installation : ",
+    "costPerMinuteResults": "Coût par Minute : ",
+    
+    // Footer
     "footer": "© 2024 Calculateur d'Agent Vocal IA. Tous droits réservés.",
+    
+    // Additional Calculator Text
     "viewPricing": "Voir les Prix",
     "operationsPerScenario": "Opérations par Scénario",
     "operationsHelp": "Entrez le nombre d'opérations consommées par vos scénarios Make.com",
@@ -63,14 +100,6 @@ export const fr = {
     "country": "Pays",
     "selectCountry": "Sélectionner un pays",
     "serviceType": "Type de Service",
-    "selectServiceType": "Sélectionner un type de service",
-    "makeCalculator": "Calculateur d'Opérations Make.com",
-    "synthflowCalculator": "Calculateur de Plan Synthflow",
-    "calcomCalculator": "Plan Cal.com",
-    "twilioCalculator": "Configuration Twilio",
-    "results": "Résultats",
-    "monthlyResults": "Coût Mensuel : ",
-    "setupResults": "Coût d'Installation : ",
-    "costPerMinuteResults": "Coût par Minute : "
+    "selectServiceType": "Sélectionner un type de service"
   }
-}
+};

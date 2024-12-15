@@ -30,7 +30,7 @@ export function TechnologyParameters({
 
   const handleToggle = (id: string) => {
     const updatedTechs = technologies.map(tech =>
-      tech.id === id ? { ...tech, isSelected: !tech.isSelected } : tech
+      tech.id === id ? { ...tech, isSelected: !tech.isSelected, costPerMinute: 0 } : tech
     );
     onTechnologyChange(updatedTechs);
     onVisibilityChange(id, !technologies.find(t => t.id === id)?.isSelected);
@@ -59,7 +59,7 @@ export function TechnologyParameters({
                   id={`toggle-${tech.id}`}
                 />
                 <Label htmlFor={`toggle-${tech.id}`} className="flex-1">
-                  {tech.name}
+                  {t(tech.name)}
                 </Label>
               </div>
             </div>
