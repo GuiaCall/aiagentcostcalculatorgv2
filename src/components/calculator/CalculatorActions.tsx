@@ -33,7 +33,7 @@ export function CalculatorActions({
       
       {totalCost !== null && setupCost !== null && (
         <div className="space-y-4">
-          <div className="p-4 bg-secondary rounded-lg space-y-2">
+          <div className="p-4 bg-white dark:bg-white rounded-lg space-y-2 text-primary dark:text-primary shadow-sm">
             <p className="text-sm font-medium">
               Monthly Cost: {currencySymbol} {totalCost.toFixed(2)}
             </p>
