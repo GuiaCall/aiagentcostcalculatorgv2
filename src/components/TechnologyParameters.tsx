@@ -71,10 +71,11 @@ export function TechnologyParameters({
                 <div className="relative flex-1">
                   <Input
                     type="number"
-                    value={tech.costPerMinute || '0'}
+                    value={tech.costPerMinute}
                     onChange={(e) => handleCostChange(tech.id, e.target.value)}
                     step="0.001"
                     min="0"
+                    defaultValue="0"
                     className={`w-32 pr-8 ${
                       tech.costPerMinute > 0 ? 'bg-green-50' : 'bg-red-50'
                     }`}
