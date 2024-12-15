@@ -1,4 +1,12 @@
 import { AgencyInfo, ClientInfo } from "@/types/invoice";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface InvoicePreviewProps {
   agencyInfo: AgencyInfo;
@@ -27,6 +35,8 @@ export function InvoicePreview({
 }: InvoicePreviewProps) {
   const currencySymbol = currency === 'EUR' ? '€' : '$';
   const costPerMinute = totalCost && totalMinutes ? totalCost / totalMinutes : 0;
+  const taxAmount = (totalCost || 0) * (taxRate / 100);
+  const total = (totalCost || 0) * (1 + taxRate / 100) + (setupCost || 0);
   
   return (
     <div className="space-y-6 p-6 bg-white rounded-lg shadow-lg">
@@ -59,24 +69,46 @@ export function InvoicePreview({
         <p>Contact Person: {clientInfo.contactPerson.name} ({clientInfo.contactPerson.phone})</p>
       </div>
 
-      <div className="space-y-2">
-        <h3 className="font-semibold">Cost Breakdown</h3>
-        <div className="grid grid-cols-2 gap-2">
-          <span>Setup Cost:</span>
-          <span className="text-right">{currencySymbol}{setupCost?.toFixed(2) || '0.00'}</span>
-          <span>Monthly Service Cost:</span>
-          <span className="text-right">{currencySymbol}{totalCost?.toFixed(2) || '0.00'}</span>
-          <span>Cost per Minute:</span>
-          <span className="text-right">{currencySymbol}{costPerMinute.toFixed(4)}</span>
-          <span>Tax ({taxRate}%):</span>
-          <span className="text-right">
-            {currencySymbol}{((totalCost || 0) * (taxRate / 100)).toFixed(2)}
-          </span>
-          <span className="font-semibold">Total:</span>
-          <span className="text-right font-semibold">
-            {currencySymbol}{((totalCost || 0) * (1 + taxRate / 100) + (setupCost || 0)).toFixed(2)}
-          </span>
-        </div>
+      <div className="space-y-4">
+        <h3 className="font-semibold">Invoice Details</h3>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Description</TableHead>
+              <TableHead>Quantity</TableHead>
+              <TableHead>Rate</TableHead>
+              <TableHead className="text-right">Amount</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {setupCost && setupCost > 0 && (
+              <TableRow>
+                <TableCell>Setup Cost</TableCell>
+                <TableCell>1</TableCell>
+                <TableCell>{currencySymbol}{setupCost.toFixed(2)}</TableCell>
+                <TableCell className="text-right">{currencySymbol}{setupCost.toFixed(2)}</TableCell>
+              </TableRow>
+            )}
+            <TableRow>
+              <TableCell>Monthly Service</TableCell>
+              <TableCell>{totalMinutes} minutes</TableCell>
+              <TableCell>{currencySymbol}{costPerMinute.toFixed(4)}/min</TableCell>
+              <TableCell className="text-right">{currencySymbol}{(totalCost || 0).toFixed(2)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell colSpan={3} className="text-right font-medium">Subtotal</TableCell>
+              <TableCell className="text-right">{currencySymbol}{((totalCost || 0) + (setupCost || 0)).toFixed(2)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell colSpan={3} className="text-right font-medium">Tax ({taxRate}%)</TableCell>
+              <TableCell className="text-right">{currencySymbol}{taxAmount.toFixed(2)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell colSpan={3} className="text-right font-semibold">Total</TableCell>
+              <TableCell className="text-right font-semibold">{currencySymbol}{total.toFixed(2)}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
