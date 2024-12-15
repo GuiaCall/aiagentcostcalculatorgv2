@@ -10,9 +10,9 @@ export function TwilioRateDisplay({ selection }: TwilioRateDisplayProps) {
   const totalCostPerMinute = selection.inboundVoicePrice + (selection.inboundSmsPrice || 0);
 
   return (
-    <div className="mt-2 space-y-1 text-sm text-gray-600">
-      <p>Selected rates for {selection.country} ({selection.type}):</p>
-      <ul className="list-disc pl-5">
+    <div className="mt-2 space-y-1 bg-white rounded-lg p-4 shadow-sm">
+      <p className="text-primary font-medium">Selected rates for {selection.country} ({selection.type}):</p>
+      <ul className="list-disc pl-5 text-primary">
         <li>Phone Number Cost: ${selection.phoneNumberPrice.toFixed(2)}/month</li>
         <li>Inbound Voice: ${selection.inboundVoicePrice.toFixed(4)}/minute</li>
         {selection.inboundSmsPrice && (
