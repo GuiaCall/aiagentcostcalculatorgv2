@@ -4,18 +4,6 @@ export const en = {
     "title": "AI Voice Agent Calculator",
     "subtitle": "Calculate the costs of your AI voice agent implementation",
     
-    // Technology Parameters
-    "technologyParameters": "Technology Parameters",
-    "pleaseAddValue": "Please add a value",
-    "perMinute": "/minute",
-    
-    // Calculator Settings
-    "calculatorSettings": "Calculator Settings",
-    "averageCallDuration": "Average Call Duration (minutes)",
-    "totalMinutesPerMonth": "Total Minutes per Month",
-    "margin": "Margin (%)",
-    "taxRate": "Tax Rate (%)",
-    
     // Agency Information
     "agencyInformation": "Agency Information",
     "agencyName": "Agency Name",
@@ -42,29 +30,58 @@ export const en = {
     "contactPersonPhone": "Contact Person Phone",
     "contactPersonPhonePlaceholder": "Contact Person Phone",
     
-    // Actions
-    "calculate": "Calculate",
-    "preview": "Preview",
-    "export": "Export PDF",
+    // Calculator Settings
+    "calculatorSettings": "Calculator Settings",
+    "averageCallDuration": "Average Call Duration (minutes)",
+    "totalMinutesPerMonth": "Total Minutes per Month",
+    "margin": "Margin (%)",
+    "taxRate": "Tax Rate (%)",
     
-    // Results
-    "totalCost": "Total Cost",
-    "setupCost": "Setup Cost",
-    "monthlyCost": "Monthly Cost",
-    "costPerMinute": "Cost per Minute",
+    // Technology Parameters
+    "technologyParameters": "Technology Parameters",
+    "pleaseAddValue": "Please add a value",
+    "perMinute": "/minute",
     
-    // Calculator Components
+    // Make.com Calculator
     "makeCalculator": "Make.com Operations Calculator",
-    "synthflowCalculator": "Synthflow Plan Calculator",
-    "calcomCalculator": "Cal.com Plan",
-    "twilioCalculator": "Twilio Configuration",
+    "viewMakePricing": "View Make.com Pricing",
+    "operationsPerScenario": "Operations per Scenario",
+    "operationsHelp": "Enter the number of operations consumed by your Make.com scenarios",
+    "billingCycle": "Billing Cycle",
+    "calculateOperations": "Calculate Required Operations",
     
-    // Technology Names
-    "make.com": "Make.com",
-    "synthflow": "Synthflow",
-    "cal.com": "Cal.com",
-    "twilio": "Twilio",
-    "vapi": "Vapi",
+    // Synthflow Calculator
+    "synthflowCalculator": "Synthflow Plan Calculator",
+    "viewSynthflowPricing": "View Synthflow Pricing",
+    "billingType": "Billing Type",
+    "monthlyBilling": "Monthly Billing",
+    "yearlyBilling": "Yearly Billing (Save up to 20%)",
+    "selectPlan": "Select Plan",
+    "recommendedPlan": "Recommended Plan",
+    "basedOnUsage": "Based on your estimated usage of",
+    "minutesPerMonth": "minutes per month",
+    "monthlyPrice": "Monthly Price",
+    "baseCostPerMinute": "Base Cost per Minute",
+    "copyPasteHint": "(Copy and paste this value in the Technology Parameter for calculation)",
+    "getPlan": "Get This Plan",
+    
+    // Cal.com Calculator
+    "calcomCalculator": "Cal.com Plan",
+    "viewCalcomPricing": "View Pricing",
+    "computeMonthlyCost": "Compute Monthly Cost",
+    
+    // Twilio Calculator
+    "twilioCalculator": "Twilio Configuration",
+    "country": "Country",
+    "selectCountry": "Select a country",
+    
+    // Results and Actions
+    "calculate": "Calculate",
+    "monthlyResults": "Monthly Cost: ",
+    "setupResults": "Setup Cost: ",
+    "costPerMinuteResults": "Cost per Minute: ",
+    "preview": "Preview",
+    "exportPDF": "Export PDF",
     
     // Invoice History
     "invoiceHistory": "Invoice History",
@@ -74,32 +91,14 @@ export const en = {
     "amount": "Amount",
     "actions": "Actions",
     
-    // Results
-    "monthlyResults": "Monthly Cost: ",
-    "setupResults": "Setup Cost: ",
-    "costPerMinuteResults": "Cost per Minute: ",
-    
     // Footer
     "footer": "© 2024 AI Voice Agent Calculator. All rights reserved.",
     
-    // Additional Calculator Text
-    "viewPricing": "View Pricing",
-    "operationsPerScenario": "Operations per Scenario",
-    "operationsHelp": "Enter the number of operations consumed by your Make.com scenarios",
-    "billingCycle": "Billing Cycle",
-    "monthly": "Monthly",
-    "yearly": "Yearly (Save up to 20%)",
-    "selectPlan": "Select Plan",
-    "recommendedPlan": "Recommended Plan",
-    "basedOnUsage": "Based on your estimated usage of",
-    "minutesPerMonth": "minutes per month",
-    "monthlyPrice": "Monthly Price",
-    "baseCostPerMinute": "Base Cost per Minute",
-    "copyPasteHint": "(Copy and paste this value in the Technology Parameter for calculation)",
-    "getPlan": "Get This Plan",
-    "country": "Country",
-    "selectCountry": "Select a country",
-    "serviceType": "Service Type",
-    "selectServiceType": "Select a service type"
+    // Technology Names
+    "make.com": "Make.com",
+    "synthflow": "Synthflow",
+    "cal.com": "Cal.com",
+    "twilio": "Twilio",
+    "vapi": "Vapi"
   }
 };

@@ -4,18 +4,6 @@ export const fr = {
     "title": "Calculateur d'Agent Vocal IA",
     "subtitle": "Calculez les coûts de votre implémentation d'agent vocal IA",
     
-    // Technology Parameters
-    "technologyParameters": "Paramètres Technologiques",
-    "pleaseAddValue": "Veuillez ajouter une valeur",
-    "perMinute": "/minute",
-    
-    // Calculator Settings
-    "calculatorSettings": "Paramètres du Calculateur",
-    "averageCallDuration": "Durée Moyenne d'Appel (minutes)",
-    "totalMinutesPerMonth": "Minutes Totales par Mois",
-    "margin": "Marge (%)",
-    "taxRate": "Taux de TVA (%)",
-    
     // Agency Information
     "agencyInformation": "Informations de l'Agence",
     "agencyName": "Nom de l'Agence",
@@ -42,29 +30,58 @@ export const fr = {
     "contactPersonPhone": "Téléphone du Contact",
     "contactPersonPhonePlaceholder": "Téléphone de la Personne à Contacter",
     
-    // Actions
-    "calculate": "Calculer",
-    "preview": "Aperçu",
-    "export": "Exporter en PDF",
+    // Calculator Settings
+    "calculatorSettings": "Paramètres du Calculateur",
+    "averageCallDuration": "Durée Moyenne d'Appel (minutes)",
+    "totalMinutesPerMonth": "Minutes Totales par Mois",
+    "margin": "Marge (%)",
+    "taxRate": "Taux de TVA (%)",
     
-    // Results
-    "totalCost": "Coût Total",
-    "setupCost": "Coût d'Installation",
-    "monthlyCost": "Coût Mensuel",
-    "costPerMinute": "Coût par Minute",
+    // Technology Parameters
+    "technologyParameters": "Paramètres Technologiques",
+    "pleaseAddValue": "Veuillez ajouter une valeur",
+    "perMinute": "/minute",
     
-    // Calculator Components
+    // Make.com Calculator
     "makeCalculator": "Calculateur Make.com",
-    "synthflowCalculator": "Calculateur Synthflow",
-    "calcomCalculator": "Plan Cal.com",
-    "twilioCalculator": "Configuration Twilio",
+    "viewMakePricing": "Voir les Prix Make.com",
+    "operationsPerScenario": "Opérations par Scénario",
+    "operationsHelp": "Entrez le nombre d'opérations consommées par vos scénarios Make.com",
+    "billingCycle": "Cycle de Facturation",
+    "calculateOperations": "Calculer les Opérations",
     
-    // Technology Names
-    "make.com": "Make.com",
-    "synthflow": "Synthflow",
-    "cal.com": "Cal.com",
-    "twilio": "Twilio",
-    "vapi": "Vapi",
+    // Synthflow Calculator
+    "synthflowCalculator": "Calculateur Synthflow",
+    "viewSynthflowPricing": "Voir les Prix Synthflow",
+    "billingType": "Type de Facturation",
+    "monthlyBilling": "Facturation Mensuelle",
+    "yearlyBilling": "Facturation Annuelle (Économisez jusqu'à 20%)",
+    "selectPlan": "Sélectionner un Plan",
+    "recommendedPlan": "Plan Recommandé",
+    "basedOnUsage": "Basé sur votre utilisation estimée de",
+    "minutesPerMonth": "minutes par mois",
+    "monthlyPrice": "Prix Mensuel",
+    "baseCostPerMinute": "Coût de Base par Minute",
+    "copyPasteHint": "(Copiez et collez cette valeur dans le Paramètre Technologique pour le calcul)",
+    "getPlan": "Obtenir ce Plan",
+    
+    // Cal.com Calculator
+    "calcomCalculator": "Plan Cal.com",
+    "viewCalcomPricing": "Voir les Prix",
+    "computeMonthlyCost": "Calculer le Coût Mensuel",
+    
+    // Twilio Calculator
+    "twilioCalculator": "Configuration Twilio",
+    "country": "Pays",
+    "selectCountry": "Sélectionner un pays",
+    
+    // Results and Actions
+    "calculate": "Calculer",
+    "monthlyResults": "Coût Mensuel : ",
+    "setupResults": "Coût d'Installation : ",
+    "costPerMinuteResults": "Coût par Minute : ",
+    "preview": "Aperçu",
+    "exportPDF": "Exporter en PDF",
     
     // Invoice History
     "invoiceHistory": "Historique des Factures",
@@ -74,32 +91,14 @@ export const fr = {
     "amount": "Montant",
     "actions": "Actions",
     
-    // Results
-    "monthlyResults": "Coût Mensuel : ",
-    "setupResults": "Coût d'Installation : ",
-    "costPerMinuteResults": "Coût par Minute : ",
-    
     // Footer
     "footer": "© 2024 Calculateur d'Agent Vocal IA. Tous droits réservés.",
     
-    // Additional Calculator Text
-    "viewPricing": "Voir les Prix",
-    "operationsPerScenario": "Opérations par Scénario",
-    "operationsHelp": "Entrez le nombre d'opérations consommées par vos scénarios Make.com",
-    "billingCycle": "Cycle de Facturation",
-    "monthly": "Mensuel",
-    "yearly": "Annuel (Économisez jusqu'à 20%)",
-    "selectPlan": "Sélectionner un Plan",
-    "recommendedPlan": "Plan Recommandé",
-    "basedOnUsage": "Basé sur votre utilisation estimée de",
-    "minutesPerMonth": "minutes par mois",
-    "monthlyPrice": "Prix Mensuel",
-    "baseCostPerMinute": "Coût de Base par Minute",
-    "copyPasteHint": "(Copiez et collez cette valeur dans le Paramètre Technologique pour le calcul)",
-    "getPlan": "Obtenir ce Plan",
-    "country": "Pays",
-    "selectCountry": "Sélectionner un pays",
-    "serviceType": "Type de Service",
-    "selectServiceType": "Sélectionner un type de service"
+    // Technology Names
+    "make.com": "Make.com",
+    "synthflow": "Synthflow",
+    "cal.com": "Cal.com",
+    "twilio": "Twilio",
+    "vapi": "Vapi"
   }
 };
