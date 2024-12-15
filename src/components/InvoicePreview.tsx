@@ -39,7 +39,7 @@ export function InvoicePreview({
   const total = (totalCost || 0) * (1 + taxRate / 100) + (setupCost || 0);
   
   return (
-    <div className="space-y-6 p-6 bg-white rounded-lg shadow-lg">
+    <div className="space-y-6 p-6 bg-background text-foreground border rounded-lg shadow-lg dark:bg-slate-900">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Invoice Preview</h2>
         {showColorPicker && (
@@ -71,44 +71,46 @@ export function InvoicePreview({
 
       <div className="space-y-4">
         <h3 className="font-semibold">Invoice Details</h3>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Description</TableHead>
-              <TableHead>Quantity</TableHead>
-              <TableHead>Rate</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {setupCost && setupCost > 0 && (
+        <div className="rounded-lg border bg-card text-card-foreground">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell>Setup Cost</TableCell>
-                <TableCell>1</TableCell>
-                <TableCell>{currencySymbol}{setupCost.toFixed(2)}</TableCell>
-                <TableCell className="text-right">{currencySymbol}{setupCost.toFixed(2)}</TableCell>
+                <TableHead>Description</TableHead>
+                <TableHead>Quantity</TableHead>
+                <TableHead>Rate</TableHead>
+                <TableHead className="text-right">Amount</TableHead>
               </TableRow>
-            )}
-            <TableRow>
-              <TableCell>Monthly Service</TableCell>
-              <TableCell>{totalMinutes} minutes</TableCell>
-              <TableCell>{currencySymbol}{costPerMinute.toFixed(4)}/min</TableCell>
-              <TableCell className="text-right">{currencySymbol}{(totalCost || 0).toFixed(2)}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell colSpan={3} className="text-right font-medium">Subtotal</TableCell>
-              <TableCell className="text-right">{currencySymbol}{((totalCost || 0) + (setupCost || 0)).toFixed(2)}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell colSpan={3} className="text-right font-medium">Tax ({taxRate}%)</TableCell>
-              <TableCell className="text-right">{currencySymbol}{taxAmount.toFixed(2)}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell colSpan={3} className="text-right font-semibold">Total</TableCell>
-              <TableCell className="text-right font-semibold">{currencySymbol}{total.toFixed(2)}</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {setupCost && setupCost > 0 && (
+                <TableRow>
+                  <TableCell>Setup Cost</TableCell>
+                  <TableCell>1</TableCell>
+                  <TableCell>{currencySymbol}{setupCost.toFixed(2)}</TableCell>
+                  <TableCell className="text-right">{currencySymbol}{setupCost.toFixed(2)}</TableCell>
+                </TableRow>
+              )}
+              <TableRow>
+                <TableCell>Monthly Service</TableCell>
+                <TableCell>{totalMinutes} minutes</TableCell>
+                <TableCell>{currencySymbol}{costPerMinute.toFixed(4)}/min</TableCell>
+                <TableCell className="text-right">{currencySymbol}{(totalCost || 0).toFixed(2)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell colSpan={3} className="text-right font-medium">Subtotal</TableCell>
+                <TableCell className="text-right">{currencySymbol}{((totalCost || 0) + (setupCost || 0)).toFixed(2)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell colSpan={3} className="text-right font-medium">Tax ({taxRate}%)</TableCell>
+                <TableCell className="text-right">{currencySymbol}{taxAmount.toFixed(2)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell colSpan={3} className="text-right font-semibold">Total</TableCell>
+                <TableCell className="text-right font-semibold">{currencySymbol}{total.toFixed(2)}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </div>
   );
