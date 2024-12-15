@@ -1,5 +1,5 @@
-import { Button } from "../ui/button";
-import { CalculatorIcon, Download, Eye } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface CalculatorActionsProps {
   onCalculate: () => void;
@@ -7,9 +7,8 @@ interface CalculatorActionsProps {
   onExportPDF: () => void;
   totalCost: number | null;
   setupCost: number | null;
-  currency: 'USD' | 'EUR';
+  currency: string;
   totalMinutes: number;
-  isEditing?: boolean;
 }
 
 export function CalculatorActions({
@@ -20,20 +19,30 @@ export function CalculatorActions({
   setupCost,
   currency,
   totalMinutes,
-  isEditing = false,
 }: CalculatorActionsProps) {
   const currencySymbol = currency === 'EUR' ? '€' : '$';
-  
+
   return (
     <div className="space-y-4">
-      <Button onClick={onCalculate} className="w-full bg-primary">
-        <CalculatorIcon className="mr-2 h-4 w-4" />
-        {isEditing ? 'Recalculate' : 'Calculate'}
-      </Button>
-      
+      <div className="flex flex-wrap gap-4">
+        <Button onClick={onCalculate} variant="default">
+          Calculate Cost
+        </Button>
+        <Button onClick={onPreviewToggle} variant="outline">
+          Toggle Preview
+        </Button>
+        <Button onClick={onExportPDF} variant="outline">
+          Export PDF
+        </Button>
+      </div>
+
       {totalCost !== null && setupCost !== null && (
         <div className="space-y-4">
-          <div className="p-4 bg-white dark:bg-white rounded-lg space-y-2 text-primary dark:text-primary shadow-sm">
+          <div className={cn(
+            "p-4 rounded-lg space-y-2",
+            "bg-white text-foreground",
+            "shadow-sm border border-border"
+          )}>
             <p className="text-sm font-medium">
               Monthly Cost: {currencySymbol} {totalCost.toFixed(2)}
             </p>
@@ -41,19 +50,8 @@ export function CalculatorActions({
               Setup Cost: {currencySymbol} {setupCost.toFixed(2)}
             </p>
             <p className="text-sm font-medium">
-              Cost per Minute: {currencySymbol} {(totalCost / (totalMinutes || 1)).toFixed(4)}
+              Total Minutes: {totalMinutes}
             </p>
-          </div>
-          
-          <div className="flex space-x-4">
-            <Button onClick={onPreviewToggle} variant="outline" className="flex-1">
-              <Eye className="mr-2 h-4 w-4" />
-              Preview
-            </Button>
-            <Button onClick={onExportPDF} variant="outline" className="flex-1">
-              <Download className="mr-2 h-4 w-4" />
-              Export PDF
-            </Button>
           </div>
         </div>
       )}
