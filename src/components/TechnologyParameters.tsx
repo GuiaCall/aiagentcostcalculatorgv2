@@ -37,14 +37,15 @@ export function TechnologyParameters({
   };
 
   const handleCostChange = (id: string, value: string) => {
+    const numValue = value === '' ? 0 : parseFloat(value);
     const updatedTechs = technologies.map(tech =>
-      tech.id === id ? { ...tech, costPerMinute: value === '' ? 0 : parseFloat(value) } : tech
+      tech.id === id ? { ...tech, costPerMinute: numValue } : tech
     );
     onTechnologyChange(updatedTechs);
   };
 
   return (
-    <Card className="p-6 space-y-4">
+    <Card className="p-6 space-y-4 bg-background text-foreground">
       <h3 className="text-lg font-semibold">{t('technologyParameters')}</h3>
       <div className="space-y-4">
         {technologies.map((tech) => (
@@ -73,7 +74,7 @@ export function TechnologyParameters({
                     onChange={(e) => handleCostChange(tech.id, e.target.value)}
                     step="any"
                     min="0"
-                    className="w-32 pr-8"
+                    className="w-32 pr-8 bg-background text-foreground"
                   />
                   {tech.costPerMinute >= 0 ? (
                     <Check className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-green-500" />
