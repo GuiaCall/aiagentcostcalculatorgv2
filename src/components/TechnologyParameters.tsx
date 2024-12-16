@@ -49,11 +49,11 @@ export function TechnologyParameters({
   };
 
   const handleCostChange = (id: string, value: string) => {
-    // Allow empty string, decimal numbers, and leading zeros
-    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+    // Allow empty string, decimal numbers with up to 4 decimal places
+    if (value === '' || /^\d*\.?\d{0,4}$/.test(value)) {
       const numValue = value === '' ? 0 : parseFloat(value);
       const updatedTechs = technologies.map(tech =>
-        tech.id === id ? { ...tech, costPerMinute: isNaN(numValue) ? 0 : numValue } : tech
+        tech.id === id ? { ...tech, costPerMinute: numValue } : tech
       );
       onTechnologyChange(updatedTechs);
     }
@@ -61,8 +61,8 @@ export function TechnologyParameters({
 
   const formatValue = (value: number) => {
     if (value === 0) return '';
-    // Format number to avoid scientific notation and preserve decimals
-    return value.toString();
+    // Format number to show up to 4 decimal places without trailing zeros
+    return value.toString().replace(/\.?0+$/, '');
   };
 
   return (
