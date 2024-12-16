@@ -11,6 +11,7 @@ import {
 import { InvoiceHistory } from "@/types/invoice";
 import { format } from "date-fns";
 import { Edit, Printer, Save, Trash2, RotateCw } from "lucide-react";
+import { CurrencyType } from "@/components/calculator/CalculatorState";
 
 interface InvoiceHistoryListProps {
   invoices: InvoiceHistory[];
@@ -20,7 +21,7 @@ interface InvoiceHistoryListProps {
   onSave?: (invoice: InvoiceHistory) => void;
   editingId?: string;
   recalculatedId?: string;
-  currency: 'USD' | 'EUR';
+  currency: CurrencyType;
 }
 
 export function InvoiceHistoryList({
@@ -33,7 +34,7 @@ export function InvoiceHistoryList({
   recalculatedId,
   currency,
 }: InvoiceHistoryListProps) {
-  const currencySymbol = currency === 'EUR' ? '€' : '$';
+  const currencySymbol = currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : '$';
   
   return (
     <Card className="p-6 space-y-4">
