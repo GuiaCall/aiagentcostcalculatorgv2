@@ -19,7 +19,7 @@ export function useCalculatorState() {
   const [margin, setMargin] = useState<number>(20);
   const [taxRate, setTaxRate] = useState<number>(20);
   const [themeColor, setThemeColor] = useState<string>("#2563eb");
-  const [currency, setCurrency] = useState<'USD' | 'EUR'>('USD');
+  const [currency, setCurrency] = useState<'USD' | 'EUR' | 'GBP'>('USD');
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [technologies, setTechnologies] = useState(initialTechnologies);
   const [invoices, setInvoices] = useState<InvoiceHistory[]>([]);

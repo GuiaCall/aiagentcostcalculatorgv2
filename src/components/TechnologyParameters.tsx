@@ -26,7 +26,19 @@ export function TechnologyParameters({
 }: TechnologyParametersProps) {
   const { currency } = useCalculatorStateContext();
   const { t } = useTranslation();
-  const currencySymbol = currency === 'EUR' ? '€' : '$';
+  
+  const getCurrencySymbol = (currency: string) => {
+    switch (currency) {
+      case 'EUR':
+        return '€';
+      case 'GBP':
+        return '£';
+      default:
+        return '$';
+    }
+  };
+  
+  const currencySymbol = getCurrencySymbol(currency);
 
   const handleToggle = (id: string) => {
     const updatedTechs = technologies.map(tech =>
@@ -37,11 +49,14 @@ export function TechnologyParameters({
   };
 
   const handleCostChange = (id: string, value: string) => {
-    const numValue = value === '' ? 0 : parseFloat(value);
-    const updatedTechs = technologies.map(tech =>
-      tech.id === id ? { ...tech, costPerMinute: numValue } : tech
-    );
-    onTechnologyChange(updatedTechs);
+    // Allow empty string, 0, and decimal numbers
+    if (value === '' || value === '0' || value === '0.' || /^\d*\.?\d*$/.test(value)) {
+      const numValue = value === '' ? 0 : parseFloat(value) || 0;
+      const updatedTechs = technologies.map(tech =>
+        tech.id === id ? { ...tech, costPerMinute: numValue } : tech
+      );
+      onTechnologyChange(updatedTechs);
+    }
   };
 
   return (
@@ -69,11 +84,9 @@ export function TechnologyParameters({
                 </span>
                 <div className="relative flex-1">
                   <Input
-                    type="number"
+                    type="text"
                     value={tech.costPerMinute || ''}
                     onChange={(e) => handleCostChange(tech.id, e.target.value)}
-                    step="any"
-                    min="0"
                     className="w-32 pr-8 bg-background text-foreground"
                   />
                   {tech.costPerMinute >= 0 ? (

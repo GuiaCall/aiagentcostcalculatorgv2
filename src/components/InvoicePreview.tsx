@@ -18,7 +18,7 @@ interface InvoicePreviewProps {
   themeColor: string;
   onColorChange: (color: string) => void;
   showColorPicker?: boolean;
-  currency: 'USD' | 'EUR';
+  currency: 'USD' | 'EUR' | 'GBP';
 }
 
 export function InvoicePreview({
@@ -33,7 +33,18 @@ export function InvoicePreview({
   showColorPicker = false,
   currency,
 }: InvoicePreviewProps) {
-  const currencySymbol = currency === 'EUR' ? '€' : '$';
+  const getCurrencySymbol = (currency: string) => {
+    switch (currency) {
+      case 'EUR':
+        return '€';
+      case 'GBP':
+        return '£';
+      default:
+        return '$';
+    }
+  };
+  
+  const currencySymbol = getCurrencySymbol(currency);
   const costPerMinute = totalCost && totalMinutes ? totalCost / totalMinutes : 0;
   const taxAmount = (totalCost || 0) * (taxRate / 100);
   const total = (totalCost || 0) * (1 + taxRate / 100) + (setupCost || 0);
