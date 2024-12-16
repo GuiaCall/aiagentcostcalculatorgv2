@@ -49,9 +49,14 @@ export function TechnologyParameters({
   };
 
   const handleCostChange = (id: string, value: string) => {
-    // Allow empty string or valid decimal numbers
-    if (value === '' || /^\d*\.?\d*$/.test(value)) {
-      const numValue = value === '' ? 0 : parseFloat(value);
+    // Allow any valid number input including decimals
+    const sanitizedValue = value.replace(/[^0-9.]/g, '');
+    const parts = sanitizedValue.split('.');
+    // Ensure only one decimal point
+    const validValue = parts.length > 2 ? `${parts[0]}.${parts[1]}` : sanitizedValue;
+    
+    if (validValue === '' || /^\d*\.?\d*$/.test(validValue)) {
+      const numValue = validValue === '' ? 0 : parseFloat(validValue);
       const updatedTechs = technologies.map(tech =>
         tech.id === id ? { ...tech, costPerMinute: isNaN(numValue) ? 0 : numValue } : tech
       );
@@ -61,8 +66,12 @@ export function TechnologyParameters({
 
   const formatValue = (value: number) => {
     if (value === 0) return '';
-    // Format number to avoid scientific notation and show decimals
-    return Number(value).toString();
+    // Format number to display decimal values correctly
+    return value.toLocaleString('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 20,
+      useGrouping: false
+    });
   };
 
   return (
