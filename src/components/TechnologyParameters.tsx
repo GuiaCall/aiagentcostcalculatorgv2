@@ -49,9 +49,19 @@ export function TechnologyParameters({
   };
 
   const handleCostChange = (id: string, value: string) => {
-    // Allow empty string, 0, and decimal numbers
-    if (value === '' || value === '0' || value === '0.' || /^\d*\.?\d*$/.test(value)) {
-      const numValue = value === '' ? 0 : parseFloat(value) || 0;
+    // Allow empty string for deletion
+    if (value === '') {
+      const updatedTechs = technologies.map(tech =>
+        tech.id === id ? { ...tech, costPerMinute: 0 } : tech
+      );
+      onTechnologyChange(updatedTechs);
+      return;
+    }
+
+    // Validate input format: allow numbers with up to 4 decimal places
+    const regex = /^\d*\.?\d{0,4}$/;
+    if (regex.test(value)) {
+      const numValue = parseFloat(value) || 0;
       const updatedTechs = technologies.map(tech =>
         tech.id === id ? { ...tech, costPerMinute: numValue } : tech
       );
@@ -85,9 +95,10 @@ export function TechnologyParameters({
                 <div className="relative flex-1">
                   <Input
                     type="text"
-                    value={tech.costPerMinute || ''}
+                    value={tech.costPerMinute === 0 ? '' : tech.costPerMinute.toString()}
                     onChange={(e) => handleCostChange(tech.id, e.target.value)}
                     className="w-32 pr-8 bg-background text-foreground"
+                    placeholder="0.00"
                   />
                   {tech.costPerMinute >= 0 ? (
                     <Check className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-green-500" />
