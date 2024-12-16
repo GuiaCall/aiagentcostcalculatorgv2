@@ -111,6 +111,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_preferences: {
+        Row: {
+          client_info_color: string | null
+          created_at: string | null
+          id: string
+          invoice_details_color: string | null
+          invoice_preview_color: string | null
+          theme_color: string | null
+          total_color: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          client_info_color?: string | null
+          created_at?: string | null
+          id?: string
+          invoice_details_color?: string | null
+          invoice_preview_color?: string | null
+          theme_color?: string | null
+          total_color?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          client_info_color?: string | null
+          created_at?: string | null
+          id?: string
+          invoice_details_color?: string | null
+          invoice_preview_color?: string | null
+          theme_color?: string | null
+          total_color?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
