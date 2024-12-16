@@ -8,7 +8,7 @@ import { AuthLayout } from "./components/auth/AuthLayout";
 import Index from "./pages/Index";
 import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
-import { Pricing } from "./pages/Pricing";
+import Pricing from "./pages/Pricing";
 
 const queryClient = new QueryClient();
 
