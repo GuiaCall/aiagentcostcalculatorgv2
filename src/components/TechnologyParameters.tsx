@@ -60,8 +60,9 @@ export function TechnologyParameters({
   };
 
   const formatValue = (value: number) => {
-    // Display empty string if value is 0, otherwise format the number
-    return value === 0 ? '' : value.toString();
+    if (value === 0) return '';
+    // Format number to avoid scientific notation and preserve decimals
+    return value.toString().replace(/^0+(?=\d)/, '');
   };
 
   return (
