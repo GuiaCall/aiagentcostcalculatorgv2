@@ -7,6 +7,8 @@ import { AuthGuard } from "./components/auth/AuthGuard";
 import { AuthLayout } from "./components/auth/AuthLayout";
 import Index from "./pages/Index";
 import Landing from "./pages/Landing";
+import Dashboard from "./pages/Dashboard";
+import Pricing from "./pages/Pricing";
 
 const queryClient = new QueryClient();
 
@@ -19,11 +21,20 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<AuthLayout />} />
+          <Route path="/pricing" element={<Pricing />} />
           <Route
             path="/calculator"
             element={
               <AuthGuard>
                 <Index />
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <AuthGuard>
+                <Dashboard />
               </AuthGuard>
             }
           />
