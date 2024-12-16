@@ -1,106 +1,105 @@
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Check } from "lucide-react";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
+import { useNavigate } from "react-router-dom";
+import { CalculatorStateProvider } from "@/components/calculator/CalculatorStateContext";
+import { CurrencyDropdown } from "@/components/calculator/CurrencyDropdown";
 
-export default function Pricing() {
+const PricingTier = ({ 
+  name, 
+  price, 
+  features, 
+  isPopular 
+}: { 
+  name: string; 
+  price: number; 
+  features: string[]; 
+  isPopular?: boolean;
+}) => (
+  <div className={`rounded-lg p-8 ${isPopular ? 'bg-primary text-primary-foreground ring-2 ring-primary' : 'bg-card'}`}>
+    <h3 className="text-2xl font-bold">{name}</h3>
+    <div className="mt-4 flex items-baseline">
+      <span className="text-4xl font-bold">${price}</span>
+      <span className="ml-1 text-sm font-medium">/month</span>
+    </div>
+    <ul className="mt-6 space-y-4">
+      {features.map((feature, index) => (
+        <li key={index} className="flex items-center">
+          <Check className="h-5 w-5 flex-shrink-0" />
+          <span className="ml-3">{feature}</span>
+        </li>
+      ))}
+    </ul>
+    <Button className="mt-8 w-full" variant={isPopular ? "secondary" : "default"}>
+      Get Started
+    </Button>
+  </div>
+);
+
+export function Pricing() {
   const navigate = useNavigate();
 
-  const plans = [
+  const pricingTiers = [
     {
-      name: "Basic",
-      price: "Free",
+      name: "Starter",
+      price: 29,
       features: [
-        "Basic voice cost calculation",
-        "PDF export",
-        "Single currency support",
-        "Basic invoice management",
-      ],
-      cta: "Get Started",
-      highlighted: false
+        "Up to 1,000 minutes",
+        "Basic support",
+        "1 phone number",
+        "Standard analytics"
+      ]
     },
     {
-      name: "Pro",
-      price: "$29/month",
+      name: "Professional",
+      price: 99,
       features: [
-        "All Basic features",
-        "Multi-currency support",
-        "Advanced analytics",
-        "Custom branding",
+        "Up to 5,000 minutes",
         "Priority support",
-        "Team collaboration"
+        "5 phone numbers",
+        "Advanced analytics",
+        "Custom integrations"
       ],
-      cta: "Start Free Trial",
-      highlighted: true
+      isPopular: true
     },
     {
       name: "Enterprise",
-      price: "Custom",
+      price: 299,
       features: [
-        "All Pro features",
-        "Custom integration",
-        "Dedicated support",
-        "SLA guarantee",
-        "Custom reporting",
-        "Volume discounts"
-      ],
-      cta: "Contact Sales",
-      highlighted: false
+        "Unlimited minutes",
+        "24/7 support",
+        "Unlimited phone numbers",
+        "Custom analytics",
+        "API access",
+        "Dedicated account manager"
+      ]
     }
   ];
 
   return (
-    <>
-      <Navbar />
-      <div className="container mx-auto px-4 py-16 mt-16">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Simple, Transparent Pricing</h1>
-          <p className="text-xl text-muted-foreground">
-            Choose the plan that's right for your business
+    <CalculatorStateProvider>
+      <div className="py-24 px-6 sm:py-32 lg:px-8">
+        <div className="mx-auto max-w-7xl text-center">
+          <div className="flex justify-end mb-8">
+            <CurrencyDropdown />
+          </div>
+          <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
+            Simple, transparent pricing
+          </h2>
+          <p className="mt-6 text-lg leading-8 text-muted-foreground">
+            Choose the perfect plan for your business needs
           </p>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {plans.map((plan) => (
-            <Card 
-              key={plan.name}
-              className={`p-6 flex flex-col ${
-                plan.highlighted 
-                  ? 'border-primary shadow-lg scale-105' 
-                  : ''
-              }`}
-            >
-              <div className="mb-8">
-                <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                <p className="text-3xl font-bold">{plan.price}</p>
-                {plan.price !== "Custom" && (
-                  <p className="text-muted-foreground">per month</p>
-                )}
-              </div>
-
-              <ul className="space-y-4 mb-8 flex-grow">
-                {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-center gap-2">
-                    <Check className="h-5 w-5 text-primary" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <Button 
-                onClick={() => navigate('/calculator')}
-                variant={plan.highlighted ? "default" : "outline"}
-                className="w-full"
-              >
-                {plan.cta}
-              </Button>
-            </Card>
+        <div className="mx-auto mt-16 max-w-7xl grid gap-8 lg:grid-cols-3">
+          {pricingTiers.map((tier) => (
+            <PricingTier key={tier.name} {...tier} />
           ))}
         </div>
+        <div className="mt-16 text-center">
+          <Button variant="outline" onClick={() => navigate("/calculator")}>
+            Try the Calculator
+          </Button>
+        </div>
       </div>
-      <Footer />
-    </>
+    </CalculatorStateProvider>
   );
 }
