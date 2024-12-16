@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { CalculatorStateProvider } from "@/components/calculator/CalculatorStateContext";
 import {
   LineChart,
   Line,
@@ -65,7 +66,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <>
+    <CalculatorStateProvider>
       <Navbar />
       <div className="container mx-auto px-4 py-8 mt-16 mb-16">
         <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
@@ -127,6 +128,6 @@ export default function Dashboard() {
         </div>
       </div>
       <Footer />
-    </>
+    </CalculatorStateProvider>
   );
 }
