@@ -62,7 +62,7 @@ export function TechnologyParameters({
   const formatValue = (value: number) => {
     if (value === 0) return '';
     // Format number to avoid scientific notation and preserve decimals
-    return value.toString().replace(/^0+(?=\d)/, '');
+    return value.toString();
   };
 
   return (
@@ -95,6 +95,7 @@ export function TechnologyParameters({
                     onChange={(e) => handleCostChange(tech.id, e.target.value)}
                     className="w-32 pr-8 bg-background text-foreground"
                     placeholder="0.00"
+                    inputMode="decimal"
                   />
                   {tech.costPerMinute >= 0 ? (
                     <Check className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-green-500" />
