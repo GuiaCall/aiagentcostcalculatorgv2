@@ -35,7 +35,7 @@ const PricingTier = ({
   </div>
 );
 
-export function Pricing() {
+export default function Pricing() {
   const navigate = useNavigate();
 
   const pricingTiers = [
