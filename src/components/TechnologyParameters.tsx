@@ -49,21 +49,14 @@ export function TechnologyParameters({
   };
 
   const handleCostChange = (id: string, value: string) => {
-    // Allow empty string or valid decimal numbers
-    const regex = /^$|^\d*\.?\d*$/;
-    
-    if (regex.test(value)) {
-      const numValue = value === '' ? 0 : parseFloat(value);
+    // Allow empty string, 0, and decimal numbers
+    if (value === '' || value === '0' || value === '0.' || /^\d*\.?\d*$/.test(value)) {
+      const numValue = value === '' ? 0 : parseFloat(value) || 0;
       const updatedTechs = technologies.map(tech =>
-        tech.id === id ? { ...tech, costPerMinute: isNaN(numValue) ? 0 : numValue } : tech
+        tech.id === id ? { ...tech, costPerMinute: numValue } : tech
       );
       onTechnologyChange(updatedTechs);
     }
-  };
-
-  const formatValue = (value: number) => {
-    if (value === 0) return '';
-    return value.toString();
   };
 
   return (
@@ -92,10 +85,9 @@ export function TechnologyParameters({
                 <div className="relative flex-1">
                   <Input
                     type="text"
-                    value={formatValue(tech.costPerMinute)}
+                    value={tech.costPerMinute || ''}
                     onChange={(e) => handleCostChange(tech.id, e.target.value)}
                     className="w-32 pr-8 bg-background text-foreground"
-                    placeholder="0.00"
                   />
                   {tech.costPerMinute >= 0 ? (
                     <Check className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-green-500" />
