@@ -125,31 +125,31 @@ function CalculatorContent() {
           onClientInfoChange={state.setClientInfo}
         />
 
-      <CalculatorSettings
-        callDuration={state.callDuration}
-        totalMinutes={state.totalMinutes}
-        margin={state.margin}
-        taxRate={state.taxRate}
-        onSettingChange={handleSettingChange}
-      />
+        <CalculatorSettings
+          callDuration={state.callDuration}
+          totalMinutes={state.totalMinutes}
+          margin={state.margin}
+          taxRate={state.taxRate}
+          onSettingChange={handleSettingChange}
+        />
 
-      <TechnologyParameters
-        technologies={state.technologies}
-        onTechnologyChange={state.setTechnologies}
-        onVisibilityChange={() => {}}
-      />
+        <TechnologyParameters
+          technologies={state.technologies}
+          onTechnologyChange={state.setTechnologies}
+          onVisibilityChange={() => {}}
+        />
 
-      <TechnologyCalculators />
+        <TechnologyCalculators />
 
-      <CalculatorActions
-        onCalculate={logic.calculateCost}
-        onPreviewToggle={() => state.setShowPreview(!state.showPreview)}
-        onExportPDF={() => exportPDF()}
-        totalCost={convertCurrency(state.totalCost || 0)}
-        setupCost={convertCurrency(state.setupCost || 0)}
-        currency={state.currency}
-        totalMinutes={state.totalMinutes}
-      />
+        <CalculatorActions
+          onCalculate={logic.calculateCost}
+          onPreviewToggle={() => state.setShowPreview(!state.showPreview)}
+          onExportPDF={() => exportPDF()}
+          totalCost={convertCurrency(state.totalCost || 0)}
+          setupCost={convertCurrency(state.setupCost || 0)}
+          currency={state.currency}
+          totalMinutes={state.totalMinutes}
+        />
 
         {state.showPreview && (
           <CalculatorPreview

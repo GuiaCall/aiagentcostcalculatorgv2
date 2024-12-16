@@ -5,6 +5,8 @@ import { CalcomPlan } from "@/types/calcom";
 import { TwilioSelection } from "@/types/twilio";
 import { AgencyInfo, ClientInfo, InvoiceHistory } from "@/types/invoice";
 
+export type CurrencyType = 'USD' | 'EUR' | 'GBP';
+
 const initialTechnologies = [
   { id: "make", name: "Make.com", isSelected: true, costPerMinute: 0.001 },
   { id: "synthflow", name: "Synthflow", isSelected: true, costPerMinute: 0.002 },
@@ -19,7 +21,7 @@ export function useCalculatorState() {
   const [margin, setMargin] = useState<number>(20);
   const [taxRate, setTaxRate] = useState<number>(20);
   const [themeColor, setThemeColor] = useState<string>("#2563eb");
-  const [currency, setCurrency] = useState<'USD' | 'EUR' | 'GBP'>('USD');
+  const [currency, setCurrency] = useState<CurrencyType>('USD');
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [technologies, setTechnologies] = useState(initialTechnologies);
   const [invoices, setInvoices] = useState<InvoiceHistory[]>([]);
