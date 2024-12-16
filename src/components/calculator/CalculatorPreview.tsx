@@ -1,5 +1,6 @@
 import { InvoicePreview } from "../InvoicePreview";
 import { AgencyInfo, ClientInfo } from "@/types/invoice";
+import { CurrencyType } from "./CalculatorState";
 
 interface CalculatorPreviewProps {
   showPreview: boolean;
@@ -10,7 +11,7 @@ interface CalculatorPreviewProps {
   setupCost: number | null;
   taxRate: number;
   themeColor: string;
-  currency: 'USD' | 'EUR';
+  currency: CurrencyType;
 }
 
 export function CalculatorPreview({

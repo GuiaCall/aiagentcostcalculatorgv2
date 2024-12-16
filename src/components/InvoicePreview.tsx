@@ -1,4 +1,5 @@
 import { AgencyInfo, ClientInfo } from "@/types/invoice";
+import { CurrencyType } from "@/components/calculator/CalculatorState";
 import {
   Table,
   TableBody,
@@ -18,7 +19,7 @@ interface InvoicePreviewProps {
   themeColor: string;
   onColorChange: (color: string) => void;
   showColorPicker?: boolean;
-  currency: 'USD' | 'EUR' | 'GBP';
+  currency: CurrencyType;
 }
 
 export function InvoicePreview({
@@ -33,7 +34,7 @@ export function InvoicePreview({
   showColorPicker = false,
   currency,
 }: InvoicePreviewProps) {
-  const getCurrencySymbol = (currency: string) => {
+  const getCurrencySymbol = (currency: CurrencyType) => {
     switch (currency) {
       case 'EUR':
         return '€';
