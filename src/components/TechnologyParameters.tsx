@@ -49,16 +49,21 @@ export function TechnologyParameters({
   };
 
   const handleCostChange = (id: string, value: string) => {
-    // Allow any valid number input including decimals
-    const sanitizedValue = value.replace(/[^0-9.]/g, '');
-    const parts = sanitizedValue.split('.');
-    // Ensure only one decimal point
-    const validValue = parts.length > 2 ? `${parts[0]}.${parts[1]}` : sanitizedValue;
+    // Remove any non-numeric characters except decimal point
+    let sanitizedValue = value.replace(/[^\d.]/g, '');
     
-    if (validValue === '' || /^\d*\.?\d*$/.test(validValue)) {
-      const numValue = validValue === '' ? 0 : parseFloat(validValue);
+    // Handle multiple decimal points
+    const decimalPoints = sanitizedValue.match(/\./g)?.length || 0;
+    if (decimalPoints > 1) {
+      const parts = sanitizedValue.split('.');
+      sanitizedValue = parts[0] + '.' + parts.slice(1).join('');
+    }
+
+    // Convert to number and update state
+    const numValue = sanitizedValue === '' ? 0 : parseFloat(sanitizedValue);
+    if (!isNaN(numValue)) {
       const updatedTechs = technologies.map(tech =>
-        tech.id === id ? { ...tech, costPerMinute: isNaN(numValue) ? 0 : numValue } : tech
+        tech.id === id ? { ...tech, costPerMinute: numValue } : tech
       );
       onTechnologyChange(updatedTechs);
     }
@@ -66,12 +71,7 @@ export function TechnologyParameters({
 
   const formatValue = (value: number) => {
     if (value === 0) return '';
-    // Format number to display decimal values correctly
-    return value.toLocaleString('en-US', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 20,
-      useGrouping: false
-    });
+    return value.toString();
   };
 
   return (
@@ -100,11 +100,11 @@ export function TechnologyParameters({
                 <div className="relative flex-1">
                   <Input
                     type="text"
+                    inputMode="decimal"
                     value={formatValue(tech.costPerMinute)}
                     onChange={(e) => handleCostChange(tech.id, e.target.value)}
                     className="w-32 pr-8 bg-background text-foreground"
                     placeholder="0.00"
-                    inputMode="decimal"
                   />
                   {tech.costPerMinute >= 0 ? (
                     <Check className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-green-500" />
