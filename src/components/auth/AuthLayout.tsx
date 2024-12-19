@@ -5,7 +5,12 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 
-export function AuthLayout() {
+interface AuthLayoutProps {
+  mode: "login" | "signup";
+  children: React.ReactNode;
+}
+
+export function AuthLayout({ mode, children }: AuthLayoutProps) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -55,9 +60,14 @@ export function AuthLayout() {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-foreground">Welcome Back</h2>
+          <h2 className="text-3xl font-bold text-foreground">
+            {mode === "login" ? "Welcome Back" : "Create Account"}
+          </h2>
           <p className="mt-2 text-muted-foreground">
-            Sign in to your account to continue
+            {mode === "login" 
+              ? "Sign in to your account to continue"
+              : "Sign up for an account to get started"
+            }
           </p>
         </div>
         <div className="bg-card p-6 rounded-lg shadow-lg">
@@ -66,6 +76,7 @@ export function AuthLayout() {
             appearance={{ theme: ThemeSupa }}
             providers={[]}
             redirectTo={`${window.location.origin}/calculator`}
+            view={mode === "login" ? "sign_in" : "sign_up"}
           />
         </div>
       </div>
