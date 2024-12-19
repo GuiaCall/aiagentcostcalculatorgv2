@@ -24,16 +24,14 @@ export default function Pricing() {
 
     if (plan === 'premium') {
       try {
-        const response = await fetch('/api/create-checkout-session', {
-          method: 'POST',
+        const { data, error } = await supabase.functions.invoke('create-checkout-session', {
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session.access_token}`,
+            Authorization: `Bearer ${session.access_token}`,
           },
         });
 
-        const { url } = await response.json();
-        window.location.href = url;
+        if (error) throw error;
+        if (data?.url) window.location.href = data.url;
       } catch (error) {
         toast({
           title: "Error",
