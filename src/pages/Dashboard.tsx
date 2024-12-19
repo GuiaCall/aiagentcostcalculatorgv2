@@ -1,133 +1,245 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { CalculatorStateProvider } from "@/components/calculator/CalculatorStateContext";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { format } from 'date-fns';
+
+interface Profile {
+  id: string;
+  name: string | null;
+  location: string | null;
+  bio: string | null;
+}
+
+interface Subscription {
+  plan_type: string;
+  invoice_count: number;
+  status: string;
+}
 
 export default function Dashboard() {
-  const [totalInvoices, setTotalInvoices] = useState(0);
-  const [monthlyRevenue, setMonthlyRevenue] = useState(0);
-  const [recentActivity, setRecentActivity] = useState([]);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [invoices, setInvoices] = useState<any[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        // Fetch data from local storage for demo purposes
-        const savedInvoices = localStorage.getItem('invoiceHistory');
-        if (savedInvoices) {
-          const invoices = JSON.parse(savedInvoices);
-          setTotalInvoices(invoices.length);
-          
-          // Calculate monthly revenue
-          const currentMonth = new Date().getMonth();
-          const monthlyInvoices = invoices.filter((inv: any) => 
-            new Date(inv.date).getMonth() === currentMonth
-          );
-          const revenue = monthlyInvoices.reduce((acc: number, inv: any) => 
-            acc + inv.totalAmount, 0
-          );
-          setMonthlyRevenue(revenue);
-
-          // Get recent activity
-          const recent = invoices
-            .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())
-            .slice(0, 5);
-          setRecentActivity(recent);
-        }
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-      }
-    };
-
-    fetchDashboardData();
+    fetchProfile();
+    fetchSubscription();
+    fetchInvoices();
   }, []);
 
-  // Sample data for the chart
-  const chartData = [
-    { name: 'Jan', revenue: 4000 },
-    { name: 'Feb', revenue: 3000 },
-    { name: 'Mar', revenue: 2000 },
-    { name: 'Apr', revenue: 2780 },
-    { name: 'May', revenue: 1890 },
-    { name: 'Jun', revenue: 2390 },
-  ];
+  const fetchProfile = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', session.user.id)
+      .single();
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to fetch profile",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setProfile(data);
+  };
+
+  const fetchSubscription = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('user_id', session.user.id)
+      .single();
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to fetch subscription",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSubscription(data);
+  };
+
+  const fetchInvoices = async () => {
+    // Implement invoice fetching logic here
+    setInvoices([]);
+  };
+
+  const updateProfile = async (updatedProfile: Partial<Profile>) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+
+    const { error } = await supabase
+      .from('profiles')
+      .update(updatedProfile)
+      .eq('id', session.user.id);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update profile",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Success",
+      description: "Profile updated successfully",
+    });
+    setIsEditing(false);
+    fetchProfile();
+  };
+
+  const getRevenueData = () => {
+    const monthlyData = invoices.reduce((acc: any[], invoice: any) => {
+      const month = format(new Date(invoice.date), 'MMM yyyy');
+      const existingMonth = acc.find(item => item.month === month);
+      
+      if (existingMonth) {
+        existingMonth.amount += invoice.totalAmount;
+      } else {
+        acc.push({ month, amount: invoice.totalAmount });
+      }
+      
+      return acc;
+    }, []);
+
+    return monthlyData.sort((a, b) => 
+      new Date(a.month).getTime() - new Date(b.month).getTime()
+    );
+  };
 
   return (
-    <CalculatorStateProvider>
-      <Navbar />
-      <div className="container mx-auto px-4 py-8 mt-16 mb-16">
-        <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-2">Total Invoices</h3>
-            <p className="text-3xl font-bold">{totalInvoices}</p>
-          </Card>
-          
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-2">Monthly Revenue</h3>
-            <p className="text-3xl font-bold">${monthlyRevenue.toFixed(2)}</p>
-          </Card>
-          
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-2">Active Projects</h3>
-            <p className="text-3xl font-bold">5</p>
-          </Card>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Revenue Overview</h3>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line 
-                    type="monotone" 
-                    dataKey="revenue" 
-                    stroke="#8884d8" 
-                    strokeWidth={2}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </Card>
-
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
+    <div className="container mx-auto p-6 space-y-8">
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* Profile Section */}
+        <Card className="p-6 space-y-4">
+          <h2 className="text-2xl font-bold">Profile</h2>
+          {isEditing ? (
             <div className="space-y-4">
-              {recentActivity.map((invoice: any) => (
-                <div key={invoice.id} className="flex justify-between items-center">
-                  <div>
-                    <p className="font-medium">{invoice.invoiceNumber}</p>
-                    <p className="text-sm text-gray-500">
-                      {new Date(invoice.date).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <p className="font-semibold">${invoice.totalAmount.toFixed(2)}</p>
-                </div>
-              ))}
+              <div>
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  value={profile?.name || ''}
+                  onChange={(e) => setProfile(prev => ({ ...prev!, name: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label htmlFor="location">Location</Label>
+                <Input
+                  id="location"
+                  value={profile?.location || ''}
+                  onChange={(e) => setProfile(prev => ({ ...prev!, location: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label htmlFor="bio">Bio</Label>
+                <Input
+                  id="bio"
+                  value={profile?.bio || ''}
+                  onChange={(e) => setProfile(prev => ({ ...prev!, bio: e.target.value }))}
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={() => updateProfile(profile!)}>Save</Button>
+                <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+              </div>
             </div>
-          </Card>
-        </div>
+          ) : (
+            <div className="space-y-2">
+              <p><span className="font-semibold">Name:</span> {profile?.name || 'Not set'}</p>
+              <p><span className="font-semibold">Location:</span> {profile?.location || 'Not set'}</p>
+              <p><span className="font-semibold">Bio:</span> {profile?.bio || 'Not set'}</p>
+              <Button onClick={() => setIsEditing(true)}>Edit Profile</Button>
+            </div>
+          )}
+        </Card>
+
+        {/* Subscription Info */}
+        <Card className="p-6 space-y-4">
+          <h2 className="text-2xl font-bold">Subscription</h2>
+          <div className="space-y-2">
+            <p><span className="font-semibold">Plan:</span> {subscription?.plan_type || 'Free'}</p>
+            <p><span className="font-semibold">Status:</span> {subscription?.status || 'Active'}</p>
+            <p><span className="font-semibold">Invoices Created:</span> {subscription?.invoice_count || 0}</p>
+            {subscription?.plan_type === 'free' && (
+              <Button onClick={() => window.location.href = '/pricing'}>
+                Upgrade to Premium
+              </Button>
+            )}
+          </div>
+        </Card>
       </div>
-      <Footer />
-    </CalculatorStateProvider>
+
+      {/* Revenue Chart */}
+      <Card className="p-6">
+        <h2 className="text-2xl font-bold mb-4">Revenue Overview</h2>
+        <div className="h-[300px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={getRevenueData()}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="amount" fill="#2563eb" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+
+      {/* Recent Invoices */}
+      <Card className="p-6">
+        <h2 className="text-2xl font-bold mb-4">Recent Invoices</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left p-2">Invoice Number</th>
+                <th className="text-left p-2">Date</th>
+                <th className="text-left p-2">Client</th>
+                <th className="text-right p-2">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {invoices.slice(0, 5).map((invoice) => (
+                <tr key={invoice.id} className="border-b">
+                  <td className="p-2">{invoice.invoiceNumber}</td>
+                  <td className="p-2">{format(new Date(invoice.date), 'dd MMM yyyy')}</td>
+                  <td className="p-2">{invoice.clientInfo.name}</td>
+                  <td className="p-2 text-right">${invoice.totalAmount.toFixed(2)}</td>
+                </tr>
+              ))}
+              {invoices.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="text-center p-4 text-muted-foreground">
+                    No invoices yet
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+    </div>
   );
 }
