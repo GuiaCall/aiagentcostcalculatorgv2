@@ -3,6 +3,7 @@ import { Calculator } from "@/components/Calculator";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthGuard } from "@/components/auth/AuthGuard";
 import Dashboard from "@/pages/Dashboard";
+import Pricing from "@/pages/Pricing";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -30,6 +31,7 @@ function App() {
             } 
           />
           <Route path="/" element={<Navigate to="/calculator" replace />} />
+          <Route path="/pricing" element={<Pricing />} />
           <Route
             path="/calculator"
             element={

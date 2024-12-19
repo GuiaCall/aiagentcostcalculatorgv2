@@ -7,7 +7,8 @@ import {
   LayoutDashboard, 
   LogOut,
   Menu,
-  X
+  X,
+  CreditCard
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -59,6 +60,17 @@ export function Navbar() {
         className="hover:bg-accent"
       >
         <LayoutDashboard className="h-5 w-5" />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => {
+          navigate("/pricing");
+          setIsOpen(false);
+        }}
+        className="hover:bg-accent"
+      >
+        <CreditCard className="h-5 w-5" />
       </Button>
       <Button
         variant="outline"

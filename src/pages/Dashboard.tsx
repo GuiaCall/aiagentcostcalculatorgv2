@@ -5,6 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from 'date-fns';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
 
 export default function Dashboard() {
   const { data: user } = useQuery({
@@ -31,25 +33,29 @@ export default function Dashboard() {
   });
 
   return (
-    <div className="container mx-auto p-6 space-y-8">
-      <div className="grid md:grid-cols-2 gap-6">
-        <DashboardProfile />
-        <DashboardSubscription />
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
+      <div className="flex-grow container mx-auto p-6 space-y-8 mt-16">
+        <div className="grid md:grid-cols-2 gap-6">
+          <DashboardProfile />
+          <DashboardSubscription />
+        </div>
+
+        <Card className="p-6">
+          <h2 className="text-2xl font-bold mb-4">Revenue Overview</h2>
+          <div className="h-[300px] flex items-center justify-center">
+            <p className="text-muted-foreground">No revenue data available yet</p>
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <h2 className="text-2xl font-bold mb-4">Recent Activity</h2>
+          <div className="text-center py-8 text-muted-foreground">
+            No recent activity to display
+          </div>
+        </Card>
       </div>
-
-      <Card className="p-6">
-        <h2 className="text-2xl font-bold mb-4">Revenue Overview</h2>
-        <div className="h-[300px] flex items-center justify-center">
-          <p className="text-muted-foreground">No revenue data available yet</p>
-        </div>
-      </Card>
-
-      <Card className="p-6">
-        <h2 className="text-2xl font-bold mb-4">Recent Activity</h2>
-        <div className="text-center py-8 text-muted-foreground">
-          No recent activity to display
-        </div>
-      </Card>
+      <Footer />
     </div>
   );
 }
