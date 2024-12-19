@@ -1,74 +1,23 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { supabase } from "@/integrations/supabase/client";
-import { Loader2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Calculator } from "lucide-react";
 
-export function AuthLayout() {
-  const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error("Session check error:", error);
-          setIsLoading(false);
-          return;
-        }
-
-        if (session) {
-          navigate("/calculator");
-          return;
-        }
-
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Auth error:", error);
-        setIsLoading(false);
-      }
-    };
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_IN" && session) {
-        navigate("/calculator");
-      }
-    });
-
-    checkSession();
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
+export function AuthLayout({ children, mode }: { children: React.ReactNode; mode: 'login' | 'signup' }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-foreground">Welcome Back</h2>
-          <p className="mt-2 text-muted-foreground">
-            Sign in to your account to continue
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
+      <Card className="w-full max-w-md p-8 space-y-6 animate-fadeIn">
+        <div className="text-center space-y-4">
+          <div className="flex items-center justify-center space-x-2">
+            <Calculator className="h-8 w-8 text-primary" />
+            <h1 className="text-2xl font-bold text-gray-900">AI Agent Calculator</h1>
+          </div>
+          <p className="text-gray-600">
+            {mode === 'login' 
+              ? "Welcome back! Sign in to access your AI-powered calculator."
+              : "Join us to start creating intelligent calculations today."}
           </p>
         </div>
-        <div className="bg-card p-6 rounded-lg shadow-lg">
-          <Auth
-            supabaseClient={supabase}
-            appearance={{ theme: ThemeSupa }}
-            providers={[]}
-            redirectTo={`${window.location.origin}/calculator`}
-          />
-        </div>
-      </div>
+        {children}
+      </Card>
     </div>
   );
 }
