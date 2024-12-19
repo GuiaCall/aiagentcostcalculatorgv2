@@ -7,13 +7,13 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CalculatorStateProvider } from "@/components/calculator/CalculatorStateContext";
 
-export function Dashboard() {
+export default function Dashboard() {
   const { session } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!session) {
-      navigate("/auth");
+      navigate("/login");
     }
   }, [session, navigate]);
 
