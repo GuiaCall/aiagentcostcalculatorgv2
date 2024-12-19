@@ -1,44 +1,109 @@
-import { Calculator } from "lucide-react";
-import { Link } from "react-router-dom";
-import { MobileNav } from "./MobileNav";
-import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { CurrencyDropdown } from "@/components/calculator/CurrencyDropdown";
+import { 
+  Calculator, 
+  LayoutDashboard, 
+  LogOut,
+  Menu,
+  X
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useState } from "react";
 
 export function Navbar() {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      navigate("/login");
+      toast({
+        title: "Logged out successfully",
+        description: "You have been logged out of your account",
+      });
+    } catch (error) {
+      toast({
+        title: "Error logging out",
+        description: "There was an error logging out. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const NavItems = () => (
+    <>
+      <CurrencyDropdown />
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => {
+          navigate("/calculator");
+          setIsOpen(false);
+        }}
+        className="hover:bg-accent"
+      >
+        <Calculator className="h-5 w-5" />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => {
+          navigate("/dashboard");
+          setIsOpen(false);
+        }}
+        className="hover:bg-accent"
+      >
+        <LayoutDashboard className="h-5 w-5" />
+      </Button>
+      <Button
+        variant="outline"
+        onClick={handleLogout}
+        className="flex items-center gap-2"
+      >
+        <LogOut className="h-4 w-4" />
+        Logout
+      </Button>
+    </>
+  );
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
-        <MobileNav />
-        <div className="flex items-center space-x-2">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background border-b">
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
           <Calculator className="h-6 w-6 text-primary" />
-          <Link to="/" className="font-bold text-xl">
-            AI Agent Calculator
-          </Link>
+          <span className="font-bold text-xl">AI Agent Calculator</span>
         </div>
-        <div className="flex-1" />
-        <nav className="hidden md:flex items-center space-x-4">
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/dashboard")}
-          >
-            Dashboard
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/calculator")}
-          >
-            Calculator
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/pricing")}
-          >
-            Pricing
-          </Button>
-        </nav>
+        
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center space-x-4">
+          <NavItems />
+        </div>
+
+        {/* Mobile Navigation */}
+        <div className="md:hidden">
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                {isOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[240px] sm:w-[300px]">
+              <div className="flex flex-col space-y-4 mt-8">
+                <NavItems />
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
-    </header>
+    </nav>
   );
 }
