@@ -31,7 +31,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     };
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === "SIGNED_OUT" || event === "USER_DELETED") {
+      if (event === "SIGNED_OUT") {
         navigate("/login");
       } else if (event === "SIGNED_IN" && session) {
         setIsLoading(false);
